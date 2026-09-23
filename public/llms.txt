@@ -1,0 +1,53 @@
+# ipbulucu.org - Free IP Intelligence & Network Security Tools API
+
+> ipbulucu.org provides high-performance, developer-friendly and AI-agent ready REST APIs for IP geolocation, telecom line classification, threat intelligence, DNSBL spam checks, universal Whois, and port diagnostics.
+
+## Available APIs for AI Agents & Developers
+
+### 1. Public IP & Geolocation Intelligence
+- **Endpoint**: `GET https://ipbulucu.org/api/ip`
+- **Params**:
+  - `ip` (optional): IPv4 or IPv6 address to analyze. If omitted, detects client IP.
+  - `format`: `json` (or pass `Accept: application/json` header)
+- **Response**: IP, City, Region, Country, Coordinates, ISP, ASN, Connection Type (Fiber/VDSL/Mobile), Line Speed Tier, Fraud Score, Visitor Persona, Turkish Plate & Area Codes.
+- **Example cURL**: `curl -s "https://ipbulucu.org/api/ip?format=json"`
+- **Plain Text IP**: `curl -s https://ipbulucu.org/api/ip` (Returns: `176.33.178.53\n`)
+
+### 2. Universal Whois & RDAP (.tr & Global)
+- **Endpoint**: `GET https://ipbulucu.org/api/whois`
+- **Params**:
+  - `domain`: Domain name to query (e.g. `google.com`, `turktelekom.com.tr`).
+- **Response**: Domain, Registrar, Created Date, Expiry Date, Name Servers, Raw Whois text.
+- **Example cURL**: `curl -s "https://ipbulucu.org/api/whois?domain=turktelekom.com.tr"`
+
+### 3. Open Port & Service Scanner
+- **Endpoint**: `GET https://ipbulucu.org/api/port`
+- **Params**:
+  - `host`: IP address or domain (e.g. `google.com`).
+  - `port`: Port number (e.g. `80`, `443`, `22`, `3389`).
+- **Response**: `host`, `port`, `isOpen`, `status`, `responseTimeMs`.
+- **Example cURL**: `curl -s "https://ipbulucu.org/api/port?host=google.com&port=443"`
+
+### 4. DNS Records Resolver
+- **Endpoint**: `GET https://ipbulucu.org/api/dns`
+- **Params**:
+  - `domain`: Target domain.
+  - `type`: `A`, `AAAA`, `MX`, `TXT`, `NS`, `CNAME`, `SOA`, `ALL`.
+- **Response**: Array of resolved DNS records with TTL and host.
+- **Example cURL**: `curl -s "https://ipbulucu.org/api/dns?domain=google.com&type=A"`
+
+### 5. SSL / TLS Certificate Inspector
+- **Endpoint**: `GET https://ipbulucu.org/api/ssl`
+- **Params**:
+  - `domain`: Target domain.
+- **Response**: Issuer, Subject, Valid From, Valid To, Days Remaining, Serial Number.
+- **Example cURL**: `curl -s "https://ipbulucu.org/api/ssl?domain=google.com"`
+
+### 6. Email Security (SPF & DMARC)
+- **Endpoint**: `GET https://ipbulucu.org/api/email-security`
+- **Params**:
+  - `domain`: Target email domain.
+- **Response**: SPF record validity, DMARC record validity, MX hosts.
+
+### 7. OpenAPI Specification
+- **OpenAPI 3.1 JSON**: `https://ipbulucu.org/openapi.json`

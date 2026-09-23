@@ -1,0 +1,54 @@
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# 1. Canonical Redirect: www -> non-www & HTTP -> HTTPS
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# 2. API Routing to PHP endpoints with full query string forwarding
+RewriteRule ^api/ip/?$ /api/ip.php [QSA,L]
+RewriteRule ^api/whois/?$ /api/whois.php [QSA,L]
+RewriteRule ^api/port/?$ /api/port.php [QSA,L]
+RewriteRule ^api/ssl/?$ /api/ssl.php [QSA,L]
+RewriteRule ^api/dns/?$ /api/dns.php [QSA,L]
+RewriteRule ^api/propagation/?$ /api/propagation.php [QSA,L]
+RewriteRule ^api/blacklist/?$ /api/blacklist.php [QSA,L]
+RewriteRule ^api/headers/?$ /api/headers.php [QSA,L]
+RewriteRule ^api/email-security/?$ /api/email-security.php [QSA,L]
+RewriteRule ^api/watch/(.*)$ /api/watch.php?token=$1 [QSA,L]
+
+# 3. Clean HTML URLs (Serve .html without showing extension)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.*)$ $1.html [L]
+
+# Custom 404 handler
+ErrorDocument 404 /404.html
+</IfModule>
+
+# Caching & Performance Headers (0 CLS / Core Web Vitals)
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType image/webp "access plus 1 year"
+ExpiresByType text/css "access plus 1 month"
+ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
+
+# Gzip & Brotli Compression
+<IfModule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+# Security & HSTS Headers (A+ SSL Grade)
+<IfModule mod_headers.c>
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+Header set X-Content-Type-Options "nosniff"
+Header set X-XSS-Protection "1; mode=block"
+Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

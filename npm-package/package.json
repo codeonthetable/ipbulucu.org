@@ -1,0 +1,14 @@
+{
+  "name": "ipbulucu",
+  "version": "1.0.0",
+  "description": "Official Node.js & TypeScript SDK for ipbulucu.org - Free IP Geolocation, Whois, Port and Network Intelligence API",
+  "main": "index.js",
+  "keywords": ["ip", "ip-lookup", "geolocation", "whois", "port-check", "turkey-ip", "cgnat", "network-tools"],
+  "author": "ipbulucu.org",
+  "license": "MIT",
+  "homepage": "https://ipbulucu.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bahadirdavdav/ipbulucu"
+  }
+}

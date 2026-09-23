@@ -1,0 +1,28 @@
+# Security & Credentials (CRITICAL)
+deploy.py
+*.env
+*.env.*
+*.pem
+*.key
+*.cert
+*.log
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+
+# Next.js & Build Outputs
+.next/
+out/
+*.zip
+
+# OS & Temp
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+store_assets/*.html

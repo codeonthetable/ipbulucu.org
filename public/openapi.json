@@ -1,0 +1,84 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "IPBulucu API for AI Agents & Developers",
+    "description": "Enterprise-grade IP intelligence, Whois, Port scanning, and DNS security tools API.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://ipbulucu.org/api",
+      "description": "Production API Server"
+    }
+  ],
+  "paths": {
+    "/ip": {
+      "get": {
+        "summary": "Resolve IP geolocation and carrier intelligence",
+        "parameters": [
+          {
+            "name": "ip",
+            "in": "query",
+            "required": false,
+            "description": "Target IPv4 or IPv6 address",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "default": "json" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detailed IP intelligence payload"
+          }
+        }
+      }
+    },
+    "/whois": {
+      "get": {
+        "summary": "Query domain registration and TRABIS / global whois data",
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "query",
+            "required": true,
+            "description": "Domain name to query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Whois record object"
+          }
+        }
+      }
+    },
+    "/port": {
+      "get": {
+        "summary": "Test open network ports",
+        "parameters": [
+          {
+            "name": "host",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "port",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "default": 80 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Port status and latency"
+          }
+        }
+      }
+    }
+  }
+}
