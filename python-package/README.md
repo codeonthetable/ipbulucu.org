@@ -1,23 +1,35 @@
-# ipbulucu - Official Python SDK
+# ipbulucu — Python SDK
 
-Official Python library for querying [ipbulucu.org](https://ipbulucu.org) Network & IP Intelligence API.
+Synchronous `requests` client for the [IPBulucu API](https://ipbulucu.org/en/api-docs/): `get_ip`, `get_whois` and `check_port`. It does not provide a CLI or async API.
 
-## Installation
+## Release status
+
+On 25 October 2026 PyPI lists **1.0.0**. This repository contains **1.0.1**, prepared but not published. Published 1.0.0 has a five-second timeout but parses JSON without checking the HTTP status. The prepared 1.0.1 adds status checks, a 10-second timeout and a self-declared SDK header. For explicit timeouts and HTTP checks now, use the [direct REST quickstart](https://ipbulucu.org/en/api-docs/#quickstart).
+
 ```bash
-pip install ipbulucu
+python -m pip install ipbulucu
 ```
 
-## Quick Example
+## Example
+
+This performs one request, without retries.
+
 ```python
 import ipbulucu
+import requests
 
-# 1. IP Lookup
-info = ipbulucu.get_ip("1.1.1.1")
-print(f"City: {info.get('city')}, ISP: {info.get('isp')}")
-
-# 2. Whois Lookup
-whois = ipbulucu.get_whois("example.com")
-print(f"Registrar: {whois.get('registrar')}")
+try:
+    # Omit the argument for this server's egress IP, not an end user's IP.
+    result = ipbulucu.get_ip()
+    if result.get("success") is not True:
+        raise ValueError("Lookup failed")
+    print("Approximate location available" if result.get("geoStatus") == "available"
+          else "Location unavailable; keep fields unknown")
+except (requests.RequestException, ValueError):
+    print("Lookup failed; no automatic retry")
+    raise SystemExit(1)
 ```
 
-Location fields can be null. Check `geoStatus` before interpreting them. VPN, speed, identity, CGNAT and reputation are not measured. Version 1.0.1 has a 10 second timeout and a self-declared SDK client header.
+Location fields can be null. VPN, identity, CGNAT, speed and reputation are not measured. HTTP success does not establish complete data. Respect HTTP 429 and `Retry-After`. Keep lookup inputs and raw responses out of logs and analytics.
+
+For `check_port(host, port)`, use only authorized targets and read `status` (`open`, `closed`, `filtered`, `unavailable`) and `partial`. A timeout is inconclusive. `get_whois(domain)` returns RDAP data where provider coverage exists.

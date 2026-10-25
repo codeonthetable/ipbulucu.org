@@ -4,7 +4,8 @@
 
 ## Documentation
 - [API schema](https://ipbulucu.org/openapi.json): OpenAPI 3.1 schema.
-- [Developer guide](https://ipbulucu.org/api-dokumantasyon/)
+- [English developer guide](https://ipbulucu.org/en/api-docs/): executable Node.js, Python and cURL recipes with timeout, error and partial-result handling.
+- [Turkish developer guide](https://ipbulucu.org/api-dokumantasyon/)
 - [Privacy and data processing](https://ipbulucu.org/en/privacy-policy/)
 - [Source code](https://github.com/codeonthetable/ipbulucu.org)
 
