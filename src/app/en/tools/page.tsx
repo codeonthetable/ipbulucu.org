@@ -20,7 +20,7 @@ import {
 export const metadata: Metadata = {
   title: "All Free Network & DNS Diagnostic Tools - IPBulucu.org",
   description:
-    "Explore 12+ free developer and network security tools: IP Lookup, Global DNS Propagation, Whois, Open Port Scanner, SSL Checker, HTTP Headers, SPF/DMARC, and CIDR Subnet Calculator.",
+    "Explore free network tools: IP lookup, DNS resolver comparison, Whois, TCP port checks, SSL certificates, HTTP headers, SPF/DMARC records, and subnet calculations.",
   alternates: {
     canonical: "https://ipbulucu.org/en/tools",
     languages: {
@@ -34,10 +34,10 @@ export default function EnglishAllToolsPage() {
   const toolCategories = [
     {
       category: "DNS & Domain Intelligence",
-      description: "Analyze domain DNS records, global DNS-over-HTTPS propagation status, and authoritative nameservers.",
+      description: "Inspect domain records, compare two DNS resolvers, and review registration information.",
       tools: [
         {
-          name: "Global DNS Propagation Checker",
+          name: "DNS Resolver Comparison",
           desc: "Compare Google and Cloudflare DNS responses from the IPBulucu server.",
           href: "/en/dns-propagation",
           icon: Globe2,
@@ -70,7 +70,7 @@ export default function EnglishAllToolsPage() {
     },
     {
       category: "IP, Network & Cybersecurity Tools",
-      description: "IP address intelligence, open port testing, spam reputation lists, and privacy leak shields.",
+      description: "Public IP information, TCP reachability, DNS blocklists, and browser WebRTC address observations.",
       tools: [
         {
           name: "What Is My IP & Live Geolocation",
@@ -82,7 +82,7 @@ export default function EnglishAllToolsPage() {
         },
         {
           name: "Open Port Scanner (Batch)",
-          desc: "Verify open/closed status for web, database, email, and remote access ports (80, 443, 22, 3306, 3389).",
+          desc: "Check common TCP ports from the IPBulucu server. Refused connections and inconclusive timeouts are shown separately.",
           href: "/en/port-scanner",
           icon: Zap,
           color: "text-amber-600 bg-amber-50 dark:bg-amber-950/40",
@@ -95,8 +95,8 @@ export default function EnglishAllToolsPage() {
           color: "text-red-600 bg-red-50 dark:bg-red-950/40",
         },
         {
-          name: "WebRTC IP Leak Shield Test",
-          desc: "Test whether your web browser leaks your real IP address over WebRTC STUN when using a VPN.",
+          name: "WebRTC Address Test",
+          desc: "Compare browser WebRTC address observations with your public IP. Empty results do not prove VPN privacy.",
           href: "/en/webrtc-leak-test",
           icon: Radio,
           color: "text-rose-600 bg-rose-50 dark:bg-rose-950/40",
@@ -106,7 +106,7 @@ export default function EnglishAllToolsPage() {
     },
     {
       category: "Webmaster & Developer Utilities",
-      description: "SSL certificate diagnostics, HTTP security headers scoring, subnet math, and hashing algorithms.",
+      description: "SSL certificate checks, HTTP header presence, subnet calculations, and browser-based hashes.",
       tools: [
         {
           name: "SSL Certificate Checker",
@@ -117,7 +117,7 @@ export default function EnglishAllToolsPage() {
         },
         {
           name: "HTTP Security Headers Analyzer",
-          desc: "Audit HSTS, CSP, X-Frame-Options, and Referrer-Policy with A+ grade security scoring.",
+          desc: "Inspect HSTS, CSP, X-Frame-Options and other response headers. Policy correctness and overall security are not scored.",
           href: "/en/http-headers",
           icon: FileCode2,
           color: "text-violet-600 bg-violet-50 dark:bg-violet-950/40",
@@ -131,7 +131,7 @@ export default function EnglishAllToolsPage() {
         },
         {
           name: "Cryptographic Hash Generator",
-          desc: "Generate instant client-side MD5, SHA-1, SHA-256, and SHA-512 cryptographic hashes.",
+          desc: "Calculate SHA-1, SHA-256 and SHA-512 hashes in your browser.",
           href: "/en/hash-generator",
           icon: KeyRound,
           color: "text-orange-600 bg-orange-50 dark:bg-orange-950/40",
@@ -219,7 +219,7 @@ export default function EnglishAllToolsPage() {
           </div>
           <h2 className="text-2xl font-bold">Query Directly via Terminal or API</h2>
           <p className="text-sm text-blue-200 max-w-xl">
-            Integrate our high-speed JSON APIs into your automation scripts or use our official NPM and PyPI packages.
+            Use the documented JSON endpoints in your scripts. Check SDK versions against the current API contract and request limits.
           </p>
         </div>
 

@@ -21,7 +21,7 @@ const HASH_FAQS = [
   },
   {
     question: "SHA-256 nerede kullanılır?",
-    answer: "SHA-256, parola saklama, SSL sertifikaları, blokzincir (Bitcoin), veri bütünlüğü doğrulama ve dijital imzalarda güvenle kullanılan endüstri standardı hash algoritmasıdır.",
+    answer: "SHA-256, verilerin özetini hesaplamak ve bütünlüğünü karşılaştırmak için kullanılır. Bu araç bir parola saklama sistemi değildir; tek başına SHA-256 özeti hesaplamak güvenli parola saklama tasarımı yerine geçmez.",
   },
 ];
 
@@ -89,7 +89,7 @@ export default function HashGeneratorPage() {
           SHA-256, Base64 & Güçlü Şifre Üretici
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-          Anında SHA-256 hash hesaplama, Base64 dönüştürme ve kırılması imkansız rastgele güvenli parolalar oluşturun.
+          Tarayıcınızda SHA-256 özeti hesaplayın, Base64 dönüşümü yapın ve rastgele parolalar üretin.
         </p>
       </div>
 

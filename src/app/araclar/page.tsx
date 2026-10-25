@@ -34,7 +34,7 @@ export default function AllToolsPage() {
       description: "DNS kayıtlarını, iki sağlayıcının yanıtlarını ve kayıt bilgilerini inceleyin.",
       tools: [
         {
-          name: "Global DNS Yayılma Kontrolü",
+          name: "DNS Çözümleyici Karşılaştırma",
           desc: "Google ve Cloudflare DNS yanıtlarını IPBulucu sunucusundan karşılaştırın.",
           href: "/dns-yayilma-kontrolu",
           icon: Globe2,
@@ -57,7 +57,7 @@ export default function AllToolsPage() {
         },
         {
           name: "E-Posta Güvenlik (SPF / DMARC)",
-          desc: "E-postalarınızın spama düşmesini engelleyen SPF ve DMARC kayıtlarını test edin.",
+          desc: "MX, SPF ve doğrudan DMARC kayıtlarının varlığını, eksik veya birden fazla kaydı inceleyin.",
           href: "/eposta-guvenlik-kontrolu",
           icon: Mail,
           color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40",
@@ -79,7 +79,7 @@ export default function AllToolsPage() {
         },
         {
           name: "Açık Port Kontrolü (Toplu Tarama)",
-          desc: "HTTP (80), HTTPS (443), SSH (22) gibi popüler portların açık/kapalı durumunu test edin.",
+          desc: "Yaygın TCP portlarını sunucumuzdan kontrol edin. Reddedilen bağlantı ve belirsiz zaman aşımı ayrı gösterilir.",
           href: "/port-kontrolu",
           icon: Zap,
           color: "text-amber-600 bg-amber-50 dark:bg-amber-950/40",
@@ -93,7 +93,7 @@ export default function AllToolsPage() {
         },
         {
           name: "WebRTC IP Sızıntı Testi",
-          desc: "VPN açıkken tarayıcınızın WebRTC STUN üzerinden gerçek IP sızdırıp sızdırmadığını canlı test edin.",
+          desc: "Tarayıcının WebRTC adres gözlemlerini genel IP ile karşılaştırın. Boş sonuç VPN gizliliğini kanıtlamaz.",
           href: "/webrtc-sizinti-testi",
           icon: Radio,
           color: "text-rose-600 bg-rose-50 dark:bg-rose-950/40",
@@ -118,7 +118,7 @@ export default function AllToolsPage() {
     },
     {
       category: "Webmaster & Geliştirici Araçları",
-      description: "SSL sertifikaları, HTTP başlıkları, güvenlik skorlaması ve şifreleme motorları.",
+      description: "SSL sertifikaları, HTTP başlıklarının varlığı, hash hesaplama ve parola üretimi.",
       tools: [
         {
           name: "SSL / TLS Sertifika Kontrolü",
@@ -136,7 +136,7 @@ export default function AllToolsPage() {
         },
         {
           name: "SHA-256 & Güçlü Şifre Üretici",
-          desc: "Anında SHA-256 hash hesaplama, Base64 dönüştürme ve kırılmaz parola oluşturucu.",
+          desc: "Tarayıcıda SHA-256 özeti, Base64 dönüşümü ve rastgele parola üretimi.",
           href: "/hash-olusturucu",
           icon: KeyRound,
           color: "text-amber-600 bg-amber-50 dark:bg-amber-950/40",
@@ -151,13 +151,13 @@ export default function AllToolsPage() {
       <div className="text-center max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900 mb-3">
           <Layers className="w-3.5 h-3.5" />
-          Eksiksiz Ağ ve Webmaster Araç Kutusu
+          Ağ ve Webmaster Araçları
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight">
           Tüm Çevrimiçi Ağ Araçları
         </h1>
         <p className="text-base text-gray-600 dark:text-gray-400 mt-3 leading-relaxed">
-          Webmasterlar, sistem yöneticileri ve yazılımcılar için hazırlanmış yüksek hızlı, ücretsiz ve güvenli analiz araçları seti.
+          Webmasterlar, sistem yöneticileri ve yazılımcılar için ücretsiz ağ araçları. Her aracın ölçüm kapsamı ve veri sağlayıcı sınırları kendi sayfasında açıklanır.
         </p>
       </div>
 
