@@ -1,27 +1,38 @@
-# ipbulucu - Official Node.js SDK
+# ipbulucu — Node.js SDK
 
-Zero-dependency Node.js client for [ipbulucu.org](https://ipbulucu.org) Network & IP Intelligence API.
+CommonJS client for the [IPBulucu API](https://ipbulucu.org/en/api-docs/): `getIp`, `getWhois` and `checkPort`. Requires Node.js 18+ with built-in `fetch`.
 
-## Installation
+## Release status
+
+On 25 October 2026 the npm registry lists **1.0.0**. This repository contains **1.0.1**, prepared but not published. Its 10-second timeout and self-declared SDK header are source changes; do not assume they exist in the installed 1.0.0 package. For a bounded request now, use the [direct REST quickstart](https://ipbulucu.org/en/api-docs/#quickstart).
+
 ```bash
 npm install ipbulucu
 ```
 
-## Quick Start
+## CommonJS example
+
+Save as `lookup.cjs`, then run `node lookup.cjs`. This performs one request, without retries.
+
 ```javascript
-const { getIp, getWhois, checkPort } = require("ipbulucu");
+const { getIp } = require("ipbulucu");
 
-// 1. Get client IP intelligence
-const ipInfo = await getIp();
-console.log(ipInfo.ip, ipInfo.city, ipInfo.isp);
-
-// 2. Query registry RDAP (coverage varies)
-const whois = await getWhois("example.com");
-console.log(whois.registrar, whois.expiresOn);
-
-// 3. Test open port
-const portStatus = await checkPort("YOUR_AUTHORIZED_HOST", 443);
-console.log(portStatus.isOpen, portStatus.responseTimeMs);
+async function main() {
+  try {
+    // Omit the argument for this server's egress IP, not an end user's IP.
+    const result = await getIp();
+    if (result.success !== true) throw new Error("Lookup failed");
+    console.log(result.geoStatus === "available"
+      ? "Approximate location available"
+      : "Location unavailable; keep fields unknown");
+  } catch {
+    console.error("Lookup failed; no automatic retry");
+    process.exitCode = 1;
+  }
+}
+main();
 ```
 
-Requires Node.js 18+ (built-in fetch). Location fields can be null; check `geoStatus`. VPN, CGNAT, speed and reputation are not measured. Requests time out after 10 seconds and send a self-declared SDK client header.
+Location fields can be null. VPN, identity, CGNAT, speed and reputation are not measured. HTTP success does not establish complete data. Respect HTTP 429 and `Retry-After`. Keep lookup inputs and raw responses out of logs and analytics.
+
+For `checkPort(host, port)`, use only authorized targets and read `status` (`open`, `closed`, `filtered`, `unavailable`) and `partial`. A timeout is inconclusive. `getWhois(domain)` returns RDAP data where provider coverage exists.

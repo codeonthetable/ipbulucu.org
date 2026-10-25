@@ -3,7 +3,7 @@
   "info": {
     "title": "IPBulucu API for AI Agents & Developers",
     "description": "Public IP and network diagnostics. Nullable fields are unknown, not safe. Geolocation is approximate; upstream coverage and latency vary.",
-    "version": "1.1.0"
+    "version": "1.1.1"
   },
   "servers": [
     {
@@ -20,7 +20,7 @@
             "name": "ip",
             "in": "query",
             "required": false,
-            "description": "Target IPv4 or IPv6 address",
+            "description": "Public IPv4, IPv6 or resolvable domain. Omit for the requesting connection egress IP, not the end user of a server-side tool.",
             "schema": {
               "type": "string"
             }
@@ -216,7 +216,8 @@
               "text/plain": {
                 "schema": {
                   "type": "string"
-                }
+                },
+                "description": "With format=text: public IP only, without a geolocation provider call."
               }
             }
           },
@@ -253,7 +254,16 @@
             "description": "Invalid or unsupported input"
           },
           "429": {
-            "description": "Shared request limit; retry later"
+            "description": "Shared service rate limit reached. Stop and respect Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds before a new attempt.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
           },
           "502": {
             "description": "Upstream result could not be verified"
@@ -265,7 +275,7 @@
     },
     "/port": {
       "get": {
-        "summary": "Test open network ports",
+        "summary": "Check TCP reachability from the IPBulucu server",
         "parameters": [
           {
             "name": "host",
@@ -278,11 +288,25 @@
           {
             "name": "port",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
+              "minimum": 1,
+              "maximum": 65535,
               "default": 80
-            }
+            },
+            "description": "One TCP port; ignored when ports is provided."
+          },
+          {
+            "name": "ports",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated TCP ports, at most 16 entries. Overrides port. Request budget may leave some checks unattempted.",
+            "schema": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "example": "80,443"
           }
         ],
         "responses": {
@@ -293,14 +317,23 @@
             "description": "Invalid or unsupported input"
           },
           "429": {
-            "description": "Shared request limit; retry later"
+            "description": "Shared service rate limit reached. Stop and respect Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds before a new attempt.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
           },
           "502": {
             "description": "Upstream result could not be verified"
           }
         },
         "operationId": "checkTcpPort",
-        "description": "Use only authorized hosts. Measures a TCP connection from this server; timeout does not prove a closed port."
+        "description": "Use only authorized targets. A refused connection, timeout and unattempted check are different outcomes. Select port or ports; ports takes precedence. Default single port is 80."
       }
     },
     "/dns": {
@@ -325,7 +358,16 @@
             "description": "Invalid input"
           },
           "429": {
-            "description": "Shared request limit"
+            "description": "Shared service rate limit reached. Stop and respect Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds before a new attempt.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
           },
           "502": {
             "description": "Upstream verification unavailable"
@@ -345,6 +387,16 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "DNS record type.",
+            "schema": {
+              "type": "string",
+              "default": "A"
+            }
           }
         ],
         "responses": {
@@ -355,7 +407,16 @@
             "description": "Invalid input"
           },
           "429": {
-            "description": "Shared request limit"
+            "description": "Shared service rate limit reached. Stop and respect Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds before a new attempt.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
           },
           "502": {
             "description": "Upstream verification unavailable"
@@ -385,7 +446,16 @@
             "description": "Invalid input"
           },
           "429": {
-            "description": "Shared request limit"
+            "description": "Shared service rate limit reached. Stop and respect Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds before a new attempt.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
           },
           "502": {
             "description": "Upstream verification unavailable"
@@ -415,7 +485,16 @@
             "description": "Invalid input"
           },
           "429": {
-            "description": "Shared request limit"
+            "description": "Shared service rate limit reached. Stop and respect Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds before a new attempt.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
           },
           "502": {
             "description": "Upstream verification unavailable"
@@ -445,7 +524,16 @@
             "description": "Invalid input"
           },
           "429": {
-            "description": "Shared request limit"
+            "description": "Shared service rate limit reached. Stop and respect Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds before a new attempt.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
           },
           "502": {
             "description": "Upstream verification unavailable"
@@ -475,7 +563,16 @@
             "description": "Invalid input"
           },
           "429": {
-            "description": "Shared request limit"
+            "description": "Shared service rate limit reached. Stop and respect Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds before a new attempt.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
           },
           "502": {
             "description": "Upstream verification unavailable"
@@ -505,7 +602,16 @@
             "description": "Invalid input"
           },
           "429": {
-            "description": "Shared request limit"
+            "description": "Shared service rate limit reached. Stop and respect Retry-After.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds before a new attempt.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
           },
           "502": {
             "description": "Upstream verification unavailable"

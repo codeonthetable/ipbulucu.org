@@ -40,7 +40,7 @@ export default function TroubleshootingGuide({ kind, language = "tr" }: { kind: 
   const sources = kind === "port"
     ? [{ label: "IETF · TCP (RFC 9293)", href: "https://www.rfc-editor.org/rfc/rfc9293" }, { label: "IETF · Shared address space (RFC 6598)", href: "https://www.rfc-editor.org/rfc/rfc6598" }]
     : [{ label: "Google · Email sender guidelines", href: "https://support.google.com/mail/answer/81126" }];
-  return <section id="troubleshooting" className="max-w-4xl mx-auto rounded-3xl border border-gray-200 dark:border-gray-800 p-5 sm:p-8 space-y-5">
+  return <section id="troubleshooting" className="scroll-mt-24 max-w-4xl mx-auto rounded-3xl border border-gray-200 dark:border-gray-800 p-5 sm:p-8 space-y-5">
     <div><h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{guide.title}</h2><p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{guide.intro}</p></div>
     <ol className="grid gap-5 md:grid-cols-2">{(guide.steps as Step[]).map((step, index) => <li key={step.title} className="space-y-2">
       <h3 className="font-semibold text-gray-900 dark:text-white">{step.title}</h3>
