@@ -80,7 +80,9 @@ function ipb_budget($name, $limit, $period) {
     if ($allowed) { $data['count']++; rewind($fp); ftruncate($fp,0); fwrite($fp,json_encode($data)); fflush($fp); }
     flock($fp,LOCK_UN); fclose($fp); return $allowed;
 }
-function ipb_http($url, $head=false, $timeoutMs=6500, $maxRedirects=3) {
+function ipb_http($url, $head=false, $timeoutMs=6500, $maxRedirects=3, $providerAttempt=0) {
+    static $handles=[]; // Request-scoped connection reuse avoids a TLS handshake for every DNS record type.
+    $GLOBALS['IPBULUCU_HTTP_ERROR_CODE']=null;
     $deadline = microtime(true) + $timeoutMs/1000;
     for ($hop=0; $hop <= $maxRedirects; $hop++) {
         if (strlen($url)>2048 || preg_match('/[\x00-\x20\x7f\\\\]/',$url)) ipb_fail(400,'Invalid URL.');
@@ -89,12 +91,17 @@ function ipb_http($url, $head=false, $timeoutMs=6500, $maxRedirects=3) {
         $host = ipb_host($url); $port = $parts['port'] ?? ($parts['scheme']==='https' ? 443 : 80);
         if (!in_array($port,[80,443],true)) ipb_fail(400,'HTTP checks support ports 80 and 443.');
         // Fixed official DoH anycast addresses avoid repeated host-resolver lookups. TLS still verifies the original hostname.
-        $providerPins=['dns.google'=>'8.8.8.8','cloudflare-dns.com'=>'1.1.1.1'];
+        $providerPins=$providerAttempt===1
+            ? ['dns.google'=>'8.8.4.4','cloudflare-dns.com'=>'1.0.0.1']
+            : ['dns.google'=>'8.8.8.8','cloudflare-dns.com'=>'1.1.1.1'];
         $ip = $providerPins[$host] ?? ipb_target($host); $remaining = (int)(($deadline - microtime(true))*1000);
         if ($remaining < 1 || !function_exists('curl_init')) return null;
         $headers=[]; $body=''; $headerBytes=0;
-        $curl = curl_init($url);
+        $handleKey=$parts['scheme'].'://'.$host.':'.$port.'@'.$ip;
+        if (!isset($handles[$handleKey])) $handles[$handleKey]=curl_init($url);
+        $curl=$handles[$handleKey];
         curl_setopt_array($curl,[
+            CURLOPT_URL=>$url,
             CURLOPT_RETURNTRANSFER=>true, CURLOPT_NOBODY=>$head,
             CURLOPT_FOLLOWLOCATION=>false, CURLOPT_PROTOCOLS=>CURLPROTO_HTTP | CURLPROTO_HTTPS,
             CURLOPT_CONNECTTIMEOUT_MS=>min(2000,$remaining), CURLOPT_TIMEOUT_MS=>$remaining,
@@ -110,7 +117,7 @@ function ipb_http($url, $head=false, $timeoutMs=6500, $maxRedirects=3) {
             },
             CURLOPT_WRITEFUNCTION=>function($c,$chunk) use (&$body) { if(strlen($body)+strlen($chunk)>1048576) return 0; $body.=$chunk; return strlen($chunk); }
         ]);
-        $ok=curl_exec($curl); $status=(int)curl_getinfo($curl,CURLINFO_HTTP_CODE); curl_close($curl);
+        $ok=curl_exec($curl); $status=(int)curl_getinfo($curl,CURLINFO_HTTP_CODE); $GLOBALS['IPBULUCU_HTTP_ERROR_CODE']=curl_errno($curl);
         if ($ok===false || !$status) return null;
         if (!in_array($status,[301,302,303,307,308],true) || empty($headers['location']) || $hop===$maxRedirects) return ['status'=>$status,'headers'=>$headers,'body'=>$body,'url'=>$url];
         $location=$headers['location'];
@@ -131,14 +138,21 @@ function ipb_doh($name,$type,$resolver='google',$timeoutMs=1600) {
     if (!isset($codes[$type])) ipb_fail(400,'Unsupported DNS record type.');
     $base=$resolver==='cloudflare' ? 'https://cloudflare-dns.com/dns-query' : 'https://dns.google/resolve';
     $start=microtime(true);
-    $response=ipb_http($base.'?name='.rawurlencode($name).'&type='.$type.'&edns_client_subnet=0.0.0.0%2F0',false,$timeoutMs,0);
+    $url=$base.'?name='.rawurlencode($name).'&type='.$type.'&edns_client_subnet=0.0.0.0%2F0';
+    $response=ipb_http($url,false,$timeoutMs,0);
+    // One bounded retry uses the same provider's official secondary address.
+    // Keep certificate validation and the original total time budget on both attempts.
+    $remaining=(int)($timeoutMs-(microtime(true)-$start)*1000);
+    if ($response===null && $remaining>100 && in_array($GLOBALS['IPBULUCU_HTTP_ERROR_CODE']??0,[5,6,7,28,35,52,55,56,92],true)) {
+        $response=ipb_http($url,false,$remaining,0,1);
+    }
     $ms=(int)round((microtime(true)-$start)*1000);
     $data=$response && $response['status']===200 ? json_decode($response['body'],true) : null;
     $rcode=is_array($data) && isset($data['Status']) && is_int($data['Status']) ? $data['Status'] : null;
     $answers=[];
     if ($rcode===0 && empty($data['TC'])) foreach (($data['Answer']??[]) as $r) if (($r['type']??null)===$codes[$type] && is_string($r['data']??null)) $answers[]=$r['data'];
     $status=$rcode===3 ? 'nxdomain' : ($rcode===0 && empty($data['TC']) ? ($answers ? 'resolved' : 'no-record') : 'unavailable');
-    return ['status'=>$status,'rcode'=>$rcode,'records'=>array_values(array_unique($answers)),'responseTimeMs'=>$ms,'resolver'=>$resolver,'upstreamHttpStatus'=>$response['status']??null];
+    return ['status'=>$status,'rcode'=>$rcode,'records'=>array_values(array_unique($answers)),'responseTimeMs'=>$ms,'resolver'=>$resolver,'upstreamHttpStatus'=>$response['status']??null,'transportErrorCode'=>$GLOBALS['IPBULUCU_HTTP_ERROR_CODE']??null];
 }
 function ipb_txt($value) {
     // DNS JSON represents TXT character strings quoted; concatenate their chunks.

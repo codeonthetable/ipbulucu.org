@@ -6,7 +6,7 @@ $start=microtime(true); $records=['A'=>[],'AAAA'=>[],'MX'=>[],'TXT'=>[],'NS'=>[]
 foreach (array_keys($records) as $type) {
     $answer=ipb_doh($host,$type,'google',max(1,min(1800,(int)((8-(microtime(true)-$start))*1000))));
     $statuses[$type]=$answer['status'];
-    if ($answer['status']==='unavailable') ipb_fail(502,'One or more DNS queries are unavailable. Please retry; missing records cannot be inferred from this error.');
+    if ($answer['status']==='unavailable') ipb_fail(502,$type.' DNS query is unavailable. Please retry; missing records cannot be inferred from this error.');
     foreach ($answer['records'] as $value) {
         if ($type==='MX') { $parts=preg_split('/\s+/',trim($value),2); if(count($parts)===2 && ctype_digit($parts[0])) $records['MX'][]=['priority'=>(int)$parts[0],'exchange'=>rtrim($parts[1],'.') ?: '.']; }
         elseif ($type==='TXT') $records['TXT'][]=[ipb_txt($value)];

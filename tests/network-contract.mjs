@@ -11,13 +11,15 @@ const mocks=String.raw`
 namespace IPBNetworkTest;
 function dns_get_record($host,$type) { return [['ip'=>getenv('CASE')==='private-dns' ? '127.0.0.1' : '1.1.1.1']]; }
 function curl_init($url) { return (object)['url'=>$url,'options'=>[],'status'=>200]; }
-function curl_setopt_array($c,$opts) { $c->options=$opts; return true; }
+function curl_setopt_array($c,$opts) { $c->options=$opts; $c->url=$opts[CURLOPT_URL]; $c->failed=false; return true; }
 function curl_getinfo($c,$key) { return $c->status; }
 function curl_close($c) {}
+function curl_errno($c) { return !empty($c->failed) || getenv('CASE')==='transport-failure' ? 35 : 0; }
 function curl_exec($c) {
     $o=$c->options;
     if($o[CURLOPT_SSL_VERIFYPEER]!==true || $o[CURLOPT_SSL_VERIFYHOST]!==2 || $o[CURLOPT_FOLLOWLOCATION]!==false || !$o[CURLOPT_RESOLVE] || $o[CURLOPT_PROXY]!=='') throw new \RuntimeException('Unsafe transport options');
     $case=getenv('CASE');
+    if($case==='primary-failure' && (str_ends_with($o[CURLOPT_RESOLVE][0],':8.8.8.8') || str_ends_with($o[CURLOPT_RESOLVE][0],':1.1.1.1'))) { $c->failed=true; return false; }
     if($case==='transport-failure') return false;
     $headers=['HTTP/1.1 200 OK', 'content-security-policy: default-src self', 'set-cookie: SECRET_MUST_NOT_RETURN=1'];
     if($case==='redirect-private') { $c->status=302; $headers=['HTTP/1.1 302 Found','location: http://127.0.0.1/admin']; }
@@ -82,6 +84,7 @@ try {
  await test('transport failures never synthesize HTTP 200',async()=>{assert.equal((await req('headers','url=https://example.com','transport-failure')).status,502);});
  await test('header response uses actual status, presence count and omits cookies',async()=>{const {body:b}=await req('headers','url=https://example.com');assert.equal(b.statusCode,200);assert.equal(b.passedSecurityCount,1);assert(!JSON.stringify(b).includes('SECRET_MUST_NOT_RETURN'));});
  await test('two independent resolver answers and disagreement survive',async()=>{const {body:b}=await req('propagation','host=example.com&type=A','different-resolvers');assert.equal(b.availableCount,2);assert.equal(b.answersAgree,false);assert.notDeepEqual(b.results[0].records,b.results[1].records);assert.equal(b.propagationPercentage,null);});
+ await test('DoH transport failure retries the official secondary with TLS still verified',async()=>{const {body:b}=await req('propagation','host=example.com&type=A','primary-failure');assert.equal(b.availableCount,2);assert.equal(b.answersAgree,true);assert(b.results.every(r=>r.transportErrorCode===0));});
  await test('DNS SERVFAIL is unavailable, NXDOMAIN is explicit',async()=>{let {body:b}=await req('propagation','host=example.com','servfail');assert.equal(b.availableCount,0);assert.equal(b.partial,true);b=(await req('propagation','host=example.com','nxdomain')).body;assert.equal(b.results[0].status,'nxdomain');assert.equal(b.resolvedCount,0);});
  await test('DNS records preserve TXT chunks, MX priority and SOA names',async()=>{const {body:b}=await req('dns','host=example.com');assert.equal(b.records.TXT[0][0],'v=spf1 -all');assert.equal(b.records.MX[0].priority,10);assert.equal(b.records.SOA.nsname,'ns.example.com');assert.equal(b.records.SOA.serial,42);assert.equal((await req('dns','host=example.com','servfail')).status,502);});
  await test('DNSBL resolver blocks/control failure stay unknown; NXDOMAIN differs from listed',async()=>{
