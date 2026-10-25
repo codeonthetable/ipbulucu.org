@@ -15,6 +15,9 @@ import {
 } from "lucide-react";
 import FaqAccordion from "@/components/FaqAccordion";
 import AdPlaceholder from "@/components/AdPlaceholder";
+import TroubleshootingGuide from "@/components/TroubleshootingGuide";
+import DiagnosticResultSummary from "@/components/DiagnosticResultSummary";
+import { emailSummary } from "@/lib/diagnostic-summary";
 
 interface EmailSecurityData {
   domain: string;
@@ -25,11 +28,13 @@ interface EmailSecurityData {
     records: { exchange: string; priority: number }[];
   };
   spf: {
+    count: number;
     present: boolean;
     record: string | null;
     status: string;
   };
   dmarc: {
+    count: number;
     present: boolean;
     record: string | null;
     status: string;
@@ -39,15 +44,15 @@ interface EmailSecurityData {
 const EMAIL_FAQS = [
   {
     question: "SPF (Sender Policy Framework) nedir?",
-    answer: "SPF, alan adınız adına hangi IP adreslerinin veya e-posta sunucularının (Google Workspace, Microsoft 365 vb.) e-posta göndermeye yetkili olduğunu belirten bir DNS TXT kaydıdır. Sahte e-posta gönderimini (spoofing) engeller.",
+    answer: "SPF, zarf gönderen alan adı için izin verilen posta sunucularını belirten DNS TXT kaydıdır. Tek başına görünen gönderen adresini veya teslimatı doğrulamaz; DKIM ve DMARC ile birlikte değerlendirilir.",
   },
   {
     question: "DMARC kaydı ne işe yarar?",
-    answer: "DMARC, SPF ve DKIM doğrulamalarından geçemeyen sahte e-postaların alıcı sunucular (Gmail, Yahoo, Outlook) tarafından nasıl işleneceğini (karantinaya alma veya doğrudan reddetme) belirleyen en üst düzey e-posta güvenlik protokolüdür.",
+    answer: "DMARC, görünen gönderen alan adıyla hizalanmış SPF veya DKIM sonucunu değerlendirir ve başarısız iletiler için alan adının politikasını bildirir. DNS'te kayıt bulunması, gerçek bir iletinin DMARC doğrulamasını geçtiğini göstermez.",
   },
   {
     question: "E-postalarım neden spam kutusuna düşüyor?",
-    answer: "Alan adınızda SPF veya DMARC kayıtları eksik veya hatalıysa, Gmail ve Yahoo gibi büyük sağlayıcılar 2024 sonrası yeni güvenlik kuralları gereğince e-postalarınızı spam kutusuna atar veya tamamen engeller.",
+    answer: "Kimlik doğrulama, gönderici itibarı, şikâyetler, içerik ve alıcı politikası teslimatı etkileyebilir. Bu araç DNS kayıt varlığını gösterir. Gerçek neden için test iletisinin doğrulama başlığını ve varsa alıcı sunucunun hata kodunu inceleyin.",
   },
 ];
 
@@ -58,6 +63,7 @@ export default function EmailSecurityPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<EmailSecurityData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const nullMx = result?.mx.records.length === 1 && result.mx.records[0].priority === 0 && result.mx.records[0].exchange === ".";
 
   const handleCheck = async (targetDomain: string) => {
     if (!targetDomain.trim()) return;
@@ -86,10 +92,10 @@ export default function EmailSecurityPage() {
       <div className="text-center max-w-2xl mx-auto">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900 mb-3">
           <Mail className="w-3.5 h-3.5" />
-          E-Posta Teslimat & Sahtecilik Önleme
+          E-Posta DNS Kayıtları
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-          SPF, DMARC & E-Posta Güvenlik Testi
+          MX, SPF ve DMARC Kaydı Kontrolü
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
           Alan adınızın MX, SPF ve doğrudan _dmarc TXT kayıtlarını inceleyin. Eksik veya birden fazla kaydı görün.
@@ -104,22 +110,22 @@ export default function EmailSecurityPage() {
             e.preventDefault();
             handleCheck(domain);
           }}
-          className="relative flex items-center"
+          className="flex flex-col sm:flex-row gap-3"
         >
           <input
             type="text"
+            aria-label="Alan adı"
             value={domain}
             onChange={(e) => setDomain(e.target.value)}
             placeholder="Alan adı girin (Örn: firmaniz.com)"
-            className="w-full px-5 py-4 pl-12 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-base shadow-sm"
+            className="w-full min-w-0 px-5 py-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-base shadow-sm"
           />
-          <Globe className="w-5 h-5 text-gray-400 absolute left-4 pointer-events-none" />
           <button
             type="submit"
             disabled={loading || !domain.trim()}
-            className="absolute right-2.5 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-400 text-white font-semibold text-sm shadow-md transition-all"
+            className="shrink-0 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-400 text-white font-semibold text-sm shadow-md transition-all"
           >
-            {loading ? "Test Ediliyor..." : "Güvenliği Test Et"}
+            {loading ? "Test Ediliyor..." : "Kayıtları Kontrol Et"}
           </button>
         </form>
 
@@ -179,7 +185,7 @@ export default function EmailSecurityPage() {
               <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    {result.spf.present ? (
+                    {result.spf.count === 1 ? (
                       <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                     ) : (
                       <XCircle className="w-5 h-5 text-red-500" />
@@ -190,7 +196,7 @@ export default function EmailSecurityPage() {
                   </div>
                   <span
                     className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                      result.spf.present
+                      result.spf.count === 1
                         ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400"
                         : "bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400"
                     }`}
@@ -213,7 +219,7 @@ export default function EmailSecurityPage() {
               <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    {result.dmarc.present ? (
+                    {result.dmarc.count === 1 ? (
                       <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                     ) : (
                       <XCircle className="w-5 h-5 text-red-500" />
@@ -224,7 +230,7 @@ export default function EmailSecurityPage() {
                   </div>
                   <span
                     className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                      result.dmarc.present
+                      result.dmarc.count === 1
                         ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400"
                         : "bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400"
                     }`}
@@ -247,16 +253,17 @@ export default function EmailSecurityPage() {
               <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    {result.mx.present ? (
+                    {result.mx.present && !nullMx ? (
                       <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                     ) : (
                       <XCircle className="w-5 h-5 text-red-500" />
                     )}
                     <span className="font-bold text-gray-900 dark:text-white text-sm">
-                      MX Kayıtları ({result.mx.records.length} Sunucu)
+                      MX Kayıtları ({result.mx.records.length} kayıt)
                     </span>
                   </div>
                 </div>
+                {nullMx && <p className="text-sm text-amber-700 dark:text-amber-400 mb-2">Null MX: bu alan adı posta kabul etmediğini bildiriyor.</p>}
                 {result.mx.records.length > 0 ? (
                   <div className="space-y-1.5 mt-2">
                     {result.mx.records.map((mx, i) => (
@@ -274,6 +281,9 @@ export default function EmailSecurityPage() {
           </div>
         </div>
       )}
+
+      {result && <DiagnosticResultSummary summary={emailSummary(result, "tr")} />}
+      <TroubleshootingGuide kind="email" />
 
       <AdPlaceholder slotId="email-sec-mid-banner" format="leaderboard" />
 

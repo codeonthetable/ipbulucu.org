@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   KeyRound,
   Copy,
@@ -28,53 +28,59 @@ const HASH_FAQS = [
 export default function HashGeneratorPage() {
   const [inputText, setInputText] = useState("IPBulucu.org");
   const [base64Encoded, setBase64Encoded] = useState("");
-  const [base64Decoded, setBase64Decoded] = useState("");
   const [sha256Hash, setSha256Hash] = useState("");
+  const [hashError, setHashError] = useState(false);
+  const [copyError, setCopyError] = useState(false);
   const [generatedPassword, setGeneratedPassword] = useState("");
-  const [passLength, setPassLength] = useState(16);
+  const [passLength, setPassLength] = useState("16");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
-  const calculateHashes = async (text: string) => {
-    setInputText(text);
-
+  useEffect(() => {
+    let current = true;
+    setSha256Hash("");
+    setHashError(false);
+    setCopiedKey(null);
     try {
-      setBase64Encoded(btoa(unescape(encodeURIComponent(text))));
+      const bytes = new TextEncoder().encode(inputText);
+      setBase64Encoded(btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join("")));
     } catch {
       setBase64Encoded("Geçersiz metin");
     }
-
-    try {
-      setBase64Decoded(decodeURIComponent(escape(atob(text))));
-    } catch {
-      setBase64Decoded("Geçersiz Base64 formatı");
+    async function calculateHash() {
+      try {
+        const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(inputText));
+        const hex = Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+        if (current) setSha256Hash(hex);
+      } catch {
+        if (current) setHashError(true);
+      }
     }
-
-    if (text) {
-      const msgBuffer = new TextEncoder().encode(text);
-      const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-      setSha256Hash(hashHex);
-    } else {
-      setSha256Hash("");
-    }
-  };
+    void calculateHash();
+    return () => { current = false; };
+  }, [inputText]);
 
   const generateStrongPassword = () => {
+    const length = Math.min(64, Math.max(8, Math.trunc(Number(passLength)) || 8));
+    setPassLength(String(length));
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
-    const array = new Uint32Array(passLength);
+    const array = new Uint32Array(length);
     crypto.getRandomValues(array);
     let pass = "";
-    for (let i = 0; i < passLength; i++) {
+    for (let i = 0; i < length; i++) {
       pass += chars[array[i] % chars.length];
     }
     setGeneratedPassword(pass);
   };
 
-  const handleCopy = (text: string, key: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 1500);
+  const handleCopy = async (text: string, key: string) => {
+    setCopyError(false);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 1500);
+    } catch {
+      setCopyError(true);
+    }
   };
 
   return (
@@ -101,8 +107,9 @@ export default function HashGeneratorPage() {
           </label>
           <textarea
             rows={3}
+            aria-label="Dönüştürülecek metin"
             value={inputText}
-            onChange={(e) => calculateHashes(e.target.value)}
+            onChange={(e) => setInputText(e.target.value)}
             placeholder="Bir metin girin..."
             className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono"
           />
@@ -115,10 +122,12 @@ export default function HashGeneratorPage() {
                   SHA-256 Hash
                 </span>
                 <p className="font-mono text-xs text-gray-800 dark:text-gray-200 truncate mt-1">
-                  {sha256Hash || "Hesaplanıyor..."}
+                  {hashError ? "SHA-256 hesaplanamadı. Güncel bir tarayıcı ve HTTPS bağlantısı kullanın." : sha256Hash || "Hesaplanıyor..."}
                 </p>
               </div>
               <button
+                aria-label="SHA-256 özetini kopyala"
+                disabled={!sha256Hash}
                 onClick={() => handleCopy(sha256Hash, "sha256")}
                 className="p-2 rounded-xl bg-white dark:bg-gray-800 hover:bg-gray-100 text-gray-700 dark:text-gray-300 shadow-sm shrink-0"
               >
@@ -136,6 +145,7 @@ export default function HashGeneratorPage() {
                 </p>
               </div>
               <button
+                aria-label="Base64 sonucunu kopyala"
                 onClick={() => handleCopy(base64Encoded, "b64enc")}
                 className="p-2 rounded-xl bg-white dark:bg-gray-800 hover:bg-gray-100 text-gray-700 dark:text-gray-300 shadow-sm shrink-0"
               >
@@ -143,6 +153,8 @@ export default function HashGeneratorPage() {
               </button>
             </div>
           </div>
+          {inputText === "" && <p className="text-xs text-gray-500">Boş metnin SHA-256 özeti gösteriliyor; Base64 sonucu boş bir dizgedir.</p>}
+          {copyError && <p role="status" className="text-sm text-amber-700">Kopyalanamadı. Sonucu seçerek elle kopyalayabilirsiniz.</p>}
         </div>
 
         {/* Strong Password Generator */}
@@ -162,7 +174,7 @@ export default function HashGeneratorPage() {
                 min="8"
                 max="64"
                 value={passLength}
-                onChange={(e) => setPassLength(Number(e.target.value))}
+                onChange={(e) => setPassLength(e.target.value)}
                 className="w-16 px-2.5 py-1 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 font-mono text-center"
               />
             </div>

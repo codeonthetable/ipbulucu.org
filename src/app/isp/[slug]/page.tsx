@@ -55,7 +55,7 @@ export default async function IspPage({params}: IspPageProps) {
       <h2 className="text-xl font-bold">Bağlantı sorunu için üç kontrol</h2>
       <ol className="list-decimal pl-5 space-y-3 text-sm text-gray-600 dark:text-gray-300">
         <li>Aynı cihaz ve oyun sunucusunda kablolu ve Wi-Fi sonuçlarını karşılaştırın. Saat, gecikme ve paket kaybını kaydedin; tek ölçümden genel sonuç çıkarmayın.</li>
-        <li>Port erişimi gerekiyorsa modeminizin WAN adresini genel IP ile karşılaştırın. <code>100.64.0.0/10</code> paylaşımlı adres alanıdır; <a className="text-blue-600 underline" href="https://datatracker.ietf.org/doc/html/rfc6598">RFC 6598</a>. Farklı adresler NAT veya başka bir ağ çıkışından kaynaklanabilir; kesin CGNAT durumunu sağlayıcı doğrular.</li>
+        <li>Port erişimi gerekiyorsa modeminizin WAN adresini genel IP ile karşılaştırın. <code>100.64.0.0/10</code> paylaşımlı adres alanıdır; <a className="text-blue-600 underline" href="https://datatracker.ietf.org/doc/html/rfc6598">RFC 6598</a>. Farklı adresler NAT veya başka bir ağ çıkışından kaynaklanabilir; kesin CGNAT durumunu sağlayıcı doğrular. <Link className="text-blue-600 underline" href="/port-kontrolu/#troubleshooting">Port açtım ama çalışmıyor: adım adım kontrol →</Link></li>
         <li>MTU, IPv6 ve güvenlik duvarını rastgele değiştirmeyin. <Link href="/oyunlarda-ping-dusurme-yollari/" className="text-blue-600 underline">Ping sorun giderme rehberini</Link> ve <Link href="/statik-ip-dinamik-ip-farklari/" className="text-blue-600 underline">statik/dinamik IP karşılaştırmasını</Link> kullanın.</li>
       </ol>
     </section>
