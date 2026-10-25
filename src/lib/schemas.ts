@@ -10,7 +10,7 @@ export function generateWebApplicationSchema(options?: {
     "url": options?.url || "https://ipbulucu.org",
     "description":
       options?.description ||
-      "Google uyumlu ultra hızlı IP adresi sorgulama, coğrafi konum tespiti, Whois, DNS ve açık port kontrolü aracı.",
+      "Genel IP adresi, kaynak bilgisiyle yaklaşık konum, Whois, DNS ve ağ araçları.",
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "All",
     "offers": {
@@ -23,12 +23,23 @@ export function generateWebApplicationSchema(options?: {
       "name": "ipbulucu.org",
       "url": "https://ipbulucu.org",
       "logo": "https://ipbulucu.org/icon.svg",
+      "sameAs": [
+        "https://chromewebstore.google.com/detail/ip-bulucu-anl%c4%b1k-ip-konum/nifmmckmhnfjmpjfakhkifbeegdnanpb",
+        "https://github.com/codeonthetable/ipbulucu.org",
+        "https://www.npmjs.com/package/ipbulucu",
+        "https://pypi.org/project/ipbulucu/"
+      ],
     },
+    "sameAs": [
+      "https://chromewebstore.google.com/detail/ip-bulucu-anl%c4%b1k-ip-konum/nifmmckmhnfjmpjfakhkifbeegdnanpb",
+      "https://github.com/codeonthetable/ipbulucu.org",
+      "https://www.npmjs.com/package/ipbulucu",
+      "https://pypi.org/project/ipbulucu/"
+    ],
     "featureList": [
-      "Anında IPv4 ve IPv6 Tespiti",
-      "Gerçek Zamanlı Coğrafi Konum (İl, İlçe, Koordinat)",
+      "Genel IPv4 veya IPv6 adresi sorgulama",
+      "Kaynak bilgisiyle yaklaşık coğrafi konum",
       "İnternet Servis Sağlayıcı (ISP) ve ASN Bilgisi",
-      "VPN, Proxy ve Tor Güvenlik Taraması",
       "Whois ve DNS Kayıtları Sorgulayıcı",
       "Açık Port ve Kara Liste Kontrolü",
     ],

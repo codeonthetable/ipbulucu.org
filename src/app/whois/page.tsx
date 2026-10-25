@@ -1,4 +1,5 @@
 "use client";
+import { toolFetch } from "@/lib/usage";
 
 import { useState } from "react";
 import {
@@ -25,7 +26,7 @@ const WHOIS_FAQS = [
   },
   {
     question: ".tr uzantılı domainlerde Whois nasıl çalışır?",
-    answer: "Türkiye'nin resmi alan adı otoritesi TRABIS (BTK) tarafından yönetilen .tr, .com.tr, .org.tr uzantıları doğrudan TRABIS veritabanı üzerinden doğrulanır.",
+    answer: "Bu araç kayıt kuruluşlarının RDAP verisini kullanır. Her uzantı ve alan adı desteklenmeyebilir; .tr için özel TRABIS entegrasyonu yoktur. Sonuç alınamazsa kayıt durumu bilinmiyor olarak kalır.",
   },
   {
     question: "Whois gizliliği (Whois Privacy) nedir?",
@@ -55,9 +56,9 @@ export default function WhoisPage() {
     setResult(null);
 
     try {
-      const res = await fetch(`/api/whois?query=${encodeURIComponent(lookupQuery.trim())}`);
+      const res = await toolFetch(`/api/whois?query=${encodeURIComponent(lookupQuery.trim())}`, undefined, "user");
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Whois bilgisi alınamadı.");
+      if (!res.ok || data.success === false || data.error) throw new Error(data.error || "Whois bilgisi alınamadı.");
       setResult(data);
     } catch (err: unknown) {
       setError((err as Error).message || "Sorgulama sırasında bir hata oluştu.");

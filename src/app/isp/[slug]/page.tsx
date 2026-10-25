@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Building, Globe, Server, Zap, ArrowLeft, ShieldCheck } from "lucide-react";
 import { ISPS_DATA } from "@/lib/seo-data";
+import InteractiveIpFinder from "@/components/InteractiveIpFinder";
 import FaqAccordion from "@/components/FaqAccordion";
 import AdPlaceholder from "@/components/AdPlaceholder";
 import { generateBreadcrumbSchema } from "@/lib/schemas";
@@ -30,9 +31,10 @@ export async function generateMetadata({ params }: IspPageProps): Promise<Metada
       `${isp.name.toLowerCase()} dns sunucuları`,
       `${isp.name.toLowerCase()} asn`,
       `${isp.name.toLowerCase()} ip sorgulama`,
+      `${isp.name.toLowerCase()} cgnat`,
     ],
     alternates: {
-      canonical: `https://ipbulucu.org/isp/${isp.slug}`,
+      canonical: `https://ipbulucu.org/isp/${isp.slug}/`,
     },
   };
 }
@@ -48,7 +50,7 @@ export default async function IspPage({ params }: IspPageProps) {
   const breadcrumbs = [
     { name: "Ana Sayfa", url: "/" },
     { name: "İnternet Sağlayıcılar", url: "/" },
-    { name: `${isp.name} (${isp.asn})`, url: `/isp/${isp.slug}` },
+    { name: `${isp.name} (${isp.asn})`, url: `/isp/${isp.slug}/` },
   ];
 
   const ispFaqs = [
@@ -92,6 +94,13 @@ export default async function IspPage({ params }: IspPageProps) {
           {isp.description}
         </p>
       </div>
+
+      {/* Live Interactive IP Finder for this ISP */}
+      <InteractiveIpFinder
+        defaultTitle={`${isp.name} Canlı IP, CGNAT & Santral Sorgulama`}
+        placeholder={`${isp.name} IP adresinizi veya başka bir IP'yi sorgulayın...`}
+        buttonLabel="Operatör & Konum Sorgula"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-6 rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">

@@ -1,4 +1,5 @@
 "use client";
+import { toolFetch } from "@/lib/usage";
 
 import { useState } from "react";
 import { Server, Globe, CheckCircle, Database, Shield, Zap, Sparkles, Copy, Check } from "lucide-react";
@@ -41,9 +42,9 @@ export default function DnsLookupPage() {
     setResult(null);
 
     try {
-      const res = await fetch(`/api/dns?host=${encodeURIComponent(targetHost.trim())}`);
+      const res = await toolFetch(`/api/dns?host=${encodeURIComponent(targetHost.trim())}`, undefined, "user");
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "DNS kayıtları alınamadı.");
+      if (!res.ok || data.success === false || data.error) throw new Error(data.error || "DNS kayıtları alınamadı.");
       setResult(data);
     } catch (err: unknown) {
       setError((err as Error).message || "DNS sorgusu sırasında hata oluştu.");

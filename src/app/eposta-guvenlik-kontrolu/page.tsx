@@ -1,4 +1,5 @@
 "use client";
+import { toolFetch } from "@/lib/usage";
 
 import { useState } from "react";
 import {
@@ -66,11 +67,11 @@ export default function EmailSecurityPage() {
     setResult(null);
 
     try {
-      const res = await fetch(
-        `/api/email-security?domain=${encodeURIComponent(targetDomain.trim())}`
+      const res = await toolFetch(
+        `/api/email-security?domain=${encodeURIComponent(targetDomain.trim())}`, undefined, "user"
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "E-posta güvenlik analizi yapılamadı.");
+      if (!res.ok || data.success === false || data.error) throw new Error(data.error || "E-posta güvenlik analizi yapılamadı.");
       setResult(data);
     } catch (err: unknown) {
       setError((err as Error).message || "Kontrol sırasında hata oluştu.");
@@ -91,8 +92,9 @@ export default function EmailSecurityPage() {
           SPF, DMARC & E-Posta Güvenlik Testi
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-          Alan adınızın SPF, DMARC ve MX kayıtlarını doğrulayarak e-postalarınızın spama düşmesini ve adınıza sahte e-posta gönderilmesini engelleyin.
+          Alan adınızın MX, SPF ve doğrudan _dmarc TXT kayıtlarını inceleyin. Eksik veya birden fazla kaydı görün.
         </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">Oran yalnızca MX, tek SPF ve tek DMARC kaydı varlığını gösterir; güvenlik veya teslimat puanı değildir. DKIM, SPF include zinciri, ileti hizalaması ve üst alan adı politikası test edilmez. MX değeri “0 .” posta kabul edilmediğini belirtir.</p>
       </div>
 
       {/* Form */}
@@ -158,7 +160,7 @@ export default function EmailSecurityPage() {
                   Alan Adı: <span className="text-emerald-600 font-mono">{result.domain}</span>
                 </h2>
                 <p className="text-xs text-gray-500 mt-1">
-                  E-Posta Teslimat Durumu: <strong>{result.statusLabel}</strong>
+                  Kayıt Durumu: <strong>{result.statusLabel}</strong>
                 </p>
               </div>
 
@@ -167,7 +169,7 @@ export default function EmailSecurityPage() {
                   %{result.score}
                 </span>
                 <span className="block text-[10px] font-bold text-gray-400 uppercase">
-                  Teslimat & Güvenlik Puanı
+                  Kayıt Varlığı Oranı
                 </span>
               </div>
             </div>
@@ -202,7 +204,7 @@ export default function EmailSecurityPage() {
                   </div>
                 ) : (
                   <p className="text-xs text-red-500 mt-1">
-                    Alan adınızda SPF kaydı bulunamadı. E-postalarınızın spama düşme riski yüksektir.
+                    Bu alan adında SPF kaydı bulunamadı.
                   </p>
                 )}
               </div>
@@ -236,7 +238,7 @@ export default function EmailSecurityPage() {
                   </div>
                 ) : (
                   <p className="text-xs text-red-500 mt-1">
-                    DMARC kaydı bulunamadı. Adınıza sahte e-posta gönderimi yapılamaması için DMARC tanımlamanız önerilir.
+                    Bu adreste DMARC kaydı bulunamadı. Üst alan adı politikası bu testte incelenmez.
                   </p>
                 )}
               </div>
@@ -265,7 +267,7 @@ export default function EmailSecurityPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-red-500 mt-1">MX kaydı bulunamadı; bu alan adına e-posta gönderilemez.</p>
+                  <p className="text-xs text-red-500 mt-1">MX kaydı bulunamadı. Bazı sunucular A/AAAA kaydına geri dönebilir; teslimat test edilmedi.</p>
                 )}
               </div>
             </div>
@@ -274,6 +276,31 @@ export default function EmailSecurityPage() {
       )}
 
       <AdPlaceholder slotId="email-sec-mid-banner" format="leaderboard" />
+
+      {/* Privacy & Security Tip Card */}
+      <div className="max-w-3xl mx-auto rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent p-6 shadow-sm">
+        <div className="flex items-start gap-3.5">
+          <div className="text-2xl leading-none select-none">💡</div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
+              Gizlilik & Güvenlik İpucu
+            </h3>
+            <p className="text-sm md:text-base text-gray-800 dark:text-gray-200 leading-relaxed">
+              <strong>Güvenlik İpucu:</strong> Kişisel e-posta adresinizi spam ve veri sızıntılarından korumak için kayıt gerektirmeyen{" "}
+              <a
+                href="https://gecici.email/"
+                target="_blank"
+                rel="noopener"
+                title="Spam korumalı reklamsız geçici posta ve onay kodu servisi"
+                className="font-bold text-emerald-600 dark:text-emerald-400 underline hover:text-emerald-500 transition-colors"
+              >
+                gecici.email
+              </a>{" "}
+              tek kullanımlık e-posta istasyonunu kullanabilirsiniz.
+            </p>
+          </div>
+        </div>
+      </div>
 
       <FaqAccordion
         faqs={EMAIL_FAQS}

@@ -1,46 +1,12 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const content = document.getElementById("content");
-
-  try {
-    const res = await fetch("https://ipbulucu.org/api/ip?format=json");
-    const data = await res.json();
-
-    content.innerHTML = `
-      <div class="ip-box">
-        <div class="ip-label">Dış Genel IP Adresiniz</div>
-        <div class="ip-val">${data.ip}</div>
-        <div style="font-size: 11px; color: #34d399; font-weight: 600;">✓ ${data.connectionType || "Genişbant"} • ${data.country}</div>
-      </div>
-
-      <div class="grid">
-        <div class="card">
-          <div class="card-title">Konum / Şehir</div>
-          <div class="card-val">${data.city} (${data.plateCode || "TR"})</div>
-        </div>
-        <div class="card">
-          <div class="card-title">Operatör (ISP)</div>
-          <div class="card-val" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${data.isp}">${data.isp}</div>
-        </div>
-        <div class="card">
-          <div class="card-title">Güvenlik Skoru</div>
-          <div class="card-val" style="color: #34d399;">%${data.securityScore || 100} / 100</div>
-        </div>
-        <div class="card">
-          <div class="card-title">CGNAT Durumu</div>
-          <div class="card-val">${data.isCgnat ? "CGNAT Havuzunda" : "Temiz (Genel IP)"}</div>
-        </div>
-      </div>
-
-      <a href="https://ipbulucu.org" target="_blank" class="btn">
-        Detaylı Ağ & Siber İstihbaratı Gör &rarr;
-      </a>
-    `;
-  } catch (err) {
-    content.innerHTML = `
-      <div class="loading" style="color: #f87171;">
-        Bağlantı hatası oluştu.<br>
-        <a href="https://ipbulucu.org" target="_blank" class="btn">Web Sitesini Aç</a>
-      </div>
-    `;
-  }
+ const content=document.getElementById("content");
+ function add(tag,text,cls){const el=document.createElement(tag);el.textContent=text;if(cls)el.className=cls;content.appendChild(el);return el;}
+ try {
+  const response=await fetch('https://ipbulucu.org/api/ip?format=json',{headers:{'X-IPBulucu-Client':'chrome-extension','X-IPBulucu-Action':'user'},cache:'no-store',signal:AbortSignal.timeout(10000)});
+  const data=await response.json();if(!response.ok||data.success===false||!data.ip)throw new Error();
+  content.replaceChildren();add('div','Genel IP adresiniz','ip-label');add('div',data.ip,'ip-val');
+  add('p',[data.city,data.country].filter(Boolean).join(', ')||'Konum bilgisi alınamadı.');add('p',data.isp||'ISS bilgisi alınamadı.');
+  add('p','Konum yaklaşık bir tahmindir. Bu sorgu hat hızı, VPN güvenliği veya CGNAT testi yapmaz.');
+ }catch{content.replaceChildren();add('p','IP sorgusu tamamlanamadı. Lütfen tekrar deneyin.');}
+ const link=add('a','IP Bulucu ağ araçlarını aç →','btn');link.href='https://ipbulucu.org/?utm_source=chrome_extension&utm_medium=referral&utm_campaign=extension';link.target='_blank';link.rel='noopener noreferrer';
 });

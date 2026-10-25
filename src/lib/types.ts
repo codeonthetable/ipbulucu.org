@@ -148,8 +148,8 @@ export interface PortCheckResult {
   ip: string;
   port: number;
   service: string;
-  status: "open" | "closed" | "filtered" | "error";
-  responseTimeMs?: number;
+  status: "open" | "closed" | "filtered" | "unavailable" | "error";
+  responseTimeMs?: number | null;
   details?: string;
 }
 
@@ -158,10 +158,13 @@ export interface BlacklistCheckResult {
   totalChecked: number;
   listedCount: number;
   cleanCount: number;
+  unavailableCount: number;
+  isClean: boolean | null;
   results: {
     host: string;
     name: string;
-    listed: boolean;
+    listed: boolean | null;
+    status: string;
     response?: string;
     delistUrl?: string;
   }[];

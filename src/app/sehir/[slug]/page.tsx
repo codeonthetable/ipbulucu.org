@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MapPin, Building, Globe, Shield, Wifi, ArrowLeft } from "lucide-react";
 import { CITIES_DATA } from "@/lib/seo-data";
 import IpMap from "@/components/IpMap";
+import InteractiveIpFinder from "@/components/InteractiveIpFinder";
 import FaqAccordion from "@/components/FaqAccordion";
 import AdPlaceholder from "@/components/AdPlaceholder";
 import { generateBreadcrumbSchema } from "@/lib/schemas";
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
       `${city.name.toLowerCase()} ip bloğu`,
     ],
     alternates: {
-      canonical: `https://ipbulucu.org/sehir/${city.slug}`,
+      canonical: `https://ipbulucu.org/sehir/${city.slug}/`,
     },
     other: {
       "geo.region": "TR-" + city.plate,
@@ -102,6 +103,13 @@ export default async function CityPage({ params }: CityPageProps) {
         </p>
       </div>
 
+      {/* Live Interactive IP Finder for this City */}
+      <InteractiveIpFinder
+        defaultTitle={`${city.name} Canlı IP & Santral Konum Sorgulama`}
+        placeholder={`${city.name} veya başka bir IP adresini sorgulayın...`}
+        buttonLabel="IP Konumunu Sorgula"
+      />
+
       {/* Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm">
@@ -152,7 +160,7 @@ export default async function CityPage({ params }: CityPageProps) {
         lng={city.lng}
         city={city.name}
         country="Türkiye"
-        ip={`${city.name} Bölgesel IP Havuzu`}
+        mode="region"
       />
 
       <AdPlaceholder slotId={`city-${city.slug}-banner`} format="leaderboard" />

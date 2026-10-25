@@ -1,50 +1,18 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('X-LiteSpeed-Cache-Control: no-cache');
-header('Cache-Control: no-store, no-cache, must-revalidate');
-
-function get_target_domain() {
-    $d = $_GET['domain'] ?? $_GET['host'] ?? $_GET['ip'] ?? $_GET['query'] ?? '';
-    if (empty($d) && !empty($_SERVER['QUERY_STRING'])) {
-        parse_str($_SERVER['QUERY_STRING'], $qs);
-        $d = $qs['domain'] ?? $qs['host'] ?? $qs['ip'] ?? $qs['query'] ?? '';
-    }
-    return trim($d);
-}
-
-$domain = get_target_domain();
-$domain = preg_replace('#^https?://#i', '', $domain);
-$domain = preg_replace('#[/:?#].*$#', '', $domain);
-
-if (empty($domain)) {
-    echo json_encode(['error' => 'Alan adı belirtilmedi.'], JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-$g = stream_context_create(["ssl" => ["capture_peer_cert" => true, "verify_peer" => false, "verify_peer_name" => false]]);
-$r = @stream_socket_client("ssl://$domain:443", $errno, $errstr, 4, STREAM_CLIENT_CONNECT, $g);
-
-if (!$r) {
-    echo json_encode(['domain' => $domain, 'valid' => false, 'error' => "SSL bağlantısı kurulamadı ($errstr)"], JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-$cont = stream_context_get_params($r);
-$cert = openssl_x509_parse($cont["options"]["ssl"]["peer_certificate"]);
-fclose($r);
-
-$validFrom = date('c', $cert['validFrom_time_t']);
-$validTo = date('c', $cert['validTo_time_t']);
-$daysRemaining = round(($cert['validTo_time_t'] - time()) / 86400);
-
-echo json_encode([
-    'domain' => $domain,
-    'valid' => $daysRemaining > 0,
-    'issuer' => $cert['issuer']['O'] ?? $cert['issuer']['CN'] ?? 'Bilinmiyor',
-    'subject' => $cert['subject']['CN'] ?? $domain,
-    'validFrom' => $validFrom,
-    'validTo' => $validTo,
-    'daysRemaining' => $daysRemaining,
-    'serialNumber' => $cert['serialNumberHex'] ?? '',
-], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+require_once __DIR__ . '/common.php';
+ipb_begin();
+$host=ipb_host(ipb_input(['host','domain','url','query']));
+$ip=ipb_target($host);
+$context=stream_context_create(['ssl'=>['capture_peer_cert'=>true,'verify_peer'=>true,'verify_peer_name'=>true,'allow_self_signed'=>false,'SNI_enabled'=>true,'peer_name'=>$host,'disable_compression'=>true]]);
+$socket=@stream_socket_client('ssl://'.(strpos($ip,':')!==false?'['.$ip.']':$ip).':443',$errno,$errstr,5,STREAM_CLIENT_CONNECT,$context);
+if(!$socket) ipb_fail(502,'TLS verification could not be completed. The connection may be unavailable, or certificate trust/hostname validation may have failed.');
+$params=stream_context_get_params($socket); $metadata=stream_get_meta_data($socket); fclose($socket);
+$resource=$params['options']['ssl']['peer_certificate']??null;
+$cert=$resource ? openssl_x509_parse($resource) : false;
+if(!$cert || !isset($cert['validFrom_time_t'],$cert['validTo_time_t'])) ipb_fail(502,'Certificate details unavailable.');
+$from=$cert['validFrom_time_t']; $to=$cert['validTo_time_t']; $now=time();
+if($from>$now || $to<=$now) ipb_fail(502,'Certificate validity dates could not be verified.');
+$san=[];
+foreach(explode(',',$cert['extensions']['subjectAltName']??'') as $item) { $item=trim($item); if(preg_match('/^(?:DNS:|IP Address:)(.+)$/',$item,$m)) $san[]=$m[1]; }
+$fingerprint=function_exists('openssl_x509_fingerprint') ? openssl_x509_fingerprint($resource,'sha256') : null;
+ipb_json(['success'=>true,'host'=>$host,'domain'=>$host,'authorized'=>true,'authError'=>null,'subject'=>$cert['subject']['CN']??'Unknown','issuer'=>$cert['issuer']['O']??$cert['issuer']['CN']??'Unknown','validFrom'=>gmdate('c',$from),'validTo'=>gmdate('c',$to),'daysRemaining'=>(int)floor(($to-$now)/86400),'isExpired'=>false,'san'=>array_values(array_unique($san)),'serialNumber'=>$cert['serialNumberHex']??null,'fingerprint'=>$fingerprint?:null,'tlsProtocol'=>$metadata['crypto']['protocol']??null,'cipherName'=>$metadata['crypto']['cipher_name']??null,'checkedAt'=>gmdate('c'),'limitations'=>['Certificate chain, hostname and dates verified against this server trust store.','Revocation, all supported protocols/ciphers and browser-specific trust are not tested.']]);

@@ -1,27 +1,18 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-
-$domain = trim($_GET['domain'] ?? '');
-$type = strtoupper(trim($_GET['type'] ?? 'A'));
-
-$nodes = [
-    ['name' => 'Türkiye (İstanbul)', 'country' => 'TR', 'flag' => '🇹🇷', 'doh' => 'https://cloudflare-dns.com/dns-query'],
-    ['name' => 'Almanya (Frankfurt)', 'country' => 'DE', 'flag' => '🇩🇪', 'doh' => 'https://dns.google/resolve'],
-    ['name' => 'ABD (New York)', 'country' => 'US', 'flag' => '🇺🇸', 'doh' => 'https://cloudflare-dns.com/dns-query'],
-    ['name' => 'İngiltere (Londra)', 'country' => 'GB', 'flag' => '🇬🇧', 'doh' => 'https://dns.quad9.net:5053/dns-query'],
-];
-
-$results = [];
-foreach ($nodes as $node) {
-    $results[] = [
-        'location' => $node['name'],
-        'flag' => $node['flag'],
-        'country' => $node['country'],
-        'status' => 'Resolved',
-        'records' => ['185.216.113.190'],
-        'responseTimeMs' => rand(15, 65),
-    ];
+require_once __DIR__ . '/common.php';
+ipb_begin();
+$host=ipb_host(ipb_input(['host','domain']),false);
+$type=strtoupper(ipb_input(['type'],'A',10));
+$results=[]; $resolved=0; $available=0;
+foreach ([['google','Google Public DNS','8.8.8.8'],['cloudflare','Cloudflare DNS','1.1.1.1']] as $resolver) {
+    $answer=ipb_doh($host,$type,$resolver[0],2500);
+    if ($answer['status']==='resolved') $resolved++;
+    if ($answer['status']!=='unavailable') $available++;
+    $results[]=array_merge($answer,['serverId'=>$resolver[0],'serverName'=>$resolver[1],'serverIp'=>$resolver[2],'location'=>'Anycast; queried from the IPBulucu server']);
 }
-
-echo json_encode(['domain' => $domain, 'type' => $type, 'results' => $results], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+$same=null;
+if ($available===2) {
+    $a=$results[0]['records']; $b=$results[1]['records']; sort($a); sort($b);
+    $same=$a===$b && $results[0]['status']===$results[1]['status'];
+}
+ipb_json(['success'=>true,'partial'=>$available<2,'host'=>$host,'domain'=>$host,'type'=>$type,'totalServers'=>2,'resolvedCount'=>$resolved,'availableCount'=>$available,'answersAgree'=>$same,'propagationPercentage'=>null,'results'=>$results,'checkedAt'=>gmdate('c'),'limitations'=>['Two anycast resolvers queried from one server; this is not worldwide propagation coverage.','Duration is the server-side HTTPS query time, not your network ping.']]);

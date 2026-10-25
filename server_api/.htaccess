@@ -20,9 +20,23 @@ RewriteRule ^api/propagation/?$ /api/propagation.php [QSA,L]
 RewriteRule ^api/blacklist/?$ /api/blacklist.php [QSA,L]
 RewriteRule ^api/headers/?$ /api/headers.php [QSA,L]
 RewriteRule ^api/email-security/?$ /api/email-security.php [QSA,L]
+RewriteRule ^api/subnet/?$ /api/subnet.php [QSA,L]
+RewriteRule ^api/watch/?$ /api/watch.php [QSA,L]
 RewriteRule ^api/watch/(.*)$ /api/watch.php?token=$1 [QSA,L]
 
-# 3. Clean HTML URLs (Serve .html without showing extension)
+# Canonical slash only for exported HTML routes (never for API or files).
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
+RewriteRule ^(.+[^/])$ /$1/ [R=301,L]
+
+# 3. DirectoryIndex and Clean HTML URLs
+DirectoryIndex index.html index.php
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
+RewriteRule ^(.*)/?$ /$1/index.html [L]
+
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME}.html -f
@@ -32,7 +46,7 @@ RewriteRule ^(.*)$ $1.html [L]
 ErrorDocument 404 /404.html
 </IfModule>
 
-# Caching & Performance Headers (0 CLS / Core Web Vitals)
+# Static asset caching
 <IfModule mod_expires.c>
 ExpiresActive On
 ExpiresByType image/webp "access plus 1 year"
@@ -45,10 +59,11 @@ ExpiresByType application/javascript "access plus 1 month"
 AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json image/svg+xml
 </IfModule>
 
-# Security & HSTS Headers (A+ SSL Grade)
+# Response headers
 <IfModule mod_headers.c>
 Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 Header set X-Content-Type-Options "nosniff"
-Header set X-XSS-Protection "1; mode=block"
+Header always set X-Frame-Options "DENY"
+Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self)"
 Header set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>

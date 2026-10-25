@@ -1,9 +1,15 @@
-import { resolveIpDetails } from "@/lib/geo";
+import type { Metadata } from "next";
 import HomePageClient from "./HomePageClient";
 import { HOME_FAQS } from "@/lib/seo-data";
 
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://ipbulucu.org/",
+    languages: { tr: "https://ipbulucu.org/", en: "https://ipbulucu.org/en/" },
+  },
+};
+
 export default async function HomePage() {
-  const initialGeoData = await resolveIpDetails("81.213.153.20");
-  return <HomePageClient initialData={initialGeoData} faqs={HOME_FAQS} />;
+  return <HomePageClient faqs={HOME_FAQS} />;
 }
 

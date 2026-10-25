@@ -33,13 +33,13 @@ export default function ApiDocsPage() {
     curl: `# 1. Terminalde Dış IP Adresini Öğrenme (Düz Metin)
 curl -s https://ipbulucu.org/api/ip
 
-# 2. Tam JSON İstihbarat Raporu Alma (Konum, Operatör, Hat Sınıfı)
+# 2. JSON Yanıtı Alma (Yaklaşık Konum, Operatör, Veri Kaynağı)
 curl -s "https://ipbulucu.org/api/ip?format=json"
 
 # 3. Belirli Bir IP veya Alan Adını Sorgulama
 curl -s "https://ipbulucu.org/api/ip?ip=8.8.8.8&format=json"
 
-# 4. TRABIS / Universal Whois Sorgusu
+# 4. RDAP Kayıt Sorgusu
 curl -s "https://ipbulucu.org/api/whois?domain=turktelekom.com.tr"
 
 # 5. Açık Port Testi
@@ -58,10 +58,9 @@ def get_ip_intel(ip=None):
     return response.json()
 
 # Örnek Kullanım
-data = get_ip_intel("81.213.153.20")
+data = get_ip_intel("1.1.1.1")
 print(f"Şehir: {data.get('city')}, Operatör: {data.get('isp')}")
-print(f"Bağlantı Türü: {data.get('connectionType')}, Hız Sınıfı: {data.get('lineSpeedTier')}")
-print(f"Güvenlik Skoru: %{data.get('securityScore')}")`,
+print(f"Konum verisi: {data.get('geoStatus')}, Kaynak: {data.get('source')}")`,
 
     nodejs: `// Node.js (Fetch API)
 async function getIpDetails(targetIp = "") {
@@ -82,11 +81,11 @@ getIpDetails();`,
 
     ai: `// OpenAI Custom GPT / LangChain Tool Yapılandırması
 // OpenAPI Şeması: https://ipbulucu.org/openapi.json
-// AI Standart Manifest: https://ipbulucu.org/llms.txt
+// API kullanım notları: https://ipbulucu.org/llms.txt
 
 {
   "name": "ipbulucu_intelligence",
-  "description": "Gerçek zamanlı IP konumu, telekom hat sınıfı, Whois ve port güvenliği sorgulayan araç.",
+  "description": "Gerçek zamanlı IP konumu, yaklaşık konum, Whois ve port bağlantısı sorgulayan araç.",
   "parameters": {
     "type": "object",
     "properties": {
@@ -108,15 +107,15 @@ getIpDetails();`,
     <div className="space-y-10 max-w-5xl mx-auto">
       {/* Header */}
       <div className="text-center space-y-4">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-semibold">
           <Bot className="w-3.5 h-3.5" />
           <span>Yapay Zeka (AI) ve Geliştiriciler İçin Ücretsiz REST API</span>
         </div>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
           Geliştirici & Yapay Zeka Ajanları API Portalı
         </h1>
-        <p className="text-sm md:text-base text-slate-400 max-w-2xl mx-auto">
-          ChatGPT, Claude, Cursor, LangChain, Python botları ve CLI komutlarınız için 0ms gecikmeli, anahtarsız ve sınırsız IP istihbarat servisleri.
+        <p className="text-sm md:text-base text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
+          ChatGPT, Claude, Cursor, LangChain, Python botları ve CLI komutlarınız için anahtarsız IP ve ağ sorgulama API’leri. Yanıt süresi ve üçüncü taraf kapsamı değişebilir.
         </p>
       </div>
 
@@ -130,7 +129,7 @@ getIpDetails();`,
             </div>
             <h2 className="text-xl font-bold text-white">Yapay Zeka Ajanları İçin Doğrudan Besleme</h2>
             <p className="text-xs md:text-sm text-slate-300 max-w-xl">
-              Model Context Protocol (MCP), Custom GPT veya LangChain projelerinize ipbulucu.org API&#39;lerini tek tıkla entegre edin.
+              OpenAPI şemasını kullanarak HTTP araç entegrasyonunuzu oluşturabilirsiniz. Hazır MCP sunucusu bu paket kapsamında sunulmaz.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -200,6 +199,84 @@ getIpDetails();`,
         </div>
       </div>
 
+      {/* Official SDKs & Open Source Ecosystem */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Resmi SDK Paketleri & Açık Kaynak Kütüphaneler</h2>
+          <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+            v1.0.0 Yayında
+          </span>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* NPM Card */}
+          <a
+            href="https://www.npmjs.com/package/ipbulucu"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/80 to-slate-950 border border-slate-800 hover:border-red-500/40 transition-all group relative overflow-hidden"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <span className="px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 font-mono text-xs font-bold border border-red-500/20">
+                NPM Package
+              </span>
+              <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-red-400 group-hover:translate-x-1 transition-all" />
+            </div>
+            <h3 className="text-base font-bold text-white mb-1 group-hover:text-red-300 transition-colors">ipbulucu (Node.js)</h3>
+            <p className="text-xs text-slate-400 mb-3">
+              JavaScript, TypeScript, React ve Node.js için resmi IP istihbarat kütüphanesi.
+            </p>
+            <div className="font-mono text-xs bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800 text-slate-300">
+              npm i ipbulucu
+            </div>
+          </a>
+
+          {/* PyPI Card */}
+          <a
+            href="https://pypi.org/project/ipbulucu/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/80 to-slate-950 border border-slate-800 hover:border-blue-500/40 transition-all group relative overflow-hidden"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <span className="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-400 font-mono text-xs font-bold border border-blue-500/20">
+                PyPI Package
+              </span>
+              <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
+            </div>
+            <h3 className="text-base font-bold text-white mb-1 group-hover:text-blue-300 transition-colors">ipbulucu (Python)</h3>
+            <p className="text-xs text-slate-400 mb-3">
+              Python 3.8+ botları, veri analitiği ve yapay zeka ajanları için resmi kütüphane.
+            </p>
+            <div className="font-mono text-xs bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800 text-slate-300">
+              pip install ipbulucu
+            </div>
+          </a>
+
+          {/* GitHub Card */}
+          <a
+            href="https://github.com/codeonthetable/ipbulucu.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-5 rounded-2xl bg-gradient-to-b from-slate-900/80 to-slate-950 border border-slate-800 hover:border-purple-500/40 transition-all group relative overflow-hidden"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <span className="px-2.5 py-1 rounded-lg bg-purple-500/10 text-purple-400 font-mono text-xs font-bold border border-purple-500/20">
+                Open Source
+              </span>
+              <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-purple-400 group-hover:translate-x-1 transition-all" />
+            </div>
+            <h3 className="text-base font-bold text-white mb-1 group-hover:text-purple-300 transition-colors">GitHub Repository</h3>
+            <p className="text-xs text-slate-400 mb-3">
+              Açık kaynak kod deposu, Chrome eklentisi ve API spesifikasyonları.
+            </p>
+            <div className="font-mono text-xs bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800 text-slate-300">
+              ⭐ codeonthetable/ipbulucu.org
+            </div>
+          </a>
+        </div>
+      </div>
+
       {/* Ad Placement */}
       <AdPlaceholder slotId="api-docs-mid" format="leaderboard" />
 
@@ -214,7 +291,7 @@ getIpDetails();`,
             </div>
             <h3 className="text-sm font-bold text-white">IP & Coğrafi Konum İstihbaratı</h3>
             <p className="text-xs text-slate-400">
-              IP adresi, şehir, koordinat, operatör (ISP), hat hızı sınıfı ve güvenlik skorunu döner.
+              Genel IP, yaklaşık konum, ISP, ASN ve kaynak bilgisi döner. Konum sağlayıcısı yanıt vermezse geoStatus=unavailable olur. Güvenlik, hat hızı ve CGNAT bu uç noktada ölçülmez.
             </p>
           </div>
 
@@ -225,7 +302,7 @@ getIpDetails();`,
             </div>
             <h3 className="text-sm font-bold text-white">Whois & RDAP (.tr Destekli)</h3>
             <p className="text-xs text-slate-400">
-              TRABIS .tr ve global alan adlarının tescil firması, bitiş ve isim sunucu kayıtlarını döner.
+              RDAP sağlayıcısının sunduğu kayıt firması, tarih ve isim sunucu alanlarını döner. Uzantı kapsamı değişir; doğrulanamayan alanlar bilinmiyor olarak kalır.
             </p>
           </div>
 

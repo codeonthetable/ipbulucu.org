@@ -1,4 +1,5 @@
 "use client";
+import { toolFetch } from "@/lib/usage";
 
 import { useState } from "react";
 import {
@@ -19,7 +20,7 @@ interface ServerResult {
   serverName: string;
   location: string;
   serverIp: string;
-  status: "resolved" | "no-record" | "timeout";
+  status: "resolved" | "no-record" | "nxdomain" | "unavailable";
   records: string[];
   responseTimeMs: number;
 }
@@ -29,7 +30,8 @@ interface PropagationData {
   type: string;
   totalServers: number;
   resolvedCount: number;
-  propagationPercentage: number;
+  availableCount: number;
+  answersAgree: boolean | null;
   results: ServerResult[];
 }
 
@@ -66,11 +68,11 @@ export default function DnsPropagationPage() {
     setResult(null);
 
     try {
-      const res = await fetch(
-        `/api/propagation?host=${encodeURIComponent(targetHost.trim())}&type=${encodeURIComponent(type)}`
+      const res = await toolFetch(
+        `/api/propagation?host=${encodeURIComponent(targetHost.trim())}&type=${encodeURIComponent(type)}`, undefined, "user"
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "DNS yayılma testi başarısız oldu.");
+      if (!res.ok || data.success === false || data.error) throw new Error(data.error || "DNS yayılma testi başarısız oldu.");
       setResult(data);
     } catch (err: unknown) {
       setError((err as Error).message || "Tarama sırasında hata oluştu.");
@@ -85,14 +87,15 @@ export default function DnsPropagationPage() {
       <div className="text-center max-w-2xl mx-auto">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900 mb-3">
           <Globe2 className="w-3.5 h-3.5" />
-          Global DNS Yayılma Testi (DNS Checker)
+          DNS Sağlayıcı Karşılaştırması
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-          DNS Yayılma Kontrolü (Global DNS Propagation)
+          DNS Yayılma Kontrolü
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-          DNS kayıtlarınızın dünya genelindeki 12+ bağımsız kıta ve omurga sunucusuna yayılıp yayılmadığını canlı haritada kontrol edin.
+          Google ve Cloudflare DNS yanıtlarını karşılaştırın. Sorgular IPBulucu sunucusundan iki anycast sağlayıcıya gönderilir.
         </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">Bu sonuç dünya çapında yayılma yüzdesi değildir. Süreler sizin bağlantınızın ping değeri değildir. <a className="underline" href="https://developers.google.com/speed/public-dns/docs/doh/json">Google DoH</a> ve <a className="underline" href="https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/">Cloudflare DoH</a> kullanılır.</p>
       </div>
 
       {/* Control Bar */}
@@ -170,27 +173,21 @@ export default function DnsPropagationPage() {
                   Hedef: <span className="text-blue-600 font-mono">{result.host}</span> ({result.type} Kaydı)
                 </h2>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  {result.resolvedCount} / {result.totalServers} Global DNS Düğümü Doğrulandı.
+                  {result.resolvedCount} sağlayıcı kayıt döndürdü. {result.availableCount} / {result.totalServers} sorgu yanıtı alınabildi.
                 </p>
               </div>
 
               <div className="text-right">
                 <span className="text-3xl font-black text-blue-600 font-mono">
-                  %{result.propagationPercentage}
+                  {result.availableCount}/{result.totalServers}
                 </span>
                 <span className="block text-[11px] font-bold text-gray-400 uppercase">
-                  Global Yayılma Durumu
+                  Alınan DNS Yanıtı
                 </span>
               </div>
             </div>
 
-            {/* Progress Bar */}
-            <div className="w-full bg-gray-100 dark:bg-gray-800 h-3 rounded-full overflow-hidden mt-4">
-              <div
-                className="bg-gradient-to-r from-blue-600 to-emerald-500 h-full transition-all duration-500 rounded-full"
-                style={{ width: `${result.propagationPercentage}%` }}
-              />
-            </div>
+            <p className="mt-4 text-sm text-gray-500">{result.answersAgree === null ? "Karşılaştırma tamamlanamadı." : result.answersAgree ? "İki sağlayıcının yanıtı aynı." : "Sağlayıcıların yanıtları farklı; önbellek veya bölgesel DNS yanıtı etkili olabilir."}</p>
 
             {/* Server Results List */}
             <div className="divide-y divide-gray-100 dark:divide-gray-800 mt-6">
@@ -201,7 +198,7 @@ export default function DnsPropagationPage() {
                       {server.serverName}
                     </span>
                     <span className="text-xs text-gray-500">
-                      {server.location} • <span className="font-mono">{server.serverIp}</span>
+                      {server.serverIp} • Sunucudan sorgu süresi: {server.responseTimeMs} ms
                     </span>
                   </div>
 
@@ -218,13 +215,13 @@ export default function DnsPropagationPage() {
                         ))}
                         <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                       </div>
-                    ) : server.status === "no-record" ? (
+                    ) : (server.status === "no-record" || server.status === "nxdomain") ? (
                       <span className="px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-500 text-xs font-semibold flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" /> Kayıt Yok
+                        <Clock className="w-3.5 h-3.5" /> {server.status === "nxdomain" ? "Alan adı bulunamadı (NXDOMAIN)" : "Bu türde kayıt yok"}
                       </span>
                     ) : (
                       <span className="px-3 py-1 rounded-lg bg-red-100 dark:bg-red-950/40 text-red-600 text-xs font-semibold flex items-center gap-1">
-                        <XCircle className="w-3.5 h-3.5" /> Zaman Aşımı
+                        <XCircle className="w-3.5 h-3.5" /> Yanıt alınamadı
                       </span>
                     )}
                   </div>

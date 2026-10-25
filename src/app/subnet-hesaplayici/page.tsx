@@ -1,4 +1,5 @@
 "use client";
+import { toolFetch } from "@/lib/usage";
 
 import { useState } from "react";
 import {
@@ -63,9 +64,9 @@ export default function SubnetCalculatorPage() {
     setResult(null);
 
     try {
-      const res = await fetch(`/api/subnet?cidr=${encodeURIComponent(inputCidr.trim())}`);
+      const res = await toolFetch(`/api/subnet?cidr=${encodeURIComponent(inputCidr.trim())}`, undefined, "user");
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Hesaplama yapılamadı.");
+      if (!res.ok || data.success === false || data.error) throw new Error(data.error || "Hesaplama yapılamadı.");
       setResult(data);
     } catch (err: unknown) {
       setError((err as Error).message || "Hesaplama sırasında bir hata oluştu.");

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "IP Bulucu - Anlık IP, Konum ve Hız Bilgisi",
-  "version": "1.0.0",
-  "description": "Tek tıkla gerçek IP adresinizi, santral konumunuzu, ISP operatörünüzü, hat hızınızı ve güvenlik durumunuzu öğrenin.",
+  "name": "IP Bulucu - IP Adresi ve Yaklaşık Konum",
+  "version": "1.0.1",
+  "description": "Genel IP adresinizi, yaklaşık konumunuzu ve internet servis sağlayıcınızı görün. IP Bulucu ağ araçlarına hızlı erişim.",
   "action": {
     "default_popup": "popup.html",
     "default_title": "IP Bulucu - ipbulucu.org"

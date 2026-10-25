@@ -26,3 +26,10 @@ Thumbs.db
 .vscode/
 .idea/
 store_assets/*.html
+.env.ftp
+
+# Private rollback data and generated release bundles
+operations/private-backups/
+
+# Private analytics, hosting reports and local operational evidence
+operations/

@@ -49,19 +49,19 @@ export default function StatikDinamikPage() {
           <RefreshCw className="w-3.5 h-3.5" />
           <span>IP Protokolleri & Karşılaştırma Rehberi</span>
         </div>
-        <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
           Statik IP ile Dinamik IP Arasındaki Farklar Nelerdir?
         </h1>
-        <p className="text-base md:text-lg text-slate-300 leading-relaxed">
+        <p className="text-base md:text-lg text-gray-600 dark:text-slate-300 leading-relaxed">
           İnternet aboneliğinizde varsayılan olarak gelen Dinamik IP ile ek ücretle kiralanan Statik IP&#39;nin avantajları, dezavantajları ve kullanım senaryoları.
         </p>
       </div>
 
       {/* Featured Snippet Definition Box */}
-      <div className="rounded-2xl border-2 border-blue-500/40 bg-slate-900/90 p-6 shadow-xl relative overflow-hidden">
+      <div className="rounded-2xl border-2 border-blue-500/40 bg-white dark:bg-slate-900/90 p-6 shadow-xl relative overflow-hidden">
         <div className="space-y-2">
-          <div className="text-xs font-black text-blue-400 uppercase tracking-wider">Kısa ve Net Cevap (Özet)</div>
-          <p className="text-sm md:text-base text-white font-medium leading-relaxed">
+          <div className="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-wider">Kısa ve Net Cevap (Özet)</div>
+          <p className="text-sm md:text-base text-gray-900 dark:text-white font-medium leading-relaxed">
             <b>Dinamik IP;</b> modemin her açılıp kapanmasında değişen geçici adrestir (Ev kullanıcıları için ideal ve ücretsizdir). <b>Statik IP</b> ise hiçbir zaman değişmeyen sabit adrestir (Güvenlik kameraları, sunucular ve CGNAT&#39;tan kurtulmak için kiralanır).
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function StatikDinamikPage() {
               <tr>
                 <td className="p-3 font-semibold text-white">CGNAT Durumu</td>
                 <td className="p-3">Genellikle CGNAT havuzundadır</td>
-                <td className="p-3 text-emerald-400 font-bold">CGNAT&#39;tan %100 Çıkarır</td>
+                <td className="p-3 text-emerald-400 font-bold">Genel statik IP hizmetine bağlıdır</td>
               </tr>
               <tr>
                 <td className="p-3 font-semibold text-white">Port Açma (Forwarding)</td>

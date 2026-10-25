@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "IPBulucu API for AI Agents & Developers",
-    "description": "Enterprise-grade IP intelligence, Whois, Port scanning, and DNS security tools API.",
-    "version": "1.0.0"
+    "description": "Public IP and network diagnostics. Nullable fields are unknown, not safe. Geolocation is approximate; upstream coverage and latency vary.",
+    "version": "1.1.0"
   },
   "servers": [
     {
@@ -14,46 +14,253 @@
   "paths": {
     "/ip": {
       "get": {
-        "summary": "Resolve IP geolocation and carrier intelligence",
+        "summary": "Get public IP and approximate geolocation",
         "parameters": [
           {
             "name": "ip",
             "in": "query",
             "required": false,
             "description": "Target IPv4 or IPv6 address",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "format",
             "in": "query",
             "required": false,
-            "schema": { "type": "string", "default": "json" }
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "text"
+              ],
+              "default": "json"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Detailed IP intelligence payload"
+            "description": "IP result; location can be unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "ip",
+                    "geoStatus"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "ip": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "IPv4",
+                        "IPv6"
+                      ]
+                    },
+                    "geoStatus": {
+                      "type": "string",
+                      "enum": [
+                        "available",
+                        "unavailable"
+                      ]
+                    },
+                    "checkedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "limitations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "source": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "country": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "countryCode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "city": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "region": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "timezone": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "isp": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "org": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "asn": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "latitude": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "longitude": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "isVpn": {
+                      "type": "null",
+                      "description": "Not measured by this endpoint."
+                    },
+                    "isProxy": {
+                      "type": "null",
+                      "description": "Not measured by this endpoint."
+                    },
+                    "isTor": {
+                      "type": "null",
+                      "description": "Not measured by this endpoint."
+                    },
+                    "isHosting": {
+                      "type": "null",
+                      "description": "Not measured by this endpoint."
+                    },
+                    "isCgnat": {
+                      "type": "null",
+                      "description": "Not measured by this endpoint."
+                    },
+                    "securityScore": {
+                      "type": "null",
+                      "description": "Not measured by this endpoint."
+                    },
+                    "fraudScore": {
+                      "type": "null",
+                      "description": "Not measured by this endpoint."
+                    },
+                    "threatLevel": {
+                      "type": "null",
+                      "description": "Not measured by this endpoint."
+                    },
+                    "userPersona": {
+                      "type": "null",
+                      "description": "Not measured by this endpoint."
+                    },
+                    "connectionType": {
+                      "type": "null",
+                      "description": "Not measured by this endpoint."
+                    },
+                    "lineSpeedTier": {
+                      "type": "null",
+                      "description": "Not measured by this endpoint."
+                    },
+                    "exposedServices": {
+                      "type": "array",
+                      "maxItems": 0,
+                      "items": {},
+                      "description": "Not measured by this endpoint."
+                    },
+                    "globalPings": {
+                      "type": "array",
+                      "maxItems": 0,
+                      "items": {},
+                      "description": "Not measured by this endpoint."
+                    },
+                    "gamePings": {
+                      "type": "array",
+                      "maxItems": 0,
+                      "items": {},
+                      "description": "Not measured by this endpoint."
+                    }
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or non-public target"
+          },
+          "405": {
+            "description": "Unsupported HTTP method"
           }
-        }
+        },
+        "operationId": "getPublicIp",
+        "description": "If ip is omitted, detects the requesting connection. AI/server callers see their server egress IP. success=true can contain geoStatus=unavailable. Reputation, VPN, CGNAT, speed and identity are not measured. Geolocation has a shared daily provider budget; text IP discovery does not use that budget."
       }
     },
     "/whois": {
       "get": {
-        "summary": "Query domain registration and TRABIS / global whois data",
+        "summary": "Query registry RDAP data where available",
         "parameters": [
           {
             "name": "domain",
             "in": "query",
             "required": true,
             "description": "Domain name to query",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "Whois record object"
+          },
+          "400": {
+            "description": "Invalid or unsupported input"
+          },
+          "429": {
+            "description": "Shared request limit; retry later"
+          },
+          "502": {
+            "description": "Upstream result could not be verified"
           }
-        }
+        },
+        "operationId": "getWhois",
+        "description": "Registry coverage varies. Unknown fields do not imply privacy protection or active registration. No TRABIS-specific integration."
       }
     },
     "/port": {
@@ -64,18 +271,244 @@
             "name": "host",
             "in": "query",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "port",
             "in": "query",
             "required": true,
-            "schema": { "type": "integer", "default": 80 }
+            "schema": {
+              "type": "integer",
+              "default": 80
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "Port status and latency"
+          },
+          "400": {
+            "description": "Invalid or unsupported input"
+          },
+          "429": {
+            "description": "Shared request limit; retry later"
+          },
+          "502": {
+            "description": "Upstream result could not be verified"
+          }
+        },
+        "operationId": "checkTcpPort",
+        "description": "Use only authorized hosts. Measures a TCP connection from this server; timeout does not prove a closed port."
+      }
+    },
+    "/dns": {
+      "get": {
+        "operationId": "checkDns",
+        "summary": "Query A, AAAA, MX, TXT, NS, CNAME and SOA via Google DoH",
+        "parameters": [
+          {
+            "name": "host",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result object; partial/nullable fields indicate limits"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "429": {
+            "description": "Shared request limit"
+          },
+          "502": {
+            "description": "Upstream verification unavailable"
+          }
+        }
+      }
+    },
+    "/propagation": {
+      "get": {
+        "operationId": "checkPropagation",
+        "summary": "Compare Google and Cloudflare DNS responses from one server",
+        "parameters": [
+          {
+            "name": "host",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result object; partial/nullable fields indicate limits"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "429": {
+            "description": "Shared request limit"
+          },
+          "502": {
+            "description": "Upstream verification unavailable"
+          }
+        }
+      }
+    },
+    "/blacklist": {
+      "get": {
+        "operationId": "checkBlacklist",
+        "summary": "Query configured DNSBL sources; unknown is not clean",
+        "parameters": [
+          {
+            "name": "ip",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result object; partial/nullable fields indicate limits"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "429": {
+            "description": "Shared request limit"
+          },
+          "502": {
+            "description": "Upstream verification unavailable"
+          }
+        }
+      }
+    },
+    "/headers": {
+      "get": {
+        "operationId": "checkHeaders",
+        "summary": "Read HTTP headers and count security-header presence",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result object; partial/nullable fields indicate limits"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "429": {
+            "description": "Shared request limit"
+          },
+          "502": {
+            "description": "Upstream verification unavailable"
+          }
+        }
+      }
+    },
+    "/ssl": {
+      "get": {
+        "operationId": "checkSsl",
+        "summary": "Verify TLS chain, hostname and dates using the server trust store",
+        "parameters": [
+          {
+            "name": "host",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result object; partial/nullable fields indicate limits"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "429": {
+            "description": "Shared request limit"
+          },
+          "502": {
+            "description": "Upstream verification unavailable"
+          }
+        }
+      }
+    },
+    "/email-security": {
+      "get": {
+        "operationId": "checkEmailSecurity",
+        "summary": "Inspect MX, SPF and direct DMARC record presence",
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result object; partial/nullable fields indicate limits"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "429": {
+            "description": "Shared request limit"
+          },
+          "502": {
+            "description": "Upstream verification unavailable"
+          }
+        }
+      }
+    },
+    "/subnet": {
+      "get": {
+        "operationId": "checkSubnet",
+        "summary": "Calculate IPv4 subnet boundaries",
+        "parameters": [
+          {
+            "name": "cidr",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result object; partial/nullable fields indicate limits"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "429": {
+            "description": "Shared request limit"
+          },
+          "502": {
+            "description": "Upstream verification unavailable"
           }
         }
       }

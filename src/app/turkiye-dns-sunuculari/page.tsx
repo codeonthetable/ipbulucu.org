@@ -68,7 +68,7 @@ const DNS_FAQS = [
   {
     question: "DNS değiştirmek internet hızını artırır mı?",
     answer:
-      "DNS değişikliği indirme (download) hızınızı artırmaz; ancak web sitelerinin ilk açılış süresini (alan adı çözümleme süresini) 50ms'den 4ms'ye kadar düşürerek gezinmeyi gözle görülür şekilde hızlandırır.",
+      "DNS değişikliği bağlantı hızınızı artırmaz. Alan adı çözümleme süresi sağlayıcıya, önbelleğe ve ağınıza göre iyileşebilir veya kötüleşebilir; kendi bağlantınızda ölçün.",
   },
   {
     question: "Türkiye'de en hızlı DNS hangisidir?",
@@ -86,10 +86,10 @@ export default function TurkiyeDnsPage() {
           <Server className="w-3.5 h-3.5" />
           <span>Hızlı DNS Rehberi & IP Listesi</span>
         </div>
-        <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
           En Hızlı Türkiye ve Global DNS Sunucuları (2026)
         </h1>
-        <p className="text-base md:text-lg text-slate-300 leading-relaxed">
+        <p className="text-base md:text-lg text-gray-600 dark:text-slate-300 leading-relaxed">
           Web sitelerine daha hızlı bağlanmak, engelleri aşmak ve siber güvenliğinizi artırmak için kullanabileceğiniz en popüler DNS sunucuları.
         </p>
       </div>
@@ -97,9 +97,9 @@ export default function TurkiyeDnsPage() {
       {/* DNS Grid List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {DNS_LIST.map((dns, idx) => (
-          <div key={idx} className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 space-y-4 relative overflow-hidden">
+          <div key={idx} className="rounded-3xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-6 space-y-4 relative overflow-hidden shadow-sm">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-white">{dns.name}</h2>
+              <h2 className="text-base font-bold text-gray-900 dark:text-white">{dns.name}</h2>
               {dns.badge && (
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-black uppercase">
                   {dns.badge}
