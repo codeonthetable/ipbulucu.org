@@ -1,4 +1,5 @@
 "use client";
+import { toolFetch } from "@/lib/usage";
 
 import { useState } from "react";
 import { Zap, Server, Shield, CheckCircle2, XCircle, AlertCircle, Play, Layers } from "lucide-react";
@@ -41,7 +42,7 @@ export default function PortCheckPage() {
   const [batchLoading, setBatchLoading] = useState(false);
   const [singleResult, setSingleResult] = useState<PortCheckResult | null>(null);
   const [batchResults, setBatchResults] = useState<
-    { port: number; service: string; status: "open" | "closed" | "filtered"; responseTimeMs: number }[] | null
+    { port: number; service: string; status: "open" | "closed" | "filtered" | "unavailable"; responseTimeMs: number | null }[] | null
   >(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,11 +58,11 @@ export default function PortCheckPage() {
     setBatchResults(null);
 
     try {
-      const res = await fetch(
-        `/api/port?host=${encodeURIComponent(host.trim())}&port=${encodeURIComponent(portNumber)}`
+      const res = await toolFetch(
+        `/api/port?host=${encodeURIComponent(host.trim())}&port=${encodeURIComponent(portNumber)}`, undefined, "user"
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Port testi başarısız oldu.");
+      if (!res.ok || data.success === false || data.error) throw new Error(data.error || "Port testi başarısız oldu.");
       setSingleResult(data);
     } catch (err: unknown) {
       setError((err as Error).message || "Port kontrolü sırasında hata oluştu.");
@@ -84,11 +85,11 @@ export default function PortCheckPage() {
     const portListStr = POPULAR_PORTS.map((p) => p.port).join(",");
 
     try {
-      const res = await fetch(
-        `/api/port?host=${encodeURIComponent(host.trim())}&ports=${encodeURIComponent(portListStr)}`
+      const res = await toolFetch(
+        `/api/port?host=${encodeURIComponent(host.trim())}&ports=${encodeURIComponent(portListStr)}`, undefined, "user"
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Toplu port taraması başarısız oldu.");
+      if (!res.ok || data.success === false || data.error) throw new Error(data.error || "Toplu port taraması başarısız oldu.");
       setBatchResults(data.results);
     } catch (err: unknown) {
       setError((err as Error).message || "Tarama sırasında bir hata oluştu.");
@@ -111,6 +112,7 @@ export default function PortCheckPage() {
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
           Sunucunuzun, modeminizin veya IP adresinizin portlarının dış internete açık olup olmadığını tek tıkla test edin.
         </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">Yalnızca sahibi olduğunuz veya test izniniz olan hedefleri kullanın. Ölçüm IPBulucu sunucusundan TCP bağlantısıdır; zaman aşımı kapalı port kanıtı değildir. UDP veya servis güvenliği test edilmez.</p>
       </div>
 
       {/* Control Form */}
@@ -234,7 +236,7 @@ export default function PortCheckPage() {
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 Hedef: <strong className="font-mono">{singleResult.ip}</strong> • Yanıt Süresi:{" "}
-                <strong className="font-mono">{singleResult.responseTimeMs} ms</strong>
+                <strong className="font-mono">{singleResult.responseTimeMs === null ? "Ölçülemedi" : `${singleResult.responseTimeMs} ms`}</strong>
               </p>
             </div>
           </div>
@@ -264,7 +266,7 @@ export default function PortCheckPage() {
 
                   <div className="flex items-center gap-3">
                     <span className="text-xs text-gray-400 font-mono hidden sm:inline">
-                      {r.responseTimeMs} ms
+                      {r.responseTimeMs === null ? "Ölçülemedi" : `${r.responseTimeMs} ms`}
                     </span>
                     {r.status === "open" ? (
                       <span className="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-bold text-xs flex items-center gap-1">

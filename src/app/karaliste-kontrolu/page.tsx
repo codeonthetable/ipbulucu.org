@@ -1,4 +1,5 @@
 "use client";
+import { toolFetch } from "@/lib/usage";
 
 import { useState } from "react";
 import {
@@ -45,9 +46,9 @@ export default function BlacklistPage() {
     setResult(null);
 
     try {
-      const res = await fetch(`/api/blacklist?ip=${encodeURIComponent(targetIp.trim())}`);
+      const res = await toolFetch(`/api/blacklist?ip=${encodeURIComponent(targetIp.trim())}`, undefined, "user");
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Kara liste kontrolü yapılamadı.");
+      if (!res.ok || data.success === false || data.error) throw new Error(data.error || "Kara liste kontrolü yapılamadı.");
       setResult(data);
     } catch (err: unknown) {
       setError((err as Error).message || "Kontrol sırasında hata oluştu.");
@@ -62,14 +63,15 @@ export default function BlacklistPage() {
       <div className="text-center max-w-2xl mx-auto">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900 mb-3">
           <ShieldAlert className="w-3.5 h-3.5" />
-          10+ Global DNSBL Spam Taraması
+          DNSBL Kaynak ve Erişim Kontrolü
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
           IP Kara Liste & Spam Kontrolü
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-          IP adresinizin veya alan adınızın Spamhaus, Barracuda, SpamCop, SORBS gibi global kara listelerde olup olmadığını anında tarayın.
+          SpamCop ve DroneBL listelerini sorgulayın. Spamhaus ve Barracuda için resmi kontrol bağlantılarına ulaşın.
         </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">Yanıt alınamaması temiz sonuç sayılmaz. Bir listede kayıt bulunmaması güvenlik veya e-posta teslimatı garantisi vermez.</p>
       </div>
 
       {/* Form */}
@@ -135,15 +137,15 @@ export default function BlacklistPage() {
                   Hedef IP: <span className="font-mono text-blue-600">{result.ip}</span>
                 </h2>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Toplam {result.totalChecked} global spam veritabanı tarandı.
+                  {result.totalChecked} kaynaktan yorumlanabilir sonuç alındı; {result.unavailableCount} kaynak doğrulanamadı.
                 </p>
               </div>
 
               <div>
-                {result.listedCount === 0 ? (
+                {result.listedCount === 0 && result.unavailableCount > 0 ? (<span className="text-amber-600 font-semibold">Kısmi sonuç · {result.unavailableCount} kaynak bilinmiyor</span>) : result.listedCount === 0 ? (
                   <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold text-sm shadow-sm">
                     <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                    TEMİZ ({result.cleanCount}/{result.totalChecked})
+                    Kontrol edilen listelerde kayıt yok ({result.cleanCount}/{result.totalChecked})
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300 font-bold text-sm shadow-sm">
@@ -168,7 +170,7 @@ export default function BlacklistPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    {r.listed ? (
+                    {r.listed === null ? (<a className="text-xs text-amber-600 underline" href={r.delistUrl} target="_blank" rel="noopener noreferrer">{r.status === "not-configured" ? "Otomatik erişim yapılandırılmadı · Resmi kontrol" : "Doğrulanamadı · Resmi kontrol"}</a>) : r.listed ? (
                       <>
                         <span className="px-3 py-1 rounded-full bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 font-bold text-xs">
                           KARA LİSTEDE
@@ -186,7 +188,7 @@ export default function BlacklistPage() {
                       </>
                     ) : (
                       <span className="px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold text-xs flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Temiz (OK)
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Bu listede kayıt yok
                       </span>
                     )}
                   </div>

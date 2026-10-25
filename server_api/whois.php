@@ -1,113 +1,29 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('X-LiteSpeed-Cache-Control: no-cache');
-header('Cache-Control: no-store, no-cache, must-revalidate');
-
-$domain = trim($_GET['domain'] ?? $_GET['query'] ?? '');
-if (empty($domain)) {
-    echo json_encode(['error' => 'Alan adı belirtilmedi.'], JSON_UNESCAPED_UNICODE);
-    exit;
+require_once __DIR__ . '/common.php';
+ipb_begin();
+$query=ipb_host(ipb_input(['query','domain','host','ip']));
+$isIp=filter_var($query,FILTER_VALIDATE_IP)!==false;
+if($isIp && !ipb_public_ip($query)) ipb_fail(400,'Enter a public IP address.');
+$response=ipb_http('https://rdap.org/'.($isIp?'ip/':'domain/').rawurlencode($query));
+$data=$response && $response['status']===200 ? json_decode($response['body'],true) : null;
+if(!is_array($data) || empty($data['objectClassName']) || isset($data['errorCode'])) ipb_fail(502,'Registry RDAP data unavailable for this query. No ownership or registration status could be confirmed.');
+$registrar='Unknown'; $organization=$isIp && is_string($data['name']??null) ? $data['name'] : 'Unknown';
+$registered='Unknown'; $expires='Unknown'; $updated='Unknown'; $nameservers=[];
+foreach(($data['entities']??[]) as $entity) {
+    $name=null;
+    foreach(($entity['vcardArray'][1]??[]) as $property) if(($property[0]??'')==='fn' && is_string($property[3]??null)) $name=$property[3];
+    if(!$name) continue;
+    if(in_array('registrar',$entity['roles']??[],true)) $registrar=$name;
+    if(in_array('registrant',$entity['roles']??[],true)) $organization=$name;
 }
-
-$domain = strtolower(preg_replace('#^https?://#i', '', $domain));
-$domain = preg_replace('#[/:?#].*$#', '', $domain);
-
-$server = 'whois.verisign-grs.com';
-$isTr = (bool)preg_match('/\.tr$/i', $domain);
-
-if ($isTr) {
-    $server = 'whois.trabis.gov.tr';
-} elseif (preg_match('/\.org$/i', $domain)) {
-    $server = 'whois.pir.org';
-} elseif (preg_match('/\.io$/i', $domain)) {
-    $server = 'whois.nic.io';
-} elseif (preg_match('/\.de$/i', $domain)) {
-    $server = 'whois.denic.de';
-} elseif (preg_match('/\.uk$/i', $domain)) {
-    $server = 'whois.nominet.uk';
+foreach(($data['events']??[]) as $event) {
+    $date=is_string($event['eventDate']??null) ? strtotime($event['eventDate']) : false;
+    if($date===false) continue;
+    if(($event['eventAction']??'')==='registration') $registered=gmdate('Y-m-d H:i:s',$date).' UTC';
+    elseif(($event['eventAction']??'')==='expiration') $expires=gmdate('Y-m-d H:i:s',$date).' UTC';
+    elseif(($event['eventAction']??'')==='last changed') $updated=gmdate('Y-m-d H:i:s',$date).' UTC';
 }
-
-$raw = '';
-$fp = @fsockopen($server, 43, $errno, $errstr, 3);
-if ($fp) {
-    fputs($fp, $domain . "\r\n");
-    stream_set_timeout($fp, 3);
-    while (!feof($fp)) {
-        $raw .= fgets($fp, 128);
-    }
-    fclose($fp);
-}
-
-if (!empty($raw)) {
-    $raw = mb_convert_encoding($raw, 'UTF-8', 'UTF-8, ISO-8859-9, Windows-1254, ISO-8859-1');
-}
-
-$registrar = 'Bilinmiyor';
-$createdDate = null;
-$expiryDate = null;
-$nameServers = [];
-
-// Fallback to RDAP
-if (empty(trim($raw)) || stripos($raw, 'Whois sunucusuna') !== false) {
-    $rdapUrl = "https://rdap.org/domain/" . urlencode($domain);
-    $ch = curl_init($rdapUrl);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 4);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'ipbulucu.org-Whois/1.0');
-    $rdapRaw = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    if ($rdapRaw && $httpCode >= 200 && $httpCode < 300) {
-        $rdap = json_decode($rdapRaw, true);
-        if ($rdap) {
-            $raw = json_encode($rdap, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-            if (isset($rdap['entities'])) {
-                foreach ($rdap['entities'] as $e) {
-                    if (isset($e['roles']) && in_array('registrar', $e['roles'])) {
-                        $registrar = $e['vcardArray'][1][1][3] ?? $e['handle'] ?? 'Bilinmiyor';
-                    }
-                }
-            }
-            if (isset($rdap['events'])) {
-                foreach ($rdap['events'] as $ev) {
-                    if ($ev['eventAction'] === 'registration') $createdDate = $ev['eventDate'];
-                    if ($ev['eventAction'] === 'expiration') $expiryDate = $ev['eventDate'];
-                }
-            }
-            if (isset($rdap['nameservers'])) {
-                foreach ($rdap['nameservers'] as $ns) {
-                    if (isset($ns['ldhName'])) $nameServers[] = strtolower($ns['ldhName']);
-                }
-            }
-        }
-    }
-}
-
-if (!empty($raw) && $registrar === 'Bilinmiyor') {
-    if (preg_match('/(Registrar:|Registrar Name:|Organization Name:)\s*(.+)/i', $raw, $m)) {
-        $registrar = trim($m[2]);
-    }
-    if (preg_match('/(Creation Date:|Created on:|Registration Time:|Created:)\s*(.+)/i', $raw, $m)) {
-        $createdDate = trim($m[2]);
-    }
-    if (preg_match('/(Registry Expiry Date:|Expiration Date:|Expires on:|Expires:)\s*(.+)/i', $raw, $m)) {
-        $expiryDate = trim($m[2]);
-    }
-    if (preg_match_all('/(Name Server:|nserver:)\s*([^\s]+)/i', $raw, $m)) {
-        $nameServers = array_unique(array_map('trim', $m[2]));
-    }
-}
-
-echo json_encode([
-    'domain' => $domain,
-    'server' => $server,
-    'registrar' => $registrar,
-    'createdDate' => $createdDate,
-    'expiryDate' => $expiryDate,
-    'nameServers' => array_values($nameServers),
-    'raw' => $raw ?: "Whois verisi bulunamadı.",
-    'isTr' => $isTr,
-], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE);
+foreach(($data['nameservers']??[]) as $ns) if(is_string($ns['ldhName']??null)) $nameservers[]=strtolower(rtrim($ns['ldhName'],'.'));
+$statuses=array_values(array_filter($data['status']??[],'is_string'));
+$raw=implode("\n",['Domain / IP: '.$query,'Registrar: '.$registrar,'Organization: '.$organization,'Registration: '.$registered,'Expiration: '.$expires,'Updated: '.$updated,'Status: '.($statuses ? implode(', ',$statuses) : 'Unknown'),'Nameservers: '.implode(', ',$nameservers),'Source: '.$response['url'],'This is a summary of registry RDAP fields, not a raw WHOIS response.']);
+ipb_json(['success'=>true,'domainOrIp'=>$query,'domain'=>$query,'host'=>$query,'query'=>$query,'registrar'=>$registrar,'organization'=>$organization,'registeredOn'=>$registered,'expiresOn'=>$expires,'updatedOn'=>$updated,'nameServers'=>array_values(array_unique($nameservers)),'status'=>$statuses,'rawText'=>$raw,'raw'=>$raw,'source'=>$response['url'],'isTr'=>(bool)preg_match('/\.tr$/i',$query),'checkedAt'=>gmdate('c')]);

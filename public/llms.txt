@@ -1,53 +1,32 @@
-# ipbulucu.org - Free IP Intelligence & Network Security Tools API
+# IPBulucu — public IP and network tools
 
-> ipbulucu.org provides high-performance, developer-friendly and AI-agent ready REST APIs for IP geolocation, telecom line classification, threat intelligence, DNSBL spam checks, universal Whois, and port diagnostics.
+> Public IP lookup, approximate geolocation, DNS, Whois and network diagnostics. Results depend on the endpoint and its upstream provider. Read errors and limitations before using any result.
 
-## Available APIs for AI Agents & Developers
+## Documentation
+- [API schema](https://ipbulucu.org/openapi.json): OpenAPI 3.1 schema.
+- [Developer guide](https://ipbulucu.org/api-dokumantasyon/)
+- [Privacy and data processing](https://ipbulucu.org/en/privacy-policy/)
+- [Source code](https://github.com/codeonthetable/ipbulucu.org)
 
-### 1. Public IP & Geolocation Intelligence
-- **Endpoint**: `GET https://ipbulucu.org/api/ip`
-- **Params**:
-  - `ip` (optional): IPv4 or IPv6 address to analyze. If omitted, detects client IP.
-  - `format`: `json` (or pass `Accept: application/json` header)
-- **Response**: IP, City, Region, Country, Coordinates, ISP, ASN, Connection Type (Fiber/VDSL/Mobile), Line Speed Tier, Fraud Score, Visitor Persona, Turkish Plate & Area Codes.
-- **Example cURL**: `curl -s "https://ipbulucu.org/api/ip?format=json"`
-- **Plain Text IP**: `curl -s https://ipbulucu.org/api/ip` (Returns: `176.33.178.53\n`)
+## Public IP
+GET https://ipbulucu.org/api/ip?format=json
+Optional `ip`: public IPv4, IPv6 or resolvable domain. Omit it to detect the requesting connection's public IP. A server-side AI tool sees its own server's egress IP, not the user's device IP.
 
-### 2. Universal Whois & RDAP (.tr & Global)
-- **Endpoint**: `GET https://ipbulucu.org/api/whois`
-- **Params**:
-  - `domain`: Domain name to query (e.g. `google.com`, `turktelekom.com.tr`).
-- **Response**: Domain, Registrar, Created Date, Expiry Date, Name Servers, Raw Whois text.
-- **Example cURL**: `curl -s "https://ipbulucu.org/api/whois?domain=turktelekom.com.tr"`
+Response includes `success`, `ip`, `version`, `geoStatus`, `source`, `checkedAt`, approximate location, ISP and ASN. Location fields are nullable. `geoStatus=unavailable` means the IP is known but location data could not be obtained. `success=true` does not mean every field was measured.
 
-### 3. Open Port & Service Scanner
-- **Endpoint**: `GET https://ipbulucu.org/api/port`
-- **Params**:
-  - `host`: IP address or domain (e.g. `google.com`).
-  - `port`: Port number (e.g. `80`, `443`, `22`, `3389`).
-- **Response**: `host`, `port`, `isOpen`, `status`, `responseTimeMs`.
-- **Example cURL**: `curl -s "https://ipbulucu.org/api/port?host=google.com&port=443"`
+This endpoint does not measure VPN, proxy, Tor, CGNAT, line speed, identity, reputation, open ports or game latency. Legacy fields for these values are null or empty arrays. Never treat null as safe or zero risk. IP geolocation is not a street address or a person's identity.
 
-### 4. DNS Records Resolver
-- **Endpoint**: `GET https://ipbulucu.org/api/dns`
-- **Params**:
-  - `domain`: Target domain.
-  - `type`: `A`, `AAAA`, `MX`, `TXT`, `NS`, `CNAME`, `SOA`, `ALL`.
-- **Response**: Array of resolved DNS records with TTL and host.
-- **Example cURL**: `curl -s "https://ipbulucu.org/api/dns?domain=google.com&type=A"`
+Use `format=text` for plain text. HTTP 400 is invalid input; 405 is an unsupported method. Retry transient failures with a bounded delay. No uptime, unlimited capacity or latency guarantee is made.
 
-### 5. SSL / TLS Certificate Inspector
-- **Endpoint**: `GET https://ipbulucu.org/api/ssl`
-- **Params**:
-  - `domain`: Target domain.
-- **Response**: Issuer, Subject, Valid From, Valid To, Days Remaining, Serial Number.
-- **Example cURL**: `curl -s "https://ipbulucu.org/api/ssl?domain=google.com"`
+## Other endpoints
+- GET /api/whois?domain=example.com — domain registration data; upstream coverage varies.
+- GET /api/dns?domain=example.com — A, AAAA, MX, TXT, NS, CNAME and SOA via Google DoH.
+- GET /api/port?host=YOUR_AUTHORIZED_HOST&port=443 — TCP connection from the service server. A failed connection is not proof of a permanently closed port. Use only targets you own or are authorized to test.
 
-### 6. Email Security (SPF & DMARC)
-- **Endpoint**: `GET https://ipbulucu.org/api/email-security`
-- **Params**:
-  - `domain`: Target email domain.
-- **Response**: SPF record validity, DMARC record validity, MX hosts.
+IP monitoring on the website runs only while its tab remains open. Server-side alerts and webhook delivery are not available.
 
-### 7. OpenAPI Specification
-- **OpenAPI 3.1 JSON**: `https://ipbulucu.org/openapi.json`
+## Limits
+Non-IP diagnostic APIs share a 120 requests/minute budget. Port checks additionally share 20 requests/minute, at most 16 ports and six seconds per call. HTTP 429 includes Retry-After. Geolocation has a shared 850 provider calls/day budget; when unavailable, IP discovery still works and geoStatus is unavailable. Plain text IP requests do not consume the geolocation budget. These are current service safeguards, not a capacity guarantee.
+
+## Measurement
+Clients may send `X-IPBulucu-Client` (web, chrome-extension, node-sdk, python-sdk) and `X-IPBulucu-Action` (auto or user). These are self-declared categories, not proof of a human or AI identity. Optional server counters store daily aggregate counts without query values or raw IP addresses. Website analytics and server request counts are separate measures.

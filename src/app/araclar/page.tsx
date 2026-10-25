@@ -31,11 +31,11 @@ export default function AllToolsPage() {
   const toolCategories = [
     {
       category: "DNS & Alan Adı Araçları",
-      description: "Alan adınızın DNS kayıtları, küresel yayılma durumu ve yetkili sunucularını analiz edin.",
+      description: "DNS kayıtlarını, iki sağlayıcının yanıtlarını ve kayıt bilgilerini inceleyin.",
       tools: [
         {
           name: "Global DNS Yayılma Kontrolü",
-          desc: "DNS değişikliklerinin dünya genelindeki 12+ sunucuya yayılma yüzdesini test edin.",
+          desc: "Google ve Cloudflare DNS yanıtlarını IPBulucu sunucusundan karşılaştırın.",
           href: "/dns-yayilma-kontrolu",
           icon: Globe2,
           color: "text-blue-600 bg-blue-50 dark:bg-blue-950/40",
@@ -71,7 +71,7 @@ export default function AllToolsPage() {
       tools: [
         {
           name: "IP Adresim & Canlı Konum",
-          desc: "Dış IP adresiniz, santral konumu, ISP, ASN ve VPN/Proxy risk puanı.",
+          desc: "Genel IP adresiniz, yaklaşık konum, ISP ve ASN; ölçülemeyen veriler açıkça belirtilir.",
           href: "/",
           icon: Globe2,
           color: "text-blue-600 bg-blue-50 dark:bg-blue-950/40",
@@ -86,7 +86,7 @@ export default function AllToolsPage() {
         },
         {
           name: "Kara Liste & Spam Kontrolü",
-          desc: "IP adresinizin Spamhaus, Barracuda gibi 10+ global DNSBL listesinde olup olmadığını kontrol edin.",
+          desc: "SpamCop ve DroneBL sonuçlarını, kaynak erişimini ve resmi kontrol bağlantılarını inceleyin.",
           href: "/karaliste-kontrolu",
           icon: ShieldCheck,
           color: "text-red-600 bg-red-50 dark:bg-red-950/40",
@@ -100,8 +100,8 @@ export default function AllToolsPage() {
           badge: "Gizlilik",
         },
         {
-          name: "IP Değişim & Kara Liste Takipçisi",
-          desc: "Ev, ofis veya sunucu IP'niz değiştiğinde Telegram/Discord Webhook ile anında ücretsiz bildirim alın.",
+          name: "Sekmede IP Değişim Takibi",
+          desc: "Açık tarayıcı sekmesinde IP değişimini izleyin. Arka plan bildirimi veya webhook gönderilmez.",
           href: "/ip-takip",
           icon: Zap,
           color: "text-purple-600 bg-purple-50 dark:bg-purple-950/40",
@@ -128,8 +128,8 @@ export default function AllToolsPage() {
           color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40",
         },
         {
-          name: "HTTP Headers & Güvenlik Skoru",
-          desc: "HSTS, CSP, X-Frame-Options başlıklarını denetleyip sitenize güvenlik notu verin.",
+          name: "HTTP Başlıkları Kontrolü",
+          desc: "HSTS, CSP ve diğer HTTP başlıklarının varlığını inceleyin; politika doğruluğu test edilmez.",
           href: "/header-kontrolu",
           icon: FileCode2,
           color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-950/40",

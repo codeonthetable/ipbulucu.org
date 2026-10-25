@@ -50,23 +50,23 @@ export default function CgnatGuidePage() {
           <Router className="w-3.5 h-3.5" />
           <span>Ağ Güvenliği & Port Teşhis Rehberi</span>
         </div>
-        <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
           CGNAT Nedir? IP Adresinizin CGNAT Olduğu Nasıl Anlaşılır?
         </h1>
-        <p className="text-base md:text-lg text-slate-300 leading-relaxed">
+        <p className="text-base md:text-lg text-gray-600 dark:text-slate-300 leading-relaxed">
           Online oyunlarda NAT Type hataları (Strict/Type 3), port yönlendirme (Port Forwarding) sorunları ve IP kamera erişim engellerinin temel sebebi olan CGNAT havuzu hakkında bilmeniz gereken her şey.
         </p>
       </div>
 
       {/* Featured Snippet Definition Box (Google Sıfırıncı Sıra İçin Özel Tasarım) */}
-      <div className="rounded-2xl border-2 border-indigo-500/40 bg-slate-900/90 p-6 shadow-xl relative overflow-hidden">
+      <div className="rounded-2xl border-2 border-indigo-500/40 bg-white dark:bg-slate-900/90 p-6 shadow-xl relative overflow-hidden">
         <div className="flex items-start gap-4">
           <div className="p-3 rounded-xl bg-indigo-500/20 text-indigo-400 shrink-0">
             <Zap className="w-6 h-6" />
           </div>
           <div className="space-y-2">
             <div className="text-xs font-black text-indigo-400 uppercase tracking-wider">Özet Tanım (Doğrudan Cevap)</div>
-            <p className="text-sm md:text-base text-white font-medium leading-relaxed">
+            <p className="text-sm md:text-base text-gray-900 dark:text-white font-medium leading-relaxed">
               <b>CGNAT (Carrier-Grade Network Address Translation);</b> servis sağlayıcıların IPv4 yetersizliği nedeniyle tek bir genel IP adresini mahallenizdeki yüzlerce farklı aboneye ortak kullandırmasıdır. CGNAT havuzundaki kullanıcılara dışarıdan doğrudan port açılamaz.
             </p>
           </div>

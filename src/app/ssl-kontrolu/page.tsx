@@ -1,4 +1,5 @@
 "use client";
+import { toolFetch } from "@/lib/usage";
 
 import { useState } from "react";
 import {
@@ -63,9 +64,9 @@ export default function SslCheckPage() {
     setResult(null);
 
     try {
-      const res = await fetch(`/api/ssl?host=${encodeURIComponent(targetHost.trim())}`);
+      const res = await toolFetch(`/api/ssl?host=${encodeURIComponent(targetHost.trim())}`, undefined, "user");
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "SSL sertifikası kontrol edilemedi.");
+      if (!res.ok || data.success === false || data.error) throw new Error(data.error || "SSL sertifikası kontrol edilemedi.");
       setResult(data);
     } catch (err: unknown) {
       setError((err as Error).message || "Kontrol sırasında hata oluştu.");
@@ -88,6 +89,7 @@ export default function SslCheckPage() {
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
           Web sitenizin SSL sertifikasının geçerliliğini, kalan gün sayısını, yayıncı otoritesini ve TLS şifreleme sürümünü anında test edin.
         </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">Sunucumuzun güven deposuna göre sertifika zinciri, alan adı ve tarih doğrulanır. İptal durumu, tüm protokol/şifre seçenekleri ve her tarayıcının güven kararı test edilmez.</p>
       </div>
 
       {/* Search Bar */}
@@ -154,7 +156,7 @@ export default function SslCheckPage() {
                   SSL Sertifikası: <span className="text-emerald-600 font-mono">{result.host}</span>
                 </h2>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Protokol: <strong>{result.tlsProtocol}</strong> • Şifre: <strong>{result.cipherName}</strong>
+                  Protokol: <strong>{result.tlsProtocol ?? "Bilinmiyor"}</strong> • Şifre: <strong>{result.cipherName ?? "Bilinmiyor"}</strong>
                 </p>
               </div>
 

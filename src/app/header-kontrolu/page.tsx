@@ -1,4 +1,5 @@
 "use client";
+import { toolFetch } from "@/lib/usage";
 
 import { useState } from "react";
 import {
@@ -67,9 +68,9 @@ export default function HeadersCheckPage() {
     setResult(null);
 
     try {
-      const res = await fetch(`/api/headers?url=${encodeURIComponent(targetUrl.trim())}`);
+      const res = await toolFetch(`/api/headers?url=${encodeURIComponent(targetUrl.trim())}`, undefined, "user");
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "HTTP başlıkları analiz edilemedi.");
+      if (!res.ok || data.success === false || data.error) throw new Error(data.error || "HTTP başlıkları analiz edilemedi.");
       setResult(data);
     } catch (err: unknown) {
       setError((err as Error).message || "Kontrol sırasında hata oluştu.");
@@ -92,6 +93,7 @@ export default function HeadersCheckPage() {
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
           Herhangi bir web sitesinin HTTP yanıt başlıklarını, durum kodunu, yanıt süresini ve HSTS, CSP gibi güvenlik başlıklarını test edin.
         </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">Not yalnızca altı başlığın varlığına dayanır. Başlık değerlerinin doğru yapılandırıldığını veya sitenin saldırılara karşı güvenli olduğunu doğrulamaz. Çerez başlıkları gösterilmez.</p>
       </div>
 
       {/* Form */}
@@ -165,7 +167,7 @@ export default function HeadersCheckPage() {
               <div className="flex items-center gap-4 bg-gray-50 dark:bg-gray-800/60 p-4 rounded-2xl border border-gray-100 dark:border-gray-700">
                 <div className="text-center">
                   <span className="text-[10px] font-bold text-gray-400 uppercase block">
-                    Güvenlik Skoru
+                    Başlık Varlığı Notu
                   </span>
                   <span className="text-4xl font-black text-indigo-600 dark:text-indigo-400 font-mono">
                     {result.scoreGrade}

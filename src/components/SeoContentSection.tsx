@@ -1,124 +1,25 @@
-import {
-  Globe,
-  Shield,
-  Zap,
-  Terminal,
-  Server,
-  Lock,
-  Search,
-  CheckCircle,
-} from "lucide-react";
+import Link from "next/link";
+import { Globe, MapPin, Binary, Terminal } from "lucide-react";
 
-export default function SeoContentSection() {
-  return (
-    <article className="my-16 space-y-12 text-gray-700 dark:text-gray-300">
-      {/* Intro Header */}
-      <div className="border-b border-gray-200 dark:border-gray-800 pb-8 text-center max-w-3xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-4">
-          IP Adresi ve Coğrafi Konum Tespiti Rehberi
-        </h2>
-        <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed">
-          <strong>IPBulucu.org</strong>, internet bağlantınıza ait dış (genel) IP adresini, coğrafi konumunuzu, servis sağlayıcınızı (ISP) ve ağ güvenlik durumunuzu milisaniyeler içinde tespit eden yeni nesil bir ağ analiz platformudur.
-        </p>
-      </div>
-
-      {/* 3 Pillars Feature Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm">
-          <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
-            <Zap className="w-5 h-5" />
-          </div>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-            0ms Edge Gecikmesi
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-            Google Core Web Vitals standartlarına tam uyumlu altyapımız sayesinde IP tespitiniz harici API gecikmesi olmaksızın anında ekrana gelir.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm">
-          <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
-            <Shield className="w-5 h-5" />
-          </div>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-            VPN & Proxy Analizi
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-            Bağlantınızın arkasında bir VPN tüneli, kurumsal proxy veya Tor çıkış noktası olup olmadığını gerçek zamanlı olarak analiz eder.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm">
-          <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4">
-            <Server className="w-5 h-5" />
-          </div>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-            Zengin Ağ Araçları
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-            Yalnızca IP tespiti değil; DNS sorgulama, Whois analizi, açık port kontrolü ve DNSBL spam kara liste testlerini bir arada sunar.
-          </p>
-        </div>
-      </div>
-
-      {/* In-depth Informative Article */}
-      <div className="space-y-8 max-w-4xl mx-auto">
-        <section className="space-y-4">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <Search className="w-5 h-5 text-blue-600" />
-            IP Sorgulama ile Hangi Bilgilere Ulaşılır?
-          </h3>
-          <p className="text-sm sm:text-base leading-relaxed text-gray-600 dark:text-gray-300">
-            Bir IP adresi sorgulandığında genel açık veritabanları (RIPE, ARIN, APNIC) ve BGP yönlendirme tabloları üzerinden şu kritik bilgiler elde edilir:
-          </p>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-            <li className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/60 p-3 rounded-xl">
-              <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span><strong>Ülke, İl ve İlçe:</strong> Yaklaşık coğrafi konum</span>
-            </li>
-            <li className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/60 p-3 rounded-xl">
-              <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span><strong>İnternet Servis Sağlayıcı (ISP):</strong> Hat operatörü</span>
-            </li>
-            <li className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/60 p-3 rounded-xl">
-              <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span><strong>ASN Numarası:</strong> Otonom sistem yönlendiricisi</span>
-            </li>
-            <li className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/60 p-3 rounded-xl">
-              <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span><strong>Saat Dilimi & Koordinatlar:</strong> Enlem ve boylam</span>
-            </li>
-          </ul>
-        </section>
-
-        {/* Developer CLI Section */}
-        <section className="p-6 rounded-3xl bg-gray-900 text-white border border-gray-800 space-y-4 shadow-xl">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Terminal className="w-5 h-5 text-emerald-400" />
-              <h3 className="text-base font-bold">Yazılımcılar ve Sistem Yöneticileri İçin CLI Desteği</h3>
-            </div>
-            <span className="text-xs px-2.5 py-1 rounded bg-gray-800 text-gray-300 font-mono">
-              BASH / CMD / POWERSHELL
-            </span>
-          </div>
-
-          <p className="text-xs sm:text-sm text-gray-400">
-            Komut satırınızdan herhangi bir tarayıcı açmadan doğrudan IP adresinizi veya JSON çıktısını çekebilirsiniz:
-          </p>
-
-          <div className="space-y-2 font-mono text-xs sm:text-sm">
-            <div className="p-3 rounded-xl bg-black/60 border border-gray-800 flex items-center justify-between">
-              <span className="text-emerald-400">$ curl ipbulucu.org</span>
-              <span className="text-gray-500"># Yalnızca IP adresini döner</span>
-            </div>
-            <div className="p-3 rounded-xl bg-black/60 border border-gray-800 flex items-center justify-between">
-              <span className="text-blue-400">$ curl ipbulucu.org/api/ip?format=json</span>
-              <span className="text-gray-500"># Detaylı JSON verisi döner</span>
-            </div>
-          </div>
-        </section>
-      </div>
-    </article>
-  );
+export default function SeoContentSection({ lang = "tr" }: { lang?: "tr" | "en" }) {
+  const en = lang === "en";
+  const cards = [
+    { Icon: Globe, title: en ? "Public IP and network" : "Genel IP ve ağ bilgisi", text: en ? "The lookup shows the public address used to reach this service. The provider may also return an ISP, organisation and ASN. Missing fields remain unavailable." : "Sorgu, bu hizmete bağlanırken kullanılan genel IP adresini gösterir. Sağlayıcı ayrıca ISP, kuruluş ve ASN bilgisi döndürebilir. Gelmeyen alanlar bilinmiyor olarak kalır." },
+    { Icon: MapPin, title: en ? "Read the map correctly" : "Haritayı doğru okuyun", text: en ? "The map uses approximate coordinates supplied by ipwho.is. It is not GPS, a street address or a measurement of a person's location. No point is shown without valid coordinates." : "Harita, ipwho.is tarafından verilen yaklaşık koordinatları kullanır. GPS, açık adres veya kişinin konum ölçümü değildir. Geçerli koordinat yoksa nokta gösterilmez." },
+    { Icon: Binary, title: en ? "Local IP conversion" : "Yerel IP dönüştürme", text: en ? "IPv4 and IPv6 values are converted to decimal, hexadecimal and binary in your browser. The reverse DNS name is calculated without querying a DNS server." : "IPv4 ve IPv6 adresleri tarayıcınızda ondalık, onaltılık ve ikili gösterime çevrilir. Ters DNS sorgu adı hesaplanır; DNS sunucusundan kayıt alınmaz." },
+  ];
+  return <article className="py-8 space-y-8 text-gray-700 dark:text-gray-300">
+    <div className="max-w-3xl"><h2 className="text-2xl font-bold text-gray-900 dark:text-white">{en ? "A practical guide to IP lookup" : "IP sorgulama sonuçlarını okuma rehberi"}</h2><p className="mt-3 leading-relaxed">{en ? "Use the address, source and result status together. An IP lookup supplies network context; it cannot measure connection speed or prove that an address is safe." : "IP adresini, veri kaynağını ve sonucun durumunu birlikte değerlendirin. IP sorgusu ağ hakkında bilgi verir; bağlantı hızını ölçmez ve adresin güvenli olduğunu kanıtlamaz."}</p></div>
+    <div className="grid md:grid-cols-3 gap-5">{cards.map(({ Icon, title, text }) => <section key={title} className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6"><Icon className="text-blue-600 mb-4" size={25}/><h3 className="font-bold mb-2">{title}</h3><p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400">{text}</p></section>)}</div>
+    <div className="grid lg:grid-cols-2 gap-8">
+      <section className="space-y-3"><h3 className="text-lg font-bold">{en ? "Which tool should I use next?" : "Sonraki adımda hangi aracı kullanmalıyım?"}</h3><ul className="space-y-3 text-sm leading-relaxed">
+        <li><Link href={en ? "/en/dns-lookup/" : "/dns-sorgulama/"} className="text-blue-600 font-semibold">{en ? "DNS lookup" : "DNS sorgulama"}</Link>{en ? ": inspect an address record or the A/AAAA records of a domain. This IP form currently resolves domain input to an IPv4 address; it is not a list of every address." : ": alan adının A/AAAA kayıtlarını incelemek için kullanın. Bu IP formu alan adını şu anda IPv4 adresine çözer; bütün adresleri listelemez."}</li>
+        <li><Link href={en ? "/en/whois/" : "/whois/"} className="text-blue-600 font-semibold">Whois / RDAP</Link>{en ? ": inspect registration information. A network registration identifies an allocation or organisation, not the person currently using an IP." : ": kayıt bilgilerini incelemek için kullanın. Ağ kaydı, tahsis veya kuruluş hakkında bilgi verir; IP'yi o anda kullanan kişiyi belirlemez."}</li>
+        <li><Link href={en ? "/en/ip-tracker/" : "/ip-takip/"} className="text-blue-600 font-semibold">{en ? "IP change monitor" : "IP değişim takibi"}</Link>{en ? ": compare your public IP while the tab remains open. Closing the page stops monitoring." : ": sekme açıkken genel IP adresinizdeki değişimi kontrol edin. Sayfayı kapatınca takip durur."}</li>
+      </ul></section>
+      <section className="space-y-3"><h3 className="text-lg font-bold">{en ? "Why can results be incomplete?" : "Sonuç neden eksik gelebilir?"}</h3><p className="text-sm leading-relaxed">{en ? "A timeout, provider limit or missing record can leave location fields unavailable even when the public IP is known. A domain may have several addresses; different networks and resolvers may return different answers. Do not interpret missing data as a clean security result." : "Zaman aşımı, sağlayıcı sınırı veya eksik kayıt nedeniyle genel IP bilinse bile konum alanları gelmeyebilir. Bir alan adının birden çok adresi olabilir; ağlar ve DNS çözümleyicileri farklı yanıtlar verebilir. Eksik veri, temiz bir güvenlik sonucu anlamına gelmez."}</p><Link href={en ? "/en/api-docs/" : "/api-dokumantasyon/"} className="text-sm text-blue-600 font-semibold">{en ? "API response fields and limitations →" : "API yanıt alanları ve sınırlar →"}</Link></section>
+    </div>
+    <section className="rounded-2xl bg-slate-900 text-white p-6 space-y-4"><h3 className="font-bold flex items-center gap-2"><Terminal size={20}/>{en ? "Use from a terminal" : "Terminalden kullanım"}</h3><p className="text-sm text-slate-300">{en ? "The text endpoint returns only the public IP. JSON also requests approximate network and location data." : "Metin uç noktası yalnızca genel IP adresini döndürür. JSON isteği yaklaşık ağ ve konum bilgisini de sorgular."}</p><pre className="text-sm whitespace-pre-wrap break-all">{"curl 'https://ipbulucu.org/api/ip?format=text'\ncurl 'https://ipbulucu.org/api/ip?format=json'"}</pre></section>
+    <p className="text-xs leading-relaxed text-gray-500">{en ? "Technical references: " : "Teknik kaynaklar: "}<a className="underline" href="https://ipwhois.io/documentation" target="_blank" rel="noopener noreferrer">ipwho.is API</a>{" · "}<a className="underline" href="https://www.arin.net/resources/registry/whois/" target="_blank" rel="noopener noreferrer">ARIN Whois / RDAP</a>{" · "}<a className="underline" href="https://www.rfc-editor.org/info/rfc3596/" target="_blank" rel="noopener noreferrer">RFC 3596</a></p>
+  </article>;
 }

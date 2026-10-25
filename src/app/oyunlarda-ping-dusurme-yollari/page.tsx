@@ -42,10 +42,10 @@ export default function PingGuidePage() {
           <Gamepad2 className="w-3.5 h-3.5" />
           <span>Espor & Oyun Optimizasyon Rehberi</span>
         </div>
-        <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
           Online Oyunlarda Ping Düşürme ve Rota İyileştirme Yolları
         </h1>
-        <p className="text-base md:text-lg text-slate-300 leading-relaxed">
+        <p className="text-base md:text-lg text-gray-600 dark:text-slate-300 leading-relaxed">
           Valorant, CS2, League of Legends ve EA Sports FC sunucularına daha düşük gecikmeyle bağlanmak için uygulayabileceğiniz en etkili 5 adım.
         </p>
       </div>
