@@ -24,9 +24,9 @@ export async function generateMetadata({ params }: AsnPageProps): Promise<Metada
 
   return {
     title: `${asn.asn} (${asn.name}) Otonom Sistem & BGP Bilgileri | IPBulucu.org`,
-    description: `${asn.asn} numaralı ${asn.org} otonom sistemine ait IP aralıkları, BGP anonsları, peering ve yönlendirme detayları.`,
+    description: `${asn.asn} (${asn.org}) kayıt bilgisi, ASN ve BGP açıklaması; güncel ağ ön eklerini incelemek için RIPE NCC kaynakları.`,
     alternates: {
-      canonical: `https://ipbulucu.org/asn/${asn.slug}`,
+      canonical: `https://ipbulucu.org/asn/${asn.slug}/`,
     },
   };
 }
@@ -88,9 +88,9 @@ export default async function AsnPage({ params }: AsnPageProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm">
-          <span className="text-xs font-semibold text-gray-400 uppercase">Tahsisli IP Hacmi</span>
+          <span className="text-xs font-semibold text-gray-400 uppercase">Güncel ağ ön ekleri</span>
           <p className="text-2xl font-black text-gray-900 dark:text-white mt-1 font-mono">
-            {asn.allocatedIps}
+            <a className="text-base text-blue-600 underline" href={`https://stat.ripe.net/data/announced-prefixes/data.json?resource=${asn.asn}`}>RIPEstat kaynağında incele →</a>
           </p>
         </div>
 
@@ -109,6 +109,11 @@ export default async function AsnPage({ params }: AsnPageProps) {
         </div>
       </div>
 
+      <section className="rounded-2xl border border-gray-200 dark:border-gray-800 p-6 space-y-3 text-sm">
+        <h2 className="text-lg font-bold">Kaynak ve kapsam</h2>
+        <p><a className="text-blue-600 underline" href={`https://stat.ripe.net/data/as-overview/data.json?resource=${asn.asn}`}>RIPE NCC / RIPEstat ASN kaydı</a> 25 Ekim 2026 tarihinde kontrol edildi. Ağ anonsları zamanla değişebilir; bu sayfa canlı BGP izleme veya bütün IP aralıklarının listesi değildir.</p>
+        <p>Bir ASN’nin kayıt sahibi veya ülkesi, tüm kullanıcılarının konumunu ya da ağın güvenlik durumunu göstermez.</p>
+      </section>
       <AdPlaceholder slotId={`asn-${asn.slug}-banner`} format="leaderboard" />
 
       <FaqAccordion

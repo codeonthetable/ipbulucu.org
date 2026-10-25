@@ -5,9 +5,6 @@ export interface CitySeoData {
   region: string;
   lat: number;
   lng: number;
-  popularIsps: string[];
-  description: string;
-  ipRangesSample: string[];
 }
 
 export interface IspSeoData {
@@ -17,8 +14,8 @@ export interface IspSeoData {
   country: string;
   website: string;
   description: string;
-  dnsServers: string[];
-  speedTips: string[];
+  registryHolder: string;
+  registryCheckedAt: string;
 }
 
 export interface AsnSeoData {
@@ -27,7 +24,6 @@ export interface AsnSeoData {
   name: string;
   org: string;
   country: string;
-  allocatedIps: string;
   description: string;
 }
 
@@ -39,9 +35,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Marmara",
     lat: 41.0082,
     lng: 28.9784,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "TurkNet", "Vodafone"],
-    description: "İstanbul genelinde kullanılan IPv4/IPv6 IP adres blokları, internet servis sağlayıcıları, santral gecikme süreleri ve IP sorgulama detayları.",
-    ipRangesSample: ["212.156.0.0/16", "88.247.0.0/16", "176.240.0.0/16"],
   },
   {
     slug: "ankara",
@@ -50,9 +43,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "İç Anadolu",
     lat: 39.9334,
     lng: 32.8597,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "Türksat Kablonet", "Vodafone"],
-    description: "Ankara ili ve ilçelerinde aktif IP adres blokları, operatör altyapıları, Whois ve DNS sorgulama bilgileri.",
-    ipRangesSample: ["85.105.0.0/16", "78.190.0.0/16", "195.175.0.0/16"],
   },
   {
     slug: "izmir",
@@ -61,9 +51,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Ege",
     lat: 38.4192,
     lng: 27.1287,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "TurkNet", "Vodafone"],
-    description: "İzmir bölgesinde hizmet veren internet sağlayıcıları, IP blokları ve yerel ağ bağlantı analizi.",
-    ipRangesSample: ["88.250.0.0/16", "212.174.0.0/16", "176.234.0.0/16"],
   },
   {
     slug: "bursa",
@@ -72,9 +59,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Marmara",
     lat: 40.1885,
     lng: 29.061,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "Kablonet"],
-    description: "Bursa merkez ve çevre ilçelerinde kullanılan dinamik ve statik IP adresleri sorgulama veritabanı.",
-    ipRangesSample: ["85.96.0.0/16", "78.160.0.0/16"],
   },
   {
     slug: "antalya",
@@ -83,9 +67,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Akdeniz",
     lat: 36.8969,
     lng: 30.7133,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "Vodafone"],
-    description: "Antalya IP adresi sorgulama, turizm ve yerel altyapı operatör IP aralıkları analizi.",
-    ipRangesSample: ["88.232.0.0/16", "212.156.120.0/20"],
   },
   {
     slug: "adana",
@@ -94,9 +75,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Akdeniz",
     lat: 37.0,
     lng: 35.3213,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "Vodafone"],
-    description: "Adana ili IP adres aralıkları, ISP bilgileri ve coğrafi IP çözümleme sistemi.",
-    ipRangesSample: ["78.188.0.0/16"],
   },
   {
     slug: "konya",
@@ -105,9 +83,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "İç Anadolu",
     lat: 37.8667,
     lng: 32.4833,
-    popularIsps: ["Türk Telekom", "TurkNet", "Superonline"],
-    description: "Konya ili genişbant internet IP aralıkları ve konum doğrulama araçları.",
-    ipRangesSample: ["85.108.0.0/16"],
   },
   {
     slug: "gaziantep",
@@ -116,9 +91,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Güneydoğu Anadolu",
     lat: 37.0662,
     lng: 37.3833,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline"],
-    description: "Gaziantep IP aralıkları, yerel yönlendiriciler ve Whois sorgulama bilgileri.",
-    ipRangesSample: ["78.176.0.0/16"],
   },
   {
     slug: "kocaeli",
@@ -127,9 +99,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Marmara",
     lat: 40.8533,
     lng: 29.8815,
-    popularIsps: ["Türk Telekom", "TurkNet", "Kablonet", "Superonline"],
-    description: "Kocaeli / Gebze sanayi ve ev interneti IP blokları, kurumsal hat IP analizi.",
-    ipRangesSample: ["88.241.0.0/16"],
   },
   {
     slug: "eskisehir",
@@ -138,9 +107,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "İç Anadolu",
     lat: 39.7767,
     lng: 30.5206,
-    popularIsps: ["Türk Telekom", "TurkNet", "Vodafone", "Superonline"],
-    description: "Eskişehir ili IP adresi tespiti, öğrenci ve kurum ağları coğrafi IP aralıkları.",
-    ipRangesSample: ["193.140.0.0/16"],
   },
   {
     slug: "mersin",
@@ -149,9 +115,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Akdeniz",
     lat: 36.8121,
     lng: 34.6415,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "Vodafone Net", "TurkNet"],
-    description: "Mersin merkez, Tarsus ve Yenişehir bölgelerinde kullanılan IPv4/IPv6 IP adres blokları, santral gecikmesi ve ISP altyapı rehberi.",
-    ipRangesSample: ["88.234.0.0/16", "78.184.0.0/16"],
   },
   {
     slug: "diyarbakir",
@@ -160,9 +123,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Güneydoğu Anadolu",
     lat: 37.9144,
     lng: 40.2306,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "Vodafone Net"],
-    description: "Diyarbakır ili ve çevre ilçelerinde aktif IP adres blokları, bölgesel telekom santralleri ve konum sorgulama veritabanı.",
-    ipRangesSample: ["78.178.0.0/16", "85.102.0.0/16"],
   },
   {
     slug: "kayseri",
@@ -171,9 +131,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "İç Anadolu",
     lat: 38.7312,
     lng: 35.4787,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "Türksat Kablonet", "TurkNet"],
-    description: "Kayseri fiber ve genişbant internet IP adres aralıkları, organize sanayi ve bireysel CGNAT/Statik IP sorgulama sistemi.",
-    ipRangesSample: ["88.241.0.0/16", "81.213.0.0/16"],
   },
   {
     slug: "samsun",
@@ -182,9 +139,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Karadeniz",
     lat: 41.2867,
     lng: 36.33,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "Kablonet", "TurkNet"],
-    description: "Karadeniz bölgesi ana internet omurgası Samsun ili IP adres blokları, DNS gecikme süreleri ve operatör konum analizi.",
-    ipRangesSample: ["78.172.0.0/16", "88.238.0.0/16"],
   },
   {
     slug: "denizli",
@@ -193,9 +147,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Ege",
     lat: 37.7765,
     lng: 29.0864,
-    popularIsps: ["Türk Telekom", "TurkNet", "Superonline", "Vodafone Net"],
-    description: "Denizli ili IP adres aralıkları, kurumsal ve bireysel fiber hatların coğrafi IP çözümleme ve Whois bilgileri.",
-    ipRangesSample: ["85.99.0.0/16", "176.236.0.0/16"],
   },
   {
     slug: "sanliurfa",
@@ -204,9 +155,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Güneydoğu Anadolu",
     lat: 37.1591,
     lng: 38.7969,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "Vodafone"],
-    description: "Şanlıurfa genelinde kullanılan sabit ve mobil internet IP blokları, baz istasyonu ve santral yönlendirme bilgileri.",
-    ipRangesSample: ["78.181.0.0/16", "88.243.0.0/16"],
   },
   {
     slug: "sakarya",
@@ -215,9 +163,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Marmara",
     lat: 40.7569,
     lng: 30.3783,
-    popularIsps: ["Türk Telekom", "TurkNet", "Superonline", "Kablonet"],
-    description: "Sakarya (Adapazarı) ili IP adres aralıkları, Marmara fiber omurga gecikme değerleri ve ISS sorgulama rehberi.",
-    ipRangesSample: ["88.245.0.0/16", "78.165.0.0/16"],
   },
   {
     slug: "trabzon",
@@ -226,9 +171,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Karadeniz",
     lat: 41.0027,
     lng: 39.7168,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "Vodafone Net"],
-    description: "Doğu Karadeniz ana santral merkezi Trabzon IP adres blokları, ping optimizasyonu ve coğrafi konum tespiti.",
-    ipRangesSample: ["78.174.0.0/16", "85.106.0.0/16"],
   },
   {
     slug: "manisa",
@@ -237,9 +179,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Ege",
     lat: 38.6191,
     lng: 27.4289,
-    popularIsps: ["Türk Telekom", "Superonline", "TurkNet", "Kablonet"],
-    description: "Manisa organize sanayi ve merkez ilçeleri IP blokları, İzmir-Manisa santral geçişleri ve IP sorgulama verileri.",
-    ipRangesSample: ["88.251.0.0/16", "212.174.64.0/18"],
   },
   {
     slug: "balikesir",
@@ -248,9 +187,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Marmara",
     lat: 39.6484,
     lng: 27.8826,
-    popularIsps: ["Türk Telekom", "TurkNet", "Superonline", "Vodafone"],
-    description: "Balıkesir merkez, Bandırma ve Edremit bölgelerinde kullanılan IP adres havuzları ve servis sağlayıcı altyapı analizi.",
-    ipRangesSample: ["78.168.0.0/16", "85.97.0.0/16"],
   },
   {
     slug: "kahramanmaras",
@@ -259,9 +195,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Akdeniz",
     lat: 37.5858,
     lng: 36.9371,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "Vodafone Net"],
-    description: "Kahramanmaraş ili IPv4 ve IPv6 adres blokları, santral konumları ve internet operatörü sorgulama kılavuzu.",
-    ipRangesSample: ["78.186.0.0/16", "88.236.0.0/16"],
   },
   {
     slug: "hatay",
@@ -270,9 +203,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Akdeniz",
     lat: 36.4018,
     lng: 36.3498,
-    popularIsps: ["Türk Telekom", "Superonline", "Vodafone", "TurkNet"],
-    description: "Hatay (Antakya ve İskenderun) bölgesi IP adres blokları, fiber ve mobil şebeke IP sorgulama veritabanı.",
-    ipRangesSample: ["88.235.0.0/16", "78.189.0.0/16"],
   },
   {
     slug: "aydin",
@@ -281,9 +211,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Ege",
     lat: 37.856,
     lng: 27.8416,
-    popularIsps: ["Türk Telekom", "Superonline", "Vodafone Net", "TurkNet"],
-    description: "Aydın merkez, Kuşadası ve Didim bölgelerinde kullanılan internet IP adres aralıkları ve coğrafi konum çözümlemesi.",
-    ipRangesSample: ["88.249.0.0/16", "176.235.0.0/16"],
   },
   {
     slug: "tekirdag",
@@ -292,9 +219,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Marmara",
     lat: 40.9833,
     lng: 27.5167,
-    popularIsps: ["Türk Telekom", "TurkNet", "Kablonet", "Superonline"],
-    description: "Trakya bölgesi Tekirdağ ve Çorlu sanayi/konut internet altyapısı IP adres blokları, Avrupa çıkış gecikme süreleri.",
-    ipRangesSample: ["88.246.0.0/16", "78.162.0.0/16"],
   },
   {
     slug: "mugla",
@@ -303,9 +227,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Ege",
     lat: 37.2153,
     lng: 28.3636,
-    popularIsps: ["Türk Telekom", "Superonline", "Vodafone", "TurkNet"],
-    description: "Muğla, Bodrum, Fethiye ve Marmaris bölgelerinde aktif IPv4/IPv6 adres blokları ve operatör santral bilgileri.",
-    ipRangesSample: ["88.233.0.0/16", "212.156.140.0/20"],
   },
   {
     slug: "van",
@@ -314,9 +235,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Doğu Anadolu",
     lat: 38.4891,
     lng: 43.4089,
-    popularIsps: ["Türk Telekom", "Turkcell Superonline", "Vodafone"],
-    description: "Doğu Anadolu bölgesi Van ili IP adres blokları, internet servis sağlayıcıları ve coğrafi konum sorgulama rehberi.",
-    ipRangesSample: ["78.179.0.0/16", "85.103.0.0/16"],
   },
   {
     slug: "malatya",
@@ -325,9 +243,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Doğu Anadolu",
     lat: 38.3552,
     lng: 38.3095,
-    popularIsps: ["Türk Telekom", "Superonline", "Kablonet"],
-    description: "Malatya ili genişbant internet IP aralıkları, santral yönlendirmeleri ve canlı IP konum tespiti.",
-    ipRangesSample: ["78.182.0.0/16", "88.240.0.0/16"],
   },
   {
     slug: "erzurum",
@@ -336,9 +251,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Doğu Anadolu",
     lat: 39.9043,
     lng: 41.2679,
-    popularIsps: ["Türk Telekom", "Superonline", "Kablonet", "Vodafone"],
-    description: "Doğu Anadolu ana telekom omurga merkezi Erzurum IP adres blokları, üniversite ve kurum ağları IP sorgulama bilgileri.",
-    ipRangesSample: ["78.175.0.0/16", "193.140.120.0/21"],
   },
   {
     slug: "sivas",
@@ -347,9 +259,6 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "İç Anadolu",
     lat: 39.7477,
     lng: 37.0179,
-    popularIsps: ["Türk Telekom", "Superonline", "Vodafone Net"],
-    description: "Sivas ili IP adres aralıkları, fiber altyapı sağlayıcıları ve coğrafi IP konum doğrulama sistemi.",
-    ipRangesSample: ["85.107.0.0/16", "78.183.0.0/16"],
   },
   {
     slug: "ordu",
@@ -358,103 +267,101 @@ export const CITIES_DATA: CitySeoData[] = [
     region: "Karadeniz",
     lat: 40.9839,
     lng: 37.8764,
-    popularIsps: ["Türk Telekom", "Superonline", "TurkNet"],
-    description: "Ordu ve Fatsa/Ünye ilçeleri genişbant internet IP blokları, servis sağlayıcı ve santral konum analizi.",
-    ipRangesSample: ["78.173.0.0/16", "88.239.0.0/16"],
   },
 ];
 
+// ASN holder records checked against RIPEstat on 2026-10-25. This is not a list of every network used by each ISP.
 export const ISPS_DATA: IspSeoData[] = [
   {
-    slug: "turk-telekom",
-    name: "Türk Telekom",
-    asn: "AS9121",
-    country: "Türkiye",
-    website: "https://www.turktelekom.com.tr",
-    description: "Türkiye'nin en büyük omurga internet servis sağlayıcısı Türk Telekom (TTNET) IP blokları, DNS sunucuları ve ağ analiz bilgileri.",
-    dnsServers: ["195.175.39.39", "195.175.39.40"],
-    speedTips: ["Modem MTU değerini 1492 olarak ayarlayın", "TTNET DNS'leri yerine Cloudflare 1.1.1.1 veya Google 8.8.8.8 tercih edebilirsiniz"],
+    "slug": "turk-telekom",
+    "name": "Türk Telekom",
+    "asn": "AS9121",
+    "country": "Türkiye",
+    "website": "https://www.turktelekom.com.tr",
+    "description": "Türk Telekom bağlantınızın genel IP bilgisini sorgulayın; DNS ayarlarını, CGNAT belirtilerini ve AS9121 kayıt bilgisini kaynaklarıyla inceleyin.",
+    "registryHolder": "TTNet Turk Telekomunikasyon Anonim Sirketi",
+    "registryCheckedAt": "25 Ekim 2026"
   },
   {
-    slug: "turkcell-superonline",
-    name: "Turkcell Superonline",
-    asn: "AS34984",
-    country: "Türkiye",
-    website: "https://www.superonline.net",
-    description: "Turkcell Superonline fiber ve DSL altyapı IP blokları, ASN verileri ve kurumsal bağlantı parametreleri.",
-    dnsServers: ["213.74.1.1", "213.74.0.1"],
-    speedTips: ["IPv6 desteğini modeminizden etkinleştirin", "Fast path fiber yönlendirme ile düşük ping elde edin"],
+    "slug": "turkcell-superonline",
+    "name": "Turkcell Superonline",
+    "asn": "AS34984",
+    "country": "Türkiye",
+    "website": "https://www.superonline.net",
+    "description": "Turkcell Superonline bağlantınızın genel IP bilgisini sorgulayın; DNS ayarlarını, CGNAT belirtilerini ve AS34984 kayıt bilgisini kaynaklarıyla inceleyin.",
+    "registryHolder": "TELLCOM-AS Superonline Iletisim Hizmetleri A.S.",
+    "registryCheckedAt": "25 Ekim 2026"
   },
   {
-    slug: "turknet",
-    name: "TurkNet İletişim",
-    asn: "AS12735",
-    country: "Türkiye",
-    website: "https://turk.net",
-    description: "TurkNet GigaFiber ve VDSL kullanıcıları için IP adres havuzları, CGNAT tespiti, statik IP avantajları ve ASN ayrıntıları.",
-    dnsServers: ["193.192.98.8", "212.154.100.18"],
-    speedTips: ["GigaFiber 1000 Mbps simetrik hız için Cat6e kablo kullanın", "CGNAT havuzundan çıkmak için Statik IP tercih edebilirsiniz"],
+    "slug": "turknet",
+    "name": "TurkNet İletişim",
+    "asn": "AS12735",
+    "country": "Türkiye",
+    "website": "https://turk.net",
+    "description": "TurkNet İletişim bağlantınızın genel IP bilgisini sorgulayın; DNS ayarlarını, CGNAT belirtilerini ve AS12735 kayıt bilgisini kaynaklarıyla inceleyin.",
+    "registryHolder": "ASTurkNet TurkNet Iletisim Hizmetleri A.S.",
+    "registryCheckedAt": "25 Ekim 2026"
   },
   {
-    slug: "vodafone-net",
-    name: "Vodafone Net",
-    asn: "AS8385",
-    country: "Türkiye",
-    website: "https://www.vodafone.com.tr",
-    description: "Vodafone Net sabit genişbant ve mobil IP adres blokları, Whois ve ağ güvenliği analizi.",
-    dnsServers: ["62.248.130.4", "62.248.130.5"],
-    speedTips: ["Mobil bağlantıda APN ayarlarını kontrol edin", "Bölgesel baz istasyonu yoğunluğunu test edin"],
+    "slug": "vodafone-net",
+    "name": "Vodafone Net",
+    "asn": "AS15924",
+    "country": "Türkiye",
+    "website": "https://www.vodafone.com.tr",
+    "description": "Vodafone Net bağlantınızın genel IP bilgisini sorgulayın; DNS ayarlarını, CGNAT belirtilerini ve AS15924 kayıt bilgisini kaynaklarıyla inceleyin.",
+    "registryHolder": "BORUSANTELEKOM-AS Vodafone Net Iletisim Hizmetler AS",
+    "registryCheckedAt": "25 Ekim 2026"
   },
   {
-    slug: "turksat-kablonet",
-    name: "Türksat Kablonet",
-    asn: "AS15924",
-    country: "Türkiye",
-    website: "https://www.turksatkablo.com.tr",
-    description: "Türksat Kablo TV & Kablonet Docsis altyapısı IP aralıkları, DNS yapılandırmaları ve ping değerleri.",
-    dnsServers: ["194.27.0.1", "194.27.0.2"],
-    speedTips: ["Docsis 3.0/3.1 sinyal seviyelerini modem arayüzünden kontrol edin"],
+    "slug": "turksat-kablonet",
+    "name": "Türksat Kablonet",
+    "asn": "AS47524",
+    "country": "Türkiye",
+    "website": "https://www.turksatkablo.com.tr",
+    "description": "Türksat Kablonet bağlantınızın genel IP bilgisini sorgulayın; DNS ayarlarını, CGNAT belirtilerini ve AS47524 kayıt bilgisini kaynaklarıyla inceleyin.",
+    "registryHolder": "AS-TURKSAT Turksat Uydu Haberlesme Kablo TV ve Isletme A.S.",
+    "registryCheckedAt": "25 Ekim 2026"
   },
   {
-    slug: "millenicom",
-    name: "Millenicom",
-    asn: "AS39582",
-    country: "Türkiye",
-    website: "https://www.milleni.com.tr",
-    description: "Millenicom taahhütsüz fiber ve VDSL internet kullanıcıları için IP adres blokları, DNS sunucuları, CGNAT durumu ve ping optimizasyonu.",
-    dnsServers: ["193.192.100.100", "193.192.100.101"],
-    speedTips: ["Oyunlarda düşük ping için kablolu Ethernet bağlantısı tercih edin", "Statik IP paketi ile port yönlendirme kısıtlamalarını kaldırabilirsiniz"],
+    "slug": "millenicom",
+    "name": "Millenicom",
+    "asn": "AS34296",
+    "country": "Türkiye",
+    "website": "https://www.milleni.com.tr",
+    "description": "Millenicom bağlantınızın genel IP bilgisini sorgulayın; DNS ayarlarını, CGNAT belirtilerini ve AS34296 kayıt bilgisini kaynaklarıyla inceleyin.",
+    "registryHolder": "MILLENICOM-AS Millenicom Telekomunikasyon Hizmetleri Anonim Sirketi",
+    "registryCheckedAt": "25 Ekim 2026"
   },
   {
-    slug: "netspeed",
-    name: "Netspeed",
-    asn: "AS204970",
-    country: "Türkiye",
-    website: "https://www.netspeed.com.tr",
-    description: "Netspeed internet aboneleri için kullanılan IPv4/IPv6 adres havuzları, yurt dışı çıkış rotaları (BGP), DNS adresleri ve CGNAT sorgulama.",
-    dnsServers: ["1.1.1.1", "8.8.8.8"],
-    speedTips: ["Cloudflare 1.1.1.1 DNS ile yurt dışı CDN erişimini hızlandırın", "Modem hat zayıflaması (SNR Margin) değerlerinizi 8 dB üzerinde tutun"],
+    "slug": "netspeed",
+    "name": "Netspeed",
+    "asn": "AS206375",
+    "country": "Türkiye",
+    "website": "https://www.netspeed.com.tr",
+    "description": "Netspeed bağlantınızın genel IP bilgisini sorgulayın; DNS ayarlarını, CGNAT belirtilerini ve AS206375 kayıt bilgisini kaynaklarıyla inceleyin.",
+    "registryHolder": "NETSPEED NETSPEED INTERNET A.S.",
+    "registryCheckedAt": "25 Ekim 2026"
   },
   {
-    slug: "gibibirnet",
-    name: "GıbırNet (GibirNet)",
-    asn: "AS210063",
-    country: "Türkiye",
-    website: "https://gibir.net.tr",
-    description: "GıbırNet (GibirNet) oyuncuya özel düşük pingli internet altyapısı IP blokları, Valve/Riot sunucu rotaları ve CGNAT/Statik IP bilgileri.",
-    dnsServers: ["1.1.1.1", "8.8.8.8"],
-    speedTips: ["Oyun sunucularında paket kaybını önlemek için QoS ayarlarını yapılandırın"],
+    "slug": "gibibirnet",
+    "name": "GıbırNet (GibirNet)",
+    "asn": "AS208972",
+    "country": "Türkiye",
+    "website": "https://gibir.net.tr",
+    "description": "GıbırNet (GibirNet) bağlantınızın genel IP bilgisini sorgulayın; DNS ayarlarını, CGNAT belirtilerini ve AS208972 kayıt bilgisini kaynaklarıyla inceleyin.",
+    "registryHolder": "gibirnet-tr GIBIRNET ILETISIM HIZMETLERI SANAYI VE TICARET LIMITED SIRKETI",
+    "registryCheckedAt": "25 Ekim 2026"
   },
   {
-    slug: "atlantisnet",
-    name: "AtlantisNet",
-    asn: "AS201176",
-    country: "Türkiye",
-    website: "https://atlantisnet.com.tr",
-    description: "AtlantisNet 1000 Mbps GigaPon kendi fiber altyapısı IP adres aralıkları, simetrik internet hız ve ASN yönlendirme detayları.",
-    dnsServers: ["185.110.240.2", "1.1.1.1"],
-    speedTips: ["1000 Mbps hızdan tam verim almak için Wi-Fi 6 (802.11ax) router kullanın"],
-  },
+    "slug": "atlantisnet",
+    "name": "AtlantisNet",
+    "asn": "AS204457",
+    "country": "Türkiye",
+    "website": "https://atlantisnet.com.tr",
+    "description": "AtlantisNet bağlantınızın genel IP bilgisini sorgulayın; DNS ayarlarını, CGNAT belirtilerini ve AS204457 kayıt bilgisini kaynaklarıyla inceleyin.",
+    "registryHolder": "ATLANTIS-CENTRAL Atlantis Telekomunikasyon Bilisim Hizmetleri San. ve Tic. Ltd. Sti.",
+    "registryCheckedAt": "25 Ekim 2026"
+  }
 ];
 
 export const ASNS_DATA: AsnSeoData[] = [
@@ -464,7 +371,6 @@ export const ASNS_DATA: AsnSeoData[] = [
     name: "TTNET Türk Telekomünikasyon A.Ş.",
     org: "Turk Telekom",
     country: "TR",
-    allocatedIps: "15,000,000+",
     description: "Türkiye'nin ulusal omurga ağı olan AS9121 Türk Telekom otonom sistem numarası, IP ön ekleri ve BGP anonsları.",
   },
   {
@@ -473,7 +379,6 @@ export const ASNS_DATA: AsnSeoData[] = [
     name: "Turkcell Superonline",
     org: "Turkcell Iletisim Hizmetleri A.S.",
     country: "TR",
-    allocatedIps: "4,500,000+",
     description: "Turkcell Superonline otonom sistemi (AS34984), fiber optik BGP yönlendirmeleri ve IP havuzları.",
   },
   {
@@ -482,7 +387,6 @@ export const ASNS_DATA: AsnSeoData[] = [
     name: "TurkNet Iletisim Hizmetleri A.S.",
     org: "TurkNet",
     country: "TR",
-    allocatedIps: "1,200,000+",
     description: "TurkNet bağımsız omurga ağı AS12735 otonom sistemi ve uluslararası peering bağlantıları.",
   },
   {
@@ -491,7 +395,6 @@ export const ASNS_DATA: AsnSeoData[] = [
     name: "Google LLC",
     org: "Google LLC",
     country: "US",
-    allocatedIps: "18,000,000+",
     description: "Google'ın global BGP altyapısı, 8.8.8.8 DNS sunucuları ve Cloud omurgasını barındıran AS15169 detayları.",
   },
   {
@@ -500,7 +403,6 @@ export const ASNS_DATA: AsnSeoData[] = [
     name: "Cloudflare, Inc.",
     org: "Cloudflare, Inc.",
     country: "US",
-    allocatedIps: "4,000,000+",
     description: "Cloudflare Anycast CDN, 1.1.1.1 DNS ve DDoS koruma ağının omurgasını oluşturan AS13335.",
   },
 ];
