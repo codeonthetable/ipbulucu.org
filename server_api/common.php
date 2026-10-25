@@ -88,7 +88,9 @@ function ipb_http($url, $head=false, $timeoutMs=6500, $maxRedirects=3) {
         if (!$parts || !in_array($parts['scheme'] ?? '',['https','http'],true) || isset($parts['user']) || isset($parts['pass'])) ipb_fail(400,'Only HTTP/HTTPS URLs without credentials are supported.');
         $host = ipb_host($url); $port = $parts['port'] ?? ($parts['scheme']==='https' ? 443 : 80);
         if (!in_array($port,[80,443],true)) ipb_fail(400,'HTTP checks support ports 80 and 443.');
-        $ip = ipb_target($host); $remaining = (int)(($deadline - microtime(true))*1000);
+        // Fixed official DoH anycast addresses avoid repeated host-resolver lookups. TLS still verifies the original hostname.
+        $providerPins=['dns.google'=>'8.8.8.8','cloudflare-dns.com'=>'1.1.1.1'];
+        $ip = $providerPins[$host] ?? ipb_target($host); $remaining = (int)(($deadline - microtime(true))*1000);
         if ($remaining < 1 || !function_exists('curl_init')) return null;
         $headers=[]; $body=''; $headerBytes=0;
         $curl = curl_init($url);
@@ -99,7 +101,7 @@ function ipb_http($url, $head=false, $timeoutMs=6500, $maxRedirects=3) {
             CURLOPT_SSL_VERIFYPEER=>true, CURLOPT_SSL_VERIFYHOST=>2, CURLOPT_PROXY=>'',
             CURLOPT_RESOLVE=>[$host . ':' . $port . ':' . (strpos($ip,':')!==false ? '['.$ip.']' : $ip)],
             CURLOPT_USERAGENT=>'IPBulucu/1.1 (+https://ipbulucu.org/api-dokumantasyon)',
-            CURLOPT_HTTPHEADER=>['Accept: application/json, application/dns-json, */*'],
+            CURLOPT_HTTPHEADER=>[in_array($host,['dns.google','cloudflare-dns.com'],true) ? 'Accept: application/dns-json' : 'Accept: application/rdap+json, application/json, */*'],
             CURLOPT_HEADERFUNCTION=>function($c,$line) use (&$headers,&$headerBytes) {
                 $headerBytes += strlen($line); if ($headerBytes>65536) return 0;
                 if (stripos($line,'HTTP/')===0) $headers=[];
@@ -136,7 +138,7 @@ function ipb_doh($name,$type,$resolver='google',$timeoutMs=1600) {
     $answers=[];
     if ($rcode===0 && empty($data['TC'])) foreach (($data['Answer']??[]) as $r) if (($r['type']??null)===$codes[$type] && is_string($r['data']??null)) $answers[]=$r['data'];
     $status=$rcode===3 ? 'nxdomain' : ($rcode===0 && empty($data['TC']) ? ($answers ? 'resolved' : 'no-record') : 'unavailable');
-    return ['status'=>$status,'rcode'=>$rcode,'records'=>array_values(array_unique($answers)),'responseTimeMs'=>$ms,'resolver'=>$resolver];
+    return ['status'=>$status,'rcode'=>$rcode,'records'=>array_values(array_unique($answers)),'responseTimeMs'=>$ms,'resolver'=>$resolver,'upstreamHttpStatus'=>$response['status']??null];
 }
 function ipb_txt($value) {
     // DNS JSON represents TXT character strings quoted; concatenate their chunks.
