@@ -4,6 +4,7 @@ import { toolFetch } from "@/lib/usage";
 import { useState } from "react";
 import { ShieldCheck, ShieldAlert, CheckCircle2, XCircle, Search, Activity } from "lucide-react";
 import FaqAccordion from "@/components/FaqAccordion";
+import TroubleshootingGuide from "@/components/TroubleshootingGuide";
 
 const EN_BLACKLIST_FAQS = [
   {
@@ -154,6 +155,8 @@ export default function EnglishBlacklistCheckPage() {
           </div>
         </div>
       )}
+
+      <TroubleshootingGuide kind="email" language="en" />
 
       <div className="max-w-3xl mx-auto pt-8">
         <FaqAccordion items={EN_BLACKLIST_FAQS} />

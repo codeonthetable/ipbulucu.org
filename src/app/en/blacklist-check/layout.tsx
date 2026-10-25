@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "IP Blacklist Checker - DNSBL Results and Availability",
-  description: "Query SpamCop and DroneBL with official links to Spamhaus and Barracuda. Unavailable results are shown as unknown, never clean.",
+  title: "IP Blacklist Checker - Check IP Spam Listings",
+  description: "Check an outbound mail IP against available DNSBL sources. See unknown results, official listing checks and next steps for email delivery problems.",
   alternates: {
     canonical: "https://ipbulucu.org/en/blacklist-check/",
   },
   openGraph: {
-    title: "IP Blacklist Checker - DNSBL Results and Availability",
-    description: "Query SpamCop and DroneBL with official links to Spamhaus and Barracuda. Unavailable results are shown as unknown, never clean.",
+    title: "IP Blacklist Checker - Check IP Spam Listings",
+    description: "Check an outbound mail IP against available DNSBL sources. See unknown results, official listing checks and next steps for email delivery problems.",
     url: "https://ipbulucu.org/en/blacklist-check/",
     siteName: "IPBulucu.org",
     type: "website",

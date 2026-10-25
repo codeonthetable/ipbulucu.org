@@ -4,6 +4,9 @@ import { toolFetch } from "@/lib/usage";
 import { useState } from "react";
 import { Mail, ShieldCheck, ShieldAlert, CheckCircle2, XCircle, Search, Award } from "lucide-react";
 import FaqAccordion from "@/components/FaqAccordion";
+import TroubleshootingGuide from "@/components/TroubleshootingGuide";
+import DiagnosticResultSummary from "@/components/DiagnosticResultSummary";
+import { emailSummary } from "@/lib/diagnostic-summary";
 
 const EN_EMAIL_FAQS = [
   {
@@ -21,6 +24,7 @@ export default function EnglishEmailSecurityPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const nullMx = result?.mx?.records?.length === 1 && result.mx.records[0].priority === 0 && result.mx.records[0].exchange === ".";
 
   const handleCheck = async (targetDomain: string) => {
     if (!targetDomain.trim()) return;
@@ -46,10 +50,10 @@ export default function EnglishEmailSecurityPage() {
       <div className="text-center max-w-2xl mx-auto">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900 mb-3">
           <Mail className="w-3.5 h-3.5" />
-          Anti-Spam & Phishing Authentication Audit
+          Mail DNS Records
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-          Email Security & SPF / DMARC Checker
+          MX, SPF & DMARC Record Checker
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
           Inspect MX, SPF and direct _dmarc TXT records, including missing or duplicate records.
@@ -63,22 +67,22 @@ export default function EnglishEmailSecurityPage() {
             e.preventDefault();
             handleCheck(domain);
           }}
-          className="relative flex items-center"
+          className="flex flex-col sm:flex-row gap-3"
         >
-          <Search className="absolute left-4 w-5 h-5 text-gray-400 pointer-events-none" />
           <input
             type="text"
+            aria-label="Domain name"
             value={domain}
             onChange={(e) => setDomain(e.target.value)}
             placeholder="e.g. google.com or yourcompany.com"
-            className="w-full pl-12 pr-28 py-3.5 text-sm sm:text-base rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-gray-900 dark:text-white shadow-lg shadow-gray-100/50 dark:shadow-none transition-all"
+            className="w-full min-w-0 px-4 py-3.5 text-sm sm:text-base rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-gray-900 dark:text-white shadow-lg shadow-gray-100/50 dark:shadow-none transition-all"
           />
           <button
             type="submit"
             disabled={loading}
-            className="absolute right-2 px-5 py-2 text-xs sm:text-sm font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-500/20 disabled:opacity-50 transition-all"
+            className="shrink-0 px-5 py-2 text-xs sm:text-sm font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-500/20 disabled:opacity-50 transition-all"
           >
-            {loading ? "Testing..." : "Test Security"}
+            {loading ? "Testing..." : "Check Records"}
           </button>
         </form>
       </div>
@@ -113,14 +117,14 @@ export default function EnglishEmailSecurityPage() {
             <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
-                  {result.spf?.present ? (
+                  {result.spf?.count === 1 ? (
                     <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                   ) : (
                     <XCircle className="w-5 h-5 text-red-500" />
                   )}
                   SPF (Sender Policy Framework)
                 </span>
-                <span className={`text-xs font-bold px-2 py-0.5 rounded ${result.spf?.present ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300" : "bg-red-100 text-red-700"}`}>
+                <span className={`text-xs font-bold px-2 py-0.5 rounded ${result.spf?.count === 1 ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300" : "bg-red-100 text-red-700"}`}>
                   {result.spf?.count > 1 ? "Multiple records" : result.spf?.present ? "Record found" : "Missing"}
                 </span>
               </div>
@@ -133,14 +137,14 @@ export default function EnglishEmailSecurityPage() {
             <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
-                  {result.dmarc?.present ? (
+                  {result.dmarc?.count === 1 ? (
                     <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                   ) : (
                     <XCircle className="w-5 h-5 text-amber-500" />
                   )}
                   DMARC TXT Record
                 </span>
-                <span className={`text-xs font-bold px-2 py-0.5 rounded ${result.dmarc?.present ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300" : "bg-amber-100 text-amber-700"}`}>
+                <span className={`text-xs font-bold px-2 py-0.5 rounded ${result.dmarc?.count === 1 ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300" : "bg-amber-100 text-amber-700"}`}>
                   {result.dmarc?.count > 1 ? "Multiple records" : result.dmarc?.present ? "Record found" : "No direct record"}
                 </span>
               </div>
@@ -153,7 +157,7 @@ export default function EnglishEmailSecurityPage() {
             <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
-                  {result.mx?.present ? (
+                  {result.mx?.present && !nullMx ? (
                     <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                   ) : (
                     <XCircle className="w-5 h-5 text-red-500" />
@@ -161,9 +165,10 @@ export default function EnglishEmailSecurityPage() {
                   MX Mail Servers
                 </span>
                 <span className="text-xs font-bold text-gray-500">
-                  {result.mx?.records?.length || 0} Servers
+                  {result.mx?.records?.length || 0} records
                 </span>
               </div>
+              {nullMx && <p className="text-sm text-amber-700 dark:text-amber-400">Null MX: this domain declares it does not accept email.</p>}
               <div className="space-y-1 mt-2">
                 {result.mx?.records?.map((m: any, i: number) => (
                   <div key={i} className="text-xs font-mono text-gray-700 dark:text-gray-300 flex justify-between p-1.5 bg-white dark:bg-gray-900 rounded-lg">
@@ -176,6 +181,9 @@ export default function EnglishEmailSecurityPage() {
           </div>
         </div>
       )}
+
+      {result && <DiagnosticResultSummary summary={emailSummary(result, "en")} language="en" />}
+      <TroubleshootingGuide kind="email" language="en" />
 
       {/* Privacy & Security Tip Card */}
       <div className="max-w-3xl mx-auto rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent p-6 shadow-sm">

@@ -6,6 +6,9 @@ import { Zap, Server, Shield, CheckCircle2, XCircle, AlertCircle, Play, Layers }
 import FaqAccordion from "@/components/FaqAccordion";
 import AdPlaceholder from "@/components/AdPlaceholder";
 import { PortCheckResult } from "@/lib/types";
+import TroubleshootingGuide from "@/components/TroubleshootingGuide";
+import DiagnosticResultSummary from "@/components/DiagnosticResultSummary";
+import { portSummary } from "@/lib/diagnostic-summary";
 
 const POPULAR_PORTS = [
   { port: 80, name: "HTTP (Web)" },
@@ -37,6 +40,7 @@ const PORT_FAQS = [
 
 export default function PortCheckPage() {
   const [host, setHost] = useState("");
+  const [checkedHost, setCheckedHost] = useState("");
   const [port, setPort] = useState("80");
   const [loading, setLoading] = useState(false);
   const [batchLoading, setBatchLoading] = useState(false);
@@ -47,12 +51,14 @@ export default function PortCheckPage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleSingleCheck = async (portNumber: string) => {
+    if (loading || batchLoading) return;
     if (!host.trim()) {
       setError("Lütfen test edilecek bir IP veya alan adı girin.");
       return;
     }
 
     setLoading(true);
+    setCheckedHost(host.trim());
     setError(null);
     setSingleResult(null);
     setBatchResults(null);
@@ -72,12 +78,14 @@ export default function PortCheckPage() {
   };
 
   const handleBatchScan = async () => {
+    if (loading || batchLoading) return;
     if (!host.trim()) {
       setError("Lütfen taranacak bir IP veya alan adı girin.");
       return;
     }
 
     setBatchLoading(true);
+    setCheckedHost(host.trim());
     setError(null);
     setSingleResult(null);
     setBatchResults(null);
@@ -231,7 +239,7 @@ export default function PortCheckPage() {
                     ? "AÇIK (OPEN)"
                     : singleResult.status === "closed"
                     ? "KAPALI (CLOSED)"
-                    : "FİLTRELİ / ZAMAN AŞIMI"}
+                    : singleResult.status === "filtered" ? "BELİRSİZ / ZAMAN AŞIMI" : "TEST EDİLEMEDİ"}
                 </span>
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -249,7 +257,7 @@ export default function PortCheckPage() {
           <div className="rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 sm:p-8 shadow-sm">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Layers className="w-5 h-5 text-blue-600" />
-              Toplu Port Tarama Sonuçları: <span className="font-mono text-blue-600">{host}</span>
+              Toplu Port Tarama Sonuçları: <span className="font-mono text-blue-600">{checkedHost}</span>
             </h2>
 
             <div className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -278,7 +286,7 @@ export default function PortCheckPage() {
                       </span>
                     ) : (
                       <span className="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 font-bold text-xs">
-                        FİLTRELİ
+                        {r.status === "filtered" ? "BELİRSİZ" : "TEST EDİLEMEDİ"}
                       </span>
                     )}
                   </div>
@@ -288,6 +296,10 @@ export default function PortCheckPage() {
           </div>
         </div>
       )}
+
+      {(singleResult || batchResults?.length) ? <DiagnosticResultSummary summary={portSummary(singleResult ? [singleResult] : batchResults!, "tr")} /> : null}
+
+      <TroubleshootingGuide kind="port" />
 
       <AdPlaceholder slotId="port-mid-banner" format="leaderboard" />
 
