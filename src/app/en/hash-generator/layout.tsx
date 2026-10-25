@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Online Hash Generator - MD5, SHA-1, SHA-256 & SHA-512 Calculator",
-  description: "Generate cryptographic hashes (MD5, SHA-1, SHA-256, SHA-512) client-side in your browser with zero data transmission.",
+  title: "Online Hash Generator - SHA-1, SHA-256 and SHA-512",
+  description: "Calculate SHA-1, SHA-256 and SHA-512 hashes in your browser. Text entered into this tool is not sent to the server.",
   alternates: {
     canonical: "https://ipbulucu.org/en/hash-generator/",
   },
   openGraph: {
-    title: "Online Hash Generator - MD5, SHA-1, SHA-256 & SHA-512 Calculator",
-    description: "Generate cryptographic hashes (MD5, SHA-1, SHA-256, SHA-512) client-side in your browser with zero data transmission.",
+    title: "Online Hash Generator - SHA-1, SHA-256 and SHA-512",
+    description: "Calculate SHA-1, SHA-256 and SHA-512 hashes in your browser. Text entered into this tool is not sent to the server.",
     url: "https://ipbulucu.org/en/hash-generator/",
     siteName: "IPBulucu.org",
     type: "website",
