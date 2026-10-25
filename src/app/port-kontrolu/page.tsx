@@ -31,7 +31,7 @@ const PORT_FAQS = [
   },
   {
     question: "Kapalı (Closed) ile Filtreli (Filtered/Stealth) port arasındaki fark nedir?",
-    answer: "Kapalı port, sunucunun/cihazın aktif olduğunu ancak o portta hiçbir servisin dinlemediğini belirtir. Filtreli port ise bir güvenlik duvarının (Firewall) veya CGNAT yapısının gelen paketleri tamamen sessizce düşürdüğünü gösterir.",
+    answer: "Kapalı sonucu TCP bağlantısının reddedildiğini gösterir. Filtreli veya zaman aşımı sonucu belirsizdir: güvenlik duvarı, yönlendirme, erişim sorunu ya da yanıt vermeyen hedef kaynaklı olabilir. Tek başına CGNAT veya kapalı port kanıtı değildir.",
   },
 ];
 

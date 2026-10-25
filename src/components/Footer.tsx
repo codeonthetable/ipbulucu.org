@@ -47,7 +47,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href={isEn ? "/en/dns-propagation" : "/dns-yayilma-kontrolu"} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  {isEn ? "Global DNS Propagation" : "Global DNS Yayılma Testi"}
+                  {isEn ? "DNS Resolver Comparison" : "DNS Çözümleyici Karşılaştırma"}
                 </Link>
               </li>
               <li>
@@ -62,7 +62,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href={isEn ? "/en/port-scanner" : "/port-kontrolu"} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  {isEn ? "Port Scanner (Batch)" : "Açık Port Testi (Toplu)"}
+                  {isEn ? "Open Port Check" : "Açık Port Kontrolü"}
                 </Link>
               </li>
               <li>

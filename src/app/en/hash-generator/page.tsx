@@ -62,7 +62,7 @@ export default function EnglishHashGeneratorPage() {
           Cryptographic Hash Generator
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-          Generate secure SHA-256, SHA-1, and SHA-512 hashes instantly inside your browser without sending data to any server.
+          Calculate SHA-256, SHA-1 and SHA-512 hashes in your browser. The text entered into this tool is not sent to the server.
         </p>
       </div>
 
