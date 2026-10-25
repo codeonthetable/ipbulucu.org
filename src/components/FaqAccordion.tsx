@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { ChevronDown, HelpCircle } from "lucide-react";
 import { generateFaqSchema } from "@/lib/schemas";
 
@@ -19,9 +20,11 @@ interface FaqAccordionProps {
 export default function FaqAccordion({
   faqs,
   items,
-  title = "Frequently Asked Questions / Sıkça Sorulan Sorular",
-  subtitle = "Everything you need to know about network diagnostics and protocols.",
+  title,
+  subtitle,
 }: FaqAccordionProps) {
+  const pathname = usePathname() || "/";
+  const isEn = pathname === "/en" || pathname.startsWith("/en/");
   const list = faqs || items || [];
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
@@ -42,13 +45,13 @@ export default function FaqAccordion({
       <div className="text-center max-w-2xl mx-auto mb-8">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900 mb-3">
           <HelpCircle className="w-3.5 h-3.5" />
-          FAQ
+          {isEn ? "FAQ" : "SSS"}
         </div>
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-          {title}
+          {title ?? (isEn ? "Frequently Asked Questions" : "Sıkça Sorulan Sorular")}
         </h2>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-          {subtitle}
+          {subtitle ?? (isEn ? "Questions about network tools and interpreting results." : "Ağ araçları ve sonuçların yorumlanması hakkında sorular.")}
         </p>
       </div>
 
