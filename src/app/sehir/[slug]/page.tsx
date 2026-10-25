@@ -25,8 +25,8 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
   if (!city) return { title: "Şehir Bulunamadı - IP Bulucu" };
 
   return {
-    title: `${city.name} IP Adresleri & Konum Sorgulama (${city.plate}) | IPBulucu.org`,
-    description: `${city.name} iline ait IPv4/IPv6 IP adres blokları, Türk Telekom, Superonline, TurkNet altyapı bilgileri, harita ve coğrafi IP çözümleme rehberi.`,
+    title: `${city.name} IP Konum Sorgulama ve Doğruluk Sınırları | IPBulucu.org`,
+    description: `${city.name} için genel IP konum bilgisi nasıl yorumlanır? Yaklaşık şehir konumu, farklı il görünmesi ve IP sorgusunun sınırları.`,
     keywords: [
       `${city.name.toLowerCase()} ip adresleri`,
       `${city.name.toLowerCase()} ip sorgulama`,
@@ -36,12 +36,7 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
     alternates: {
       canonical: `https://ipbulucu.org/sehir/${city.slug}/`,
     },
-    other: {
-      "geo.region": "TR-" + city.plate,
-      "geo.placename": city.name,
-      "geo.position": `${city.lat};${city.lng}`,
-      "ICBM": `${city.lat}, ${city.lng}`,
-    },
+
   };
 }
 
@@ -62,11 +57,11 @@ export default async function CityPage({ params }: CityPageProps) {
   const cityFaqs = [
     {
       question: `${city.name} bölgesinde IP adresim neden farklı bir ilde görünebilir?`,
-      answer: `İnternet servis sağlayıcıları (ISP) dinamik IP havuzlarını bölgesel santraller arasında dağıtır. ${city.name} ilinde olsanız dahi operatörünüzün yönlendiricisi (BGP gateway) bazen İstanbul veya Ankara ana omurgası üzerinden çıkış yapabilir.`,
+      answer: `IP konum veritabanları yaklaşık bir bölge tahmin eder. Mobil ağ, VPN, operatör çıkışı veya güncel olmayan kayıt nedeniyle ${city.name} dışında bir şehir gösterilebilir. Bu sonuç fiziksel adresinizi belirlemez.`,
     },
     {
-      question: `${city.name} ilinde en hızlı internet servis sağlayıcıları hangileridir?`,
-      answer: `${city.name} genelinde ${city.popularIsps.join(", ")} gibi popüler sağlayıcılar hizmet vermektedir. Fiber (FTTH) ve GigaFiber altyapıları en düşük ping ve en yüksek kararlılığı sağlar.`,
+      question: `${city.name} konumu bir IP adresinden kesin bulunabilir mi?`,
+      answer: "Hayır. Bir IP sorgusu kişi, ev veya santral konumunu kesinleştirmez. Şehir haritası yalnız coğrafi bağlam sağlar; abone veya operatör altyapısı haritası değildir.",
     },
   ];
 
@@ -96,63 +91,31 @@ export default async function CityPage({ params }: CityPageProps) {
           {city.region} Bölgesi • Plaka Kodu: {city.plate}
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-          {city.name} IP Adresleri & Konum Rehberi
+          {city.name} IP Konum Bilgisi Nasıl Yorumlanır?
         </h1>
         <p className="text-base text-gray-600 dark:text-gray-400 max-w-3xl mt-3 leading-relaxed">
-          {city.description}
+          {city.name} için IP sorgusunda görülen şehir adı yaklaşık bir veri sağlayıcı tahminidir. Genel IP bilgisini sorgulayabilir ve aşağıdaki şehir haritasıyla coğrafi bağlamı karşılaştırabilirsiniz.
         </p>
       </div>
 
       {/* Live Interactive IP Finder for this City */}
       <InteractiveIpFinder
-        defaultTitle={`${city.name} Canlı IP & Santral Konum Sorgulama`}
-        placeholder={`${city.name} veya başka bir IP adresini sorgulayın...`}
+        defaultTitle={`${city.name} için Genel IP Konum Sorgusu`}
+        placeholder="Genel IP adresi veya alan adı girin"
         buttonLabel="IP Konumunu Sorgula"
       />
 
-      {/* Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm">
-          <div className="flex items-center gap-2 text-blue-600 font-bold mb-3">
-            <Building className="w-5 h-5" />
-            <h3>Aktif Servis Sağlayıcılar</h3>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {city.popularIsps.map((isp, i) => (
-              <span key={i} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-xs font-medium rounded-lg">
-                {isp}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm">
-          <div className="flex items-center gap-2 text-emerald-600 font-bold mb-3">
-            <Globe className="w-5 h-5" />
-            <h3>Örnek IP Blokları</h3>
-          </div>
-          <div className="space-y-1 font-mono text-xs text-gray-700 dark:text-gray-300">
-            {city.ipRangesSample.map((range, i) => (
-              <div key={i} className="p-1.5 bg-gray-50 dark:bg-gray-800 rounded">
-                {range}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm">
-          <div className="flex items-center gap-2 text-purple-600 font-bold mb-3">
-            <MapPin className="w-5 h-5" />
-            <h3>Coğrafi Bilgiler</h3>
-          </div>
-          <p className="text-xs text-gray-600 dark:text-gray-400">
-            Enlem / Boylam: <strong className="font-mono text-gray-900 dark:text-white">{city.lat}, {city.lng}</strong>
-          </p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-            Bölge: <strong className="text-gray-900 dark:text-white">{city.region}</strong>
-          </p>
-        </div>
-      </div>
+      <section className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 space-y-4">
+        <h2 className="text-xl font-bold">Sonucu nasıl kontrol edebilirsiniz?</h2>
+        <ol className="list-decimal pl-5 space-y-3 text-sm text-gray-600 dark:text-gray-300">
+          <li>Wi-Fi ve mobil bağlantıda görülen genel IP ve şehir bilgilerini karşılaştırın. Bağlantı değişikliği farklı bir ağ çıkışı kullanabilir.</li>
+          <li>VPN veya kurumsal ağ kullanıyorsanız gösterilen konumun çıkış ağına ait olabileceğini değerlendirin. Şehir adından kişinin yaşadığı yeri çıkarmayın.</li>
+          <li>Hatalı görünen kaydı sorgu sonucunda adı belirtilen veri sağlayıcıya bildirin. Bir şehre kesin tahsisli IP blokları veya adres bazında altyapı kapsamı bu sayfadan doğrulanamaz.</li>
+        </ol>
+        <p className="text-sm">IP konumlandırmasının genel sınırları için <a className="text-blue-600 underline" href="https://www.maxmind.com/en/geoip/ip-geolocation-accuracy">MaxMind’in doğruluk açıklamasını</a> inceleyebilirsiniz. Bu kaynak, sitemizdeki sonuçların MaxMind verisi kullandığı anlamına gelmez; her sorgunun kendi kaynak etiketi esas alınır.</p>
+        <Link href="/ip-ile-konum-bulma-nasil-yapilir/" className="inline-block text-blue-600 underline">IP ile konum bulma rehberi →</Link>
+      </section>
+      <p className="text-sm text-gray-500">Aşağıdaki harita {city.name} şehir bölgesini gösterir; sorgulanan IP’nin veya bir kişinin konumu değildir.</p>
 
       {/* Map for the City */}
       <IpMap

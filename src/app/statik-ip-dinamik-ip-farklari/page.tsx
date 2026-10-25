@@ -1,129 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  Globe2,
-  Lock,
-  RefreshCw,
-  ShieldCheck,
-  Server,
-  Zap,
-  CheckCircle2,
-  XCircle,
-} from "lucide-react";
 import FaqAccordion from "@/components/FaqAccordion";
-import AdPlaceholder from "@/components/AdPlaceholder";
-
-export const metadata: Metadata = {
-  title: "Statik IP ve Dinamik IP Farkı Nedir? Hangisini Seçmelisiniz?",
-  description:
-    "Statik IP ile Dinamik IP arasındaki tüm teknik ve güvenlik farkları. Güvenlik kameraları, uzaktan çalışma ve online oyunlar için hangisi daha avantajlı?",
-  alternates: {
-    canonical: "https://ipbulucu.org/statik-ip-dinamik-ip-farklari",
-  },
-};
-
-const STATIK_FAQS = [
-  {
-    question: "Statik IP nedir?",
-    answer:
-      "Statik IP, internet servis sağlayıcınız tarafından modeminize veya sunucunuza atanan ve modem yeniden başlatılsa dahi hiçbir zaman değişmeyen sabit IP adresidir.",
-  },
-  {
-    question: "Dinamik IP güvenli midir?",
-    answer:
-      "Evet, bireysel ev kullanıcıları için Dinamik IP daha avantajlıdır. Modemi her yeniden başlattığınızda yeni bir IP atandığı için hedefli siber saldırıların ve takibin önüne geçer.",
-  },
-  {
-    question: "Statik IP oyunlarda pingi düşürür mü?",
-    answer:
-      "Statik IP doğrudan pinginizi büyük oranda düşürmez; ancak CGNAT havuzundan çıkardığı için paket kaybını (packet loss) ve ping dalgalanmasını (jitter) tamamen sıfırlar.",
-  },
+export const metadata:Metadata={title:"Statik IP ve Dinamik IP Farkları: CGNAT, Port Erişimi ve Oyunlar",description:"Statik ve dinamik IP’nin farkı nedir? IP değişimi, CGNAT, uzaktan erişim, güvenlik ve oyun gecikmesi hakkında doğru bilinen yanlışlar.",alternates:{canonical:"https://ipbulucu.org/statik-ip-dinamik-ip-farklari/"}};
+const rows=[
+ ["Adresin değişmesi","Atama süresi ve sağlayıcı politikasına bağlıdır; yeniden bağlantıda aynı adres verilebilir.","Hizmet kapsamında sabit tutulur; operatör veya hizmet değişikliğinde yeniden atanabilir."],
+ ["CGNAT","Dinamik adres genel IP veya paylaşımlı çıkış arkasında olabilir.","Genel statik IP hizmetinin kapsamını sağlayıcıyla doğrulayın."],
+ ["Port erişimi","Genel adres, çalışan servis, NAT ve güvenlik duvarı kurallarına bağlıdır.","Sabit adres tek başına port açmaz; aynı servis ve güvenlik denetimleri gerekir."],
+ ["Maliyet","Abonelik koşullarına bağlıdır.","Ek ücret veya farklı paket gerekebilir; güncel koşulları operatör belirler."],
+ ["Gecikme ve güvenlik","Adres değişmesi düşük ping veya saldırıdan korunma garantisi değildir.","Sabit adres düşük ping, sıfır paket kaybı veya güvenlik garantisi değildir."]
 ];
-
-export default function StatikDinamikPage() {
-  return (
-    <div className="space-y-10 max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="space-y-4">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span>IP Protokolleri & Karşılaştırma Rehberi</span>
-        </div>
-        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
-          Statik IP ile Dinamik IP Arasındaki Farklar Nelerdir?
-        </h1>
-        <p className="text-base md:text-lg text-gray-600 dark:text-slate-300 leading-relaxed">
-          İnternet aboneliğinizde varsayılan olarak gelen Dinamik IP ile ek ücretle kiralanan Statik IP&#39;nin avantajları, dezavantajları ve kullanım senaryoları.
-        </p>
-      </div>
-
-      {/* Featured Snippet Definition Box */}
-      <div className="rounded-2xl border-2 border-blue-500/40 bg-white dark:bg-slate-900/90 p-6 shadow-xl relative overflow-hidden">
-        <div className="space-y-2">
-          <div className="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-wider">Kısa ve Net Cevap (Özet)</div>
-          <p className="text-sm md:text-base text-gray-900 dark:text-white font-medium leading-relaxed">
-            <b>Dinamik IP;</b> modemin her açılıp kapanmasında değişen geçici adrestir (Ev kullanıcıları için ideal ve ücretsizdir). <b>Statik IP</b> ise hiçbir zaman değişmeyen sabit adrestir (Güvenlik kameraları, sunucular ve CGNAT&#39;tan kurtulmak için kiralanır).
-          </p>
-        </div>
-      </div>
-
-      {/* Comparison Table */}
-      <div className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 overflow-hidden">
-        <h2 className="text-xl font-bold text-white mb-4">Detaylı Karşılaştırma Tablosu</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs md:text-sm text-slate-300 border-collapse">
-            <thead>
-              <tr className="border-b border-slate-800 text-white font-bold bg-slate-950/60">
-                <th className="p-3">Özellik</th>
-                <th className="p-3 text-blue-400">Dinamik IP</th>
-                <th className="p-3 text-emerald-400">Statik IP</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              <tr>
-                <td className="p-3 font-semibold text-white">Değişkenlik</td>
-                <td className="p-3">Modem her açıldığında değişir</td>
-                <td className="p-3">Sürekli sabittir, hiç değişmez</td>
-              </tr>
-              <tr>
-                <td className="p-3 font-semibold text-white">Maliyet</td>
-                <td className="p-3 text-emerald-400 font-bold">Ücretsiz (Standart)</td>
-                <td className="p-3 text-amber-400 font-bold">Aylık Ek Ücretli</td>
-              </tr>
-              <tr>
-                <td className="p-3 font-semibold text-white">CGNAT Durumu</td>
-                <td className="p-3">Genellikle CGNAT havuzundadır</td>
-                <td className="p-3 text-emerald-400 font-bold">Genel statik IP hizmetine bağlıdır</td>
-              </tr>
-              <tr>
-                <td className="p-3 font-semibold text-white">Port Açma (Forwarding)</td>
-                <td className="p-3 text-rose-400">Zor / CGNAT varsa imkansız</td>
-                <td className="p-3 text-emerald-400 font-bold">Doğrudan Açılabilir</td>
-              </tr>
-              <tr>
-                <td className="p-3 font-semibold text-white">Hedefli Siber Tehdit</td>
-                <td className="p-3 text-emerald-400">Düşük (IP değiştikçe korunur)</td>
-                <td className="p-3 text-rose-400">Daha yüksek (IP sabit olduğu için)</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <AdPlaceholder slotId="statik-mid" format="leaderboard" />
-
-      {/* Interactive Tool Link */}
-      <div className="p-6 rounded-3xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/60 to-slate-900 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          <h3 className="text-base font-bold text-white">Şu Anki IP Türünüzü Öğrenmek İster misiniz?</h3>
-          <p className="text-xs text-slate-300 mt-1">ipbulucu.org algoritması IP&#39;nizin Statik mi Dinamik mi olduğunu analiz eder.</p>
-        </div>
-        <Link href="/" className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shrink-0 transition-all">
-          Hemen Test Et &rarr;
-        </Link>
-      </div>
-
-      <FaqAccordion faqs={STATIK_FAQS} title="Statik ve Dinamik IP SSS" />
-    </div>
-  );
-}
+export default function StaticIpGuide(){return <article className="mx-auto max-w-4xl space-y-8">
+ <header className="space-y-4"><p className="text-sm text-blue-600">IP adresleme rehberi · 25 Ekim 2026</p><h1 className="text-3xl sm:text-4xl font-extrabold">Statik IP ile dinamik IP arasındaki farklar</h1><p className="text-gray-600 dark:text-gray-300">Statik IP, hizmet kapsamında sabit tutulan adrestir. Dinamik IP, atama politikasına göre yeniden verilebilir. Modemi yeniden başlatmak mutlaka farklı bir IP alacağınız anlamına gelmez.</p></header>
+ <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-gray-800"><table className="w-full text-left text-sm"><thead className="bg-blue-50 dark:bg-gray-900"><tr><th className="p-4">Özellik</th><th className="p-4">Dinamik IP</th><th className="p-4">Statik IP</th></tr></thead><tbody>{rows.map(([label,dynamic,fixed])=><tr key={label} className="border-t border-gray-200 dark:border-gray-800"><th className="p-4">{label}</th><td className="p-4">{dynamic}</td><td className="p-4">{fixed}</td></tr>)}</tbody></table></div>
+ <section className="space-y-3"><h2 className="text-xl font-bold">Hangi durumda gerekli olabilir?</h2><p>Bir servise sabit adres üzerinden erişmek veya bir sistemde IP izin listesi kullanmak istiyorsanız genel statik IP yararlı olabilir. Yalnız web gezinmesi veya oyun için satın almadan önce ihtiyacınızı belirleyin. Güvenlik duvarı, güncel yazılım ve güçlü kimlik doğrulama her iki adres türünde de gereklidir.</p></section>
+ <section className="space-y-3"><h2 className="text-xl font-bold">Tek sorguyla statik IP veya CGNAT anlaşılır mı?</h2><p>Genel IP sorgusu, sağlayıcınızın adres tahsis sözleşmesini göstermez. Modemin WAN adresini genel IP ile karşılaştırmak ipucu verir; <code>100.64.0.0/10</code> paylaşımlı adres alanı CGN için ayrılmıştır. VPN, farklı bağlantı veya başka NAT katmanları da adres farkına yol açabilir. Kesin hizmet durumunu sağlayıcınızdan öğrenin.</p><p><Link href="/ip-takip/" className="text-blue-600 underline">Sekme açıkken IP değişimini izle</Link>. Bir süre değişiklik olmaması, adresin sözleşmesel olarak statik olduğunu kanıtlamaz.</p></section>
+ <section className="space-y-3"><h2 className="text-xl font-bold">Teknik kaynaklar</h2><p className="text-sm">Adres atama ve yeniden kullanım davranışı: <a href="https://datatracker.ietf.org/doc/html/rfc2131" className="text-blue-600 underline">RFC 2131 — DHCP</a>. Paylaşımlı CGN adres alanı: <a href="https://datatracker.ietf.org/doc/html/rfc6598" className="text-blue-600 underline">RFC 6598</a>. Bunlar internet aboneliğinizin ticari koşullarını belirlemez.</p><Link href="/oyunlarda-ping-dusurme-yollari/" className="text-blue-600 underline">Ping ve paket kaybı sorun giderme rehberi →</Link></section>
+ <FaqAccordion title="Statik ve dinamik IP soruları" faqs={[{question:"Modemi yeniden başlatınca IP her zaman değişir mi?",answer:"Hayır. Atama süresi ve sağlayıcı politikasına bağlı olarak aynı adres yeniden verilebilir."},{question:"Dinamik IP beni saldırılardan korur mu?",answer:"IP’nin değişmesi bir güvenlik kontrolü değildir. Servislerin güncellenmesi, güvenlik duvarı ve kimlik doğrulama ayarları gerekir."},{question:"Statik IP pingi veya paket kaybını düzeltir mi?",answer:"Böyle bir garanti yoktur. Gecikme ve kayıp, erişim hattı, yerel ağ, yoğunluk ve sunucuya giden rotaya bağlıdır."}]}/>
+ </article>;}
