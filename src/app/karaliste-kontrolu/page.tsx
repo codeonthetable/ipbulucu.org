@@ -14,6 +14,8 @@ import {
 import FaqAccordion from "@/components/FaqAccordion";
 import AdPlaceholder from "@/components/AdPlaceholder";
 import { BlacklistCheckResult } from "@/lib/types";
+import DiagnosticResultSummary from "@/components/DiagnosticResultSummary";
+import { blacklistSummary } from "@/lib/diagnostic-summary";
 
 const BLACKLIST_FAQS = [
   {
@@ -198,6 +200,8 @@ export default function BlacklistPage() {
           </div>
         </div>
       )}
+
+      {result && <DiagnosticResultSummary summary={blacklistSummary(result, "tr")} />}
 
       <AdPlaceholder slotId="blacklist-mid-banner" format="leaderboard" />
 

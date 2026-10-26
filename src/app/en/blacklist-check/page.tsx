@@ -2,9 +2,12 @@
 import { toolFetch } from "@/lib/usage";
 
 import { useState } from "react";
-import { ShieldCheck, ShieldAlert, CheckCircle2, XCircle, Search, Activity } from "lucide-react";
+import { ShieldCheck, ShieldAlert, CheckCircle2, XCircle, Search } from "lucide-react";
 import FaqAccordion from "@/components/FaqAccordion";
 import TroubleshootingGuide from "@/components/TroubleshootingGuide";
+import DiagnosticResultSummary from "@/components/DiagnosticResultSummary";
+import { blacklistSummary } from "@/lib/diagnostic-summary";
+import { BlacklistCheckResult } from "@/lib/types";
 
 const EN_BLACKLIST_FAQS = [
   {
@@ -20,7 +23,7 @@ const EN_BLACKLIST_FAQS = [
 export default function EnglishBlacklistCheckPage() {
   const [ip, setIp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any | null>(null);
+  const [result, setResult] = useState<BlacklistCheckResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleCheck = async (targetIp: string) => {
@@ -98,6 +101,9 @@ export default function EnglishBlacklistCheckPage() {
               <h2 className="text-2xl font-black font-mono text-gray-900 dark:text-white">
                 {result.ip}
               </h2>
+              <p className="text-xs text-gray-500 mt-1">
+                {result.totalChecked} sources returned interpretable results; {result.unavailableCount} remain unverified.
+              </p>
             </div>
             <div>
               {result.isClean === null ? (<span className="text-amber-600 font-semibold">Partial result · {result.unavailableCount} sources unknown</span>) : result.isClean ? (
@@ -115,10 +121,10 @@ export default function EnglishBlacklistCheckPage() {
           </div>
 
           <div className="space-y-3">
-            {result.results?.map((bl: any, i: number) => (
+            {result.results.map((bl, i) => (
               <div
                 key={i}
-                className="p-3.5 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800 flex items-center justify-between"
+                className="p-3.5 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800 flex items-center justify-between flex-wrap gap-3"
               >
                 <div className="flex items-center gap-2.5">
                   {bl.listed === null ? (<a className="text-xs text-amber-600 underline" href={bl.delistUrl} target="_blank" rel="noopener noreferrer">Official check</a>) : bl.listed ? (
@@ -135,7 +141,7 @@ export default function EnglishBlacklistCheckPage() {
                 </div>
 
                 <div>
-                  {bl.listed === null ? (<span className="text-xs text-amber-600">Unknown</span>) : bl.listed ? (
+                  {bl.listed === null ? (<span className="text-xs text-amber-700 dark:text-amber-300">{bl.status === "not-configured" ? "Automatic lookup not configured" : "Provider unavailable · Unverified"}</span>) : bl.listed ? (
                     <a
                       href={bl.delistUrl}
                       target="_blank"
@@ -155,6 +161,8 @@ export default function EnglishBlacklistCheckPage() {
           </div>
         </div>
       )}
+
+      {result && <DiagnosticResultSummary summary={blacklistSummary(result, "en")} language="en" />}
 
       <TroubleshootingGuide kind="email" language="en" />
 
