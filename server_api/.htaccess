@@ -24,6 +24,14 @@ RewriteRule ^api/subnet/?$ /api/subnet.php [QSA,L]
 RewriteRule ^api/watch/?$ /api/watch.php [QSA,L]
 RewriteRule ^api/watch/(.*)$ /api/watch.php?token=$1 [QSA,L]
 
+# Next static-export clients can fall back to opening index.txt after a build
+# change. Send document navigations to HTML; preserve RSC fetches as data.
+RewriteCond %{HTTP:RSC} !^1$
+RewriteCond %{HTTP:Sec-Fetch-Dest} ^document$ [OR]
+RewriteCond %{HTTP_ACCEPT} text/html [NC]
+RewriteCond %{DOCUMENT_ROOT}/$1index.html -f
+RewriteRule ^(.*\/)?index\.txt$ /$1 [R=302,L,QSD]
+
 # Canonical slash only for exported HTML routes (never for API or files).
 RewriteCond %{REQUEST_URI} !^/api/
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -61,6 +69,10 @@ AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application
 
 # Response headers
 <IfModule mod_headers.c>
+<FilesMatch "^index\.txt$">
+Header merge Vary "RSC, Sec-Fetch-Dest, Accept"
+Header always set Cache-Control "no-store"
+</FilesMatch>
 Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 Header set X-Content-Type-Options "nosniff"
 Header always set X-Frame-Options "DENY"

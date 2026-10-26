@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import ts from 'typescript';
 const source = fs.readFileSync('src/lib/diagnostic-summary.ts', 'utf8');
 const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 } }).outputText;
-const {portSummary, emailSummary, summaryText} = await import('data:text/javascript;base64,' + Buffer.from(compiled).toString('base64'));
+const {portSummary, emailSummary, blacklistSummary, summaryText} = await import('data:text/javascript;base64,' + Buffer.from(compiled).toString('base64'));
 let checks = 0;
 function test(name, fn) { fn(); checks++; console.log('PASS', name); }
 test('port output excludes target, injected labels and arbitrary response text', () => {
@@ -45,5 +45,47 @@ test('mail summaries exclude domains, mailboxes and raw SPF/DMARC/MX values', ()
     for (const secret of ['private-fixture','private-mx','192.0.2.10','private@example.test','SECRET_ERROR','v=spf1','v=DMARC1']) assert(!text.includes(secret));
     assert(!text.includes('100'));
   }
+});
+test('blacklist partial coverage distinguishes unavailable from manual-only sources', () => {
+  const result = blacklistSummary({results:[
+    {listed:false,status:'not-listed'}, {listed:null,status:'unavailable'},
+    {listed:null,status:'not-configured'}, {listed:null,status:'not-configured'},
+  ]}, 'en');
+  assert.match(result.findings[0], /1\/4 sources/);
+  assert.match(result.findings[2], /not configured: 2; unavailable or unverified: 1/);
+  assert(result.nextSteps.some(s=>s.includes('Repeating this test does not enable')));
+  assert(result.nextSteps.some(s=>s.includes('retry later')));
+  assert(!result.findings.join(' ').includes('clean'));
+});
+test('a listing never hides unknown providers or implies all checks passed', () => {
+  const result = blacklistSummary({results:[{listed:true,status:'listed'},{listed:null,status:'not-configured'}]}, 'en');
+  assert.match(result.findings[0], /1\/2/);
+  assert.match(result.findings[1], /Listed: 1/);
+  assert.match(result.findings[2], /not configured: 1/);
+  assert(result.nextSteps.some(s=>s.includes('Confirm the listing')));
+  assert.match(result.limits, /remain unknown/);
+});
+test('empty and inconsistent DNSBL evidence cannot become negative results', () => {
+  for (const input of [{}, {results:[]}]) assert.match(blacklistSummary(input,'en').findings[0], /status unknown/);
+  const result = blacklistSummary({results:[{listed:false,status:'unavailable'},{listed:true,status:'not-configured'},{status:'not-listed'},null]}, 'en');
+  assert.match(result.findings[0], /0\/4/);
+  assert.match(result.findings[2], /unverified: 4/);
+});
+test('blacklist exports contain no targets, provider names, URLs, response strings or API totals', () => {
+  const raw = {ip:'192.0.2.30',domain:'private-fixture.example',totalChecked:999999,isClean:true,error:'PRIVATE_ERROR',results:[
+    {listed:null,status:'PRIVATE_STATUS',name:'PRIVATE_NAME',host:'private-dnsbl.example',response:'PRIVATE_RECORD',delistUrl:'https://private.example/?token=PRIVATE_TOKEN'},
+    {listed:false,status:'not-listed'},
+  ]};
+  for (const language of ['tr','en']) {
+    const text = summaryText(blacklistSummary(raw, language), language);
+    for (const secret of ['192.0.2.30','private-fixture','999999','PRIVATE_','private-dnsbl','private.example']) assert(!text.includes(secret));
+    assert(text.includes('1/2'));
+  }
+});
+test('all checked DNSBL negatives remain scoped, without a delivery or security promise', () => {
+  const result = blacklistSummary({results:[{listed:false,status:'not-listed'}]}, 'en');
+  assert.match(result.findings[1], /not listed in checked sources: 1/);
+  assert.match(result.limits, /not a security verdict or a guarantee/);
+  assert(result.nextSteps.some(s=>s.includes('actual outbound mail server IP')));
 });
 console.log(JSON.stringify({checks,result:'passed',network:'none'}));

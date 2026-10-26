@@ -1,6 +1,6 @@
 export type DiagnosticLanguage = "tr" | "en";
 export type DiagnosticSummary = {
-  tool: "port" | "email-security";
+  tool: "port" | "email-security" | "blacklist";
   title: string;
   findings: string[];
   nextSteps: string[];
@@ -72,4 +72,42 @@ export function summaryText(summary: DiagnosticSummary, language: DiagnosticLang
     en ? "Target identifiers and DNS record contents omitted." : "Hedef bilgileri ve DNS kayıt içerikleri çıkarılmıştır.",
     "", ...summary.findings.map((line) => "• " + line), "",
     en ? "Next steps:" : "Sonraki adımlar:", ...summary.nextSteps.map((line) => "• " + line), "", summary.limits].join("\n");
+}
+
+export function blacklistSummary(result: { results?: { listed?: boolean | null; status?: string }[] }, language: DiagnosticLanguage): DiagnosticSummary {
+  const en = language === "en";
+  const rows = Array.isArray(result.results) ? result.results : [];
+  // Require matching status and evidence. Unknown or inconsistent rows stay unverified.
+  const listed = rows.filter((r) => r?.listed === true && r.status === "listed").length;
+  const notListed = rows.filter((r) => r?.listed === false && r.status === "not-listed").length;
+  const manual = rows.filter((r) => r?.listed === null && r.status === "not-configured").length;
+  const unavailable = rows.length - listed - notListed - manual;
+  const findings = rows.length ? (en ? [
+    `Interpretable results: ${listed + notListed}/${rows.length} sources.`,
+    `Listed: ${listed}; not listed in checked sources: ${notListed}.`,
+    `Automatic lookup not configured: ${manual}; unavailable or unverified: ${unavailable}.`,
+  ] : [
+    `Yorumlanabilir sonuç: ${listed + notListed}/${rows.length} kaynak.`,
+    `Kayıt bulunan: ${listed}; kontrol edilen listelerde kayıt bulunmayan: ${notListed}.`,
+    `Otomatik sorgusu yapılandırılmamış: ${manual}; ulaşılamayan veya doğrulanamayan: ${unavailable}.`,
+  ]) : [en ? "No provider results available; status unknown." : "Sağlayıcı sonucu yok; durum bilinmiyor."];
+  const nextSteps: string[] = [];
+  if (listed) nextSteps.push(en
+    ? "Confirm the listing on the provider's official site. Investigate its stated reason before following that provider's removal process."
+    : "Kaydı sağlayıcının resmi sitesinden doğrulayın. Kaldırma sürecini başlatmadan önce belirtilen nedeni araştırın.");
+  if (manual) nextSteps.push(en
+    ? "Use the official check links for sources without automatic access. Repeating this test does not enable that access."
+    : "Otomatik erişimi olmayan kaynaklar için resmi kontrol bağlantılarını kullanın. Bu testi tekrarlamak erişimi etkinleştirmez.");
+  if (unavailable || !rows.length) nextSteps.push(en
+    ? "Check unavailable sources on their official sites or retry later. An unavailable source is not a negative listing result."
+    : "Ulaşılamayan kaynakları resmi sitelerinden kontrol edin veya daha sonra tekrar deneyin. Yanıt alınamaması kayıt yok anlamına gelmez.");
+  nextSteps.push(en
+    ? "For mail delivery problems, check the actual outbound mail server IP and the receiving server's rejection message. A website or home connection may use a different IP."
+    : "E-posta teslimat sorunlarında gerçek gönderici posta sunucusunun IP adresini ve alıcı sunucunun ret mesajını inceleyin. Web sitesi veya ev bağlantısı farklı bir IP kullanabilir.");
+  return {
+    tool: "blacklist", title: en ? "Blacklist check summary" : "Kara liste kontrol özeti", findings, nextSteps,
+    limits: en
+      ? "Only the reported sources were checked. Unverified sources remain unknown even if another source lists the IP. This is not a security verdict or a guarantee of email delivery."
+      : "Yalnızca raporlanan kaynaklar kontrol edildi. Bir kaynakta kayıt bulunsa bile doğrulanamayan kaynaklar bilinmiyor olarak kalır. Bu sonuç güvenlik kararı veya e-posta teslimatı garantisi değildir.",
+  };
 }
