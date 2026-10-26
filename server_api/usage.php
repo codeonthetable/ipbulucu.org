@@ -26,5 +26,19 @@ if ($ipbResolved && $ipbDocroot && strpos($ipbResolved . '/', $ipbDocroot . '/')
         $key = $endpoint . '|' . $client . '|' . $action . '|' . (int)floor($status/100) . 'xx';
         $stats['counts'][$key] = ($stats['counts'][$key] ?? 0) + 1;
         rewind($fp); ftruncate($fp, 0); fwrite($fp, json_encode($stats)); fflush($fp); flock($fp, LOCK_UN); fclose($fp);
+        // Keep provider outcomes separate from HTTP success and from the request-count schema.
+        // Fixed labels only: no target, provider response, error string or user identifier.
+        $outcome = $GLOBALS['ipbGeoOutcome'] ?? null;
+        if ($endpoint !== 'ip' || !in_array($outcome, [
+            'text_bypass', 'provider_available', 'provider_rate_limited', 'provider_http_error',
+            'provider_timeout', 'provider_transport_error', 'provider_invalid_response',
+            'provider_rejected', 'provider_ip_mismatch', 'provider_runtime_unavailable', 'budget_denied'
+        ], true)) return;
+        $fp = @fopen($ipbResolved . '/geo-outcomes-' . gmdate('Y-m-d') . '.json', 'c+');
+        if (!$fp) return;
+        if (!flock($fp, LOCK_EX)) { fclose($fp); return; }
+        $stats = json_decode(stream_get_contents($fp), true) ?: ['schema'=>1,'date_utc'=>gmdate('Y-m-d'),'counts'=>[]];
+        $stats['counts'][$outcome] = ($stats['counts'][$outcome] ?? 0) + 1;
+        rewind($fp); ftruncate($fp, 0); fwrite($fp, json_encode($stats)); fflush($fp); flock($fp, LOCK_UN); fclose($fp);
     });
 }

@@ -29,14 +29,33 @@ if (!is_string($format) || !in_array($format, ['', 'json', 'text'], true)) ipb_f
 $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
 $isCli = preg_match('/curl|wget|httpie/i', $_SERVER['HTTP_USER_AGENT'] ?? '') === 1;
 if ($format === 'text' || ($isCli && $format !== 'json' && stripos($accept, 'application/json') === false)) {
+    $GLOBALS['ipbGeoOutcome'] = 'text_bypass';
     header('Content-Type: text/plain; charset=utf-8'); echo $ip . "\n"; exit;
 }
 $data = null;
-if (function_exists('curl_init') && ipb_budget('geolocation-day', 850, 86400)) {
+if (!function_exists('curl_init')) {
+    $GLOBALS['ipbGeoOutcome'] = 'provider_runtime_unavailable';
+} elseif (!ipb_budget('geolocation-day', 850, 86400)) {
+    // This also covers unavailable budget storage, not only an exhausted allowance.
+    $GLOBALS['ipbGeoOutcome'] = 'budget_denied';
+} else {
     $ch = curl_init('https://ipwho.is/' . rawurlencode($ip));
     curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER=>true, CURLOPT_CONNECTTIMEOUT=>2, CURLOPT_TIMEOUT=>5, CURLOPT_SSL_VERIFYPEER=>true, CURLOPT_SSL_VERIFYHOST=>2, CURLOPT_USERAGENT=>'ipbulucu.org/1.1']);
-    $raw = curl_exec($ch); $status = curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
-    if ($raw !== false && $status === 200) $data = json_decode($raw, true);
+    $raw = curl_exec($ch); $status = curl_getinfo($ch, CURLINFO_HTTP_CODE); $error = curl_errno($ch); curl_close($ch);
+    if ($raw === false) {
+        $GLOBALS['ipbGeoOutcome'] = $error === CURLE_OPERATION_TIMEDOUT ? 'provider_timeout' : 'provider_transport_error';
+    } elseif ($status !== 200) {
+        $GLOBALS['ipbGeoOutcome'] = $status === 429 ? 'provider_rate_limited' : 'provider_http_error';
+    } else {
+        $data = json_decode($raw, true);
+        if (is_array($data) && ($data['success'] ?? null) === false) {
+            $GLOBALS['ipbGeoOutcome'] = 'provider_rejected';
+        } elseif (!is_array($data) || ($data['success'] ?? null) !== true || !is_string($data['ip'] ?? null)) {
+            $GLOBALS['ipbGeoOutcome'] = 'provider_invalid_response';
+        } else {
+            $GLOBALS['ipbGeoOutcome'] = $data['ip'] === $ip ? 'provider_available' : 'provider_ip_mismatch';
+        }
+    }
 }
 $valid = is_array($data) && ($data['success'] ?? false) === true && ($data['ip'] ?? '') === $ip;
 if (!$valid) $data = [];
