@@ -78,25 +78,32 @@ export default function BlacklistPage() {
 
       {/* Form */}
       <div className="max-w-2xl mx-auto">
+        <label htmlFor="blacklist-target" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">Kontrol edilecek IP adresi veya alan adı</label>
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleCheck(ip);
           }}
-          className="relative flex items-center"
+          className="relative flex flex-col sm:flex-row sm:items-center gap-3"
         >
           <input
+            id="blacklist-target"
             type="text"
+            required
+            autoCapitalize="none"
+            spellCheck={false}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? "blacklist-error" : undefined}
             value={ip}
             onChange={(e) => setIp(e.target.value)}
             placeholder="IP adresi veya alan adı girin (Örn: 8.8.8.8)"
-            className="w-full px-5 py-4 pl-12 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 text-base shadow-sm"
+            className="w-full pr-4 sm:pr-44 py-4 pl-12 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 text-base shadow-sm"
           />
-          <Globe className="w-5 h-5 text-gray-400 absolute left-4 pointer-events-none" />
+          <Globe className="w-5 h-5 text-gray-400 absolute left-4 top-5 pointer-events-none" />
           <button
             type="submit"
             disabled={loading || !ip.trim()}
-            className="absolute right-2.5 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-semibold text-sm shadow-md transition-all"
+            className="sm:absolute sm:right-2.5 px-5 py-3 sm:py-2.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-semibold text-sm shadow-md transition-all"
           >
             {loading ? "Taranıyor..." : "Kara Liste Testi"}
           </button>
@@ -124,7 +131,7 @@ export default function BlacklistPage() {
       </div>
 
       {error && (
-        <div className="max-w-2xl mx-auto p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm text-center">
+        <div id="blacklist-error" role="alert" className="max-w-2xl mx-auto p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm text-center">
           {error}
         </div>
       )}

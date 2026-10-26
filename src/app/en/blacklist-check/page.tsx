@@ -62,25 +62,32 @@ export default function EnglishBlacklistCheckPage() {
       </div>
 
       <div className="max-w-2xl mx-auto">
+        <label htmlFor="blacklist-target" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">IP address to check</label>
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleCheck(ip);
           }}
-          className="relative flex items-center"
+          className="relative flex flex-col sm:flex-row sm:items-center gap-3"
         >
-          <Search className="absolute left-4 w-5 h-5 text-gray-400 pointer-events-none" />
+          <Search className="absolute left-4 top-4 w-5 h-5 text-gray-400 pointer-events-none" />
           <input
+            id="blacklist-target"
             type="text"
+            required
+            autoCapitalize="none"
+            spellCheck={false}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? "blacklist-error" : undefined}
             value={ip}
             onChange={(e) => setIp(e.target.value)}
             placeholder="e.g. 8.8.8.8 or your server IP"
-            className="w-full pl-12 pr-28 py-3.5 text-sm sm:text-base rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900 dark:text-white shadow-lg shadow-gray-100/50 dark:shadow-none transition-all"
+            className="w-full pl-12 pr-4 sm:pr-44 py-3.5 text-base rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900 dark:text-white shadow-lg shadow-gray-100/50 dark:shadow-none transition-all"
           />
           <button
             type="submit"
             disabled={loading}
-            className="absolute right-2 px-5 py-2 text-xs sm:text-sm font-bold rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-500/20 disabled:opacity-50 transition-all"
+            className="sm:absolute sm:right-2 px-5 py-3 sm:py-2 text-sm font-bold rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-500/20 disabled:opacity-50 transition-all"
           >
             {loading ? "Checking..." : "Check Blacklist"}
           </button>
@@ -88,7 +95,7 @@ export default function EnglishBlacklistCheckPage() {
       </div>
 
       {error && (
-        <div className="max-w-2xl mx-auto p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm font-medium">
+        <div id="blacklist-error" role="alert" className="max-w-2xl mx-auto p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm font-medium">
           {error}
         </div>
       )}
