@@ -15,6 +15,8 @@ if ($ipbResolved && $ipbDocroot && strpos($ipbResolved . '/', $ipbDocroot . '/')
     if ($client === 'unattributed' && preg_match('/gptbot|claudebot|google-extended|bytespider/', $ua)) $client = 'ai_crawler_claimed';
     elseif ($client === 'unattributed' && preg_match('/chatgpt-user|claude-user|perplexity-user|oai-searchbot|perplexitybot/', $ua)) $client = 'ai_agent_or_search_claimed';
     elseif ($client === 'unattributed' && preg_match('/googlebot|bingbot|ahrefsbot|semrushbot/', $ua)) $client = 'search_crawler_claimed';
+    // Self-declared QA is separate from clients and people; never trust it as identity.
+    if (($_SERVER['HTTP_X_IPBULUCU_CONTEXT'] ?? '') === 'operational_qa') $client = 'operational_qa_claimed';
     $action = $_SERVER['HTTP_X_IPBULUCU_ACTION'] ?? 'unspecified';
     if (!in_array($action, ['auto','user'], true)) $action = 'unspecified';
     register_shutdown_function(function () use ($ipbResolved, $endpoint, $client, $action) {

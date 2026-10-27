@@ -4,7 +4,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Accept, X-IPBulucu-Client, X-IPBulucu-Action');
+header('Access-Control-Allow-Headers: Content-Type, Accept, X-IPBulucu-Client, X-IPBulucu-Action, X-IPBulucu-Context');
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'OPTIONS') { http_response_code(204); exit; }
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') { http_response_code(405); echo json_encode(['success'=>false,'error'=>'method_not_allowed']); exit; }
 

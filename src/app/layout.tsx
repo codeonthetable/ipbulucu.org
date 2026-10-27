@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { generateWebApplicationSchema } from "@/lib/schemas";
+import { analyticsBootstrap } from "@/lib/analytics-bootstrap";
 
 export const viewport: Viewport = {
   themeColor: [
@@ -77,20 +78,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: webAppSchema }}
         />
         {/* Production-only analytics; keep campaign labels, omit lookup inputs. */}
-        <script dangerouslySetInnerHTML={{__html: `
-          if (['ipbulucu.org','www.ipbulucu.org'].includes(location.hostname)) {
-            window.dataLayer = window.dataLayer || [];
-            window.gtag = function(){window.dataLayer.push(arguments);};
-            var cleanPage = new URL(location.origin + location.pathname);
-            var campaign = new URLSearchParams(location.search);
-            ['utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(key){
-              var value=campaign.get(key); if(value && /^[a-z0-9_-]{1,64}$/i.test(value)) cleanPage.searchParams.set(key,value);
-            });
-            gtag('js', new Date());
-            gtag('config', 'G-WYQCJWTWHF', {page_location: cleanPage.href, page_referrer: document.referrer.split('?')[0].split('#')[0], allow_google_signals: false, allow_ad_personalization_signals: false});
-            var tag=document.createElement('script'); tag.async=true; tag.src='https://www.googletagmanager.com/gtag/js?id=G-WYQCJWTWHF'; document.head.appendChild(tag);
-          }
-        `}} />
+        <script dangerouslySetInnerHTML={{__html: analyticsBootstrap}} />
       </head>
       <body className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors selection:bg-blue-600 selection:text-white">
         <Header />

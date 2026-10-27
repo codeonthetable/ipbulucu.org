@@ -35,6 +35,14 @@ try {
  await test('unavailable watch is not false success; debug inaccessible',async()=>{assert.equal((await request('watch.php')).httpStatusCode,501);assert.equal((await request('debug.php')).httpStatusCode,404);assert.equal((await request('usage.php')).httpStatusCode,404);});
  await test('aggregate counters contain labels only and reject public storage',async()=>{await request('ip.php','format=text&secret=DO_NOT_STORE',{env:{IPBULUCU_METRICS_DIR:'/private-metrics'},server:{HTTP_X_IPBULUCU_CLIENT:'node-sdk',HTTP_X_IPBULUCU_ACTION:'user',HTTP_USER_AGENT:'DO_NOT_STORE'}});const files=php.listFiles('/private-metrics').filter(x=>/^\d{4}-/.test(x));assert.equal(files.length,1);const raw=php.readFileAsText('/private-metrics/'+files[0]);const b=JSON.parse(raw);assert.equal(b.counts['ip|node-sdk_claimed|user|2xx'],1);assert(!raw.includes('1.1.1.1'));assert(!raw.includes('DO_NOT_STORE'));await request('ip.php','format=text',{env:{IPBULUCU_METRICS_DIR:'/www/public-metrics'}});assert.deepEqual(php.listFiles('/www/public-metrics'),[]);});
 
+ await test('fixed QA context separates test requests; unknown contexts cannot store input',async()=>{
+  await request('ip.php','format=text',{server:{HTTP_X_IPBULUCU_CLIENT:'web',HTTP_X_IPBULUCU_ACTION:'user',HTTP_X_IPBULUCU_CONTEXT:'operational_qa'}});
+  await request('ip.php','format=text',{server:{HTTP_X_IPBULUCU_CLIENT:'web',HTTP_X_IPBULUCU_ACTION:'auto',HTTP_X_IPBULUCU_CONTEXT:'DO_NOT_STORE'}});
+  const file=php.listFiles('/private-metrics').find(x=>/^\d{4}-/.test(x));const raw=php.readFileAsText('/private-metrics/'+file);const counts=JSON.parse(raw).counts;
+  assert.equal(counts['ip|operational_qa_claimed|user|2xx'],1);assert.equal(counts['ip|web_claimed|auto|2xx'],1);assert(!raw.includes('DO_NOT_STORE'));
+  const preflight=await request('ip.php','',{method:'OPTIONS'});assert.match(JSON.stringify(preflight.headers),/X-IPBulucu-Context/);
+ });
+
  function geoCounts() {
   const file=php.listFiles('/private-metrics').find(x=>x.startsWith('geo-outcomes-'));
   return file ? JSON.parse(php.readFileAsText('/private-metrics/'+file)).counts : {};

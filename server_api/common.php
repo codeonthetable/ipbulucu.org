@@ -12,7 +12,7 @@ function ipb_begin() {
     header('Cache-Control: no-store'); header('X-LiteSpeed-Cache-Control: no-cache');
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: GET, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type, Accept, X-IPBulucu-Client, X-IPBulucu-Action');
+    header('Access-Control-Allow-Headers: Content-Type, Accept, X-IPBulucu-Client, X-IPBulucu-Action, X-IPBulucu-Context');
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'OPTIONS') { http_response_code(204); exit; }
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') ipb_fail(405, 'Only GET is supported.');
     if (!ipb_budget('tools-minute', 120, 60)) { header('Retry-After: 60'); ipb_fail(429, 'Request limit reached. Please retry later.'); }

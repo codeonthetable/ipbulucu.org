@@ -1,8 +1,12 @@
 // Fixed labels only: never include lookup values, IPs, tokens, or webhook URLs.
 import { calculateIpFormats } from "./ip-formats";
+function usageContext() {
+  const telemetry = (window as unknown as {ipbulucuTelemetry?: {context: () => string}}).ipbulucuTelemetry;
+  return telemetry?.context() === "operational_qa" || new URLSearchParams(window.location.search).get("utm_medium") === "internal" ? "operational_qa" : "unclassified";
+}
 export function usageEvent(name: string, fields: Record<string, string | number>) {
   if (typeof window === "undefined" || !["ipbulucu.org", "www.ipbulucu.org"].includes(window.location.hostname)) return;
-  (window as unknown as {gtag?: (...args: unknown[]) => void}).gtag?.("event", name, fields);
+  (window as unknown as {gtag?: (...args: unknown[]) => void}).gtag?.("event", name, {...fields, usage_context: usageContext()});
 }
 export async function toolFetch(input: RequestInfo | URL, init?: RequestInit, interaction: "auto" | "user" | "unspecified" = "unspecified") {
   const url = new URL(typeof input === "string" ? input : input instanceof URL ? input.href : input.url, window.location.origin);
@@ -11,6 +15,7 @@ export async function toolFetch(input: RequestInfo | URL, init?: RequestInit, in
   if (!["ip","dns","whois","ssl","headers","port","blacklist","propagation","email-security","subnet","watch"].includes(tool)) return fetch(input, init);
   const fields = {tool_name:tool,interaction,language:window.location.pathname.startsWith("/en")?"en":"tr"};
   const headers = new Headers(init?.headers); headers.set("X-IPBulucu-Client","web"); headers.set("X-IPBulucu-Action",interaction);
+  headers.set("X-IPBulucu-Context", usageContext());
   const start = performance.now(); usageEvent("tool_request",fields);
   try {
     const response = await fetch(input,{...init,headers});
