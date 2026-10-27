@@ -34,7 +34,7 @@ await test('internal entry labels first page view, manual result, copy event and
  await e.env.exports.toolFetch('/api/ip?format=text',undefined,'user');
  e.env.exports.usageEvent('diagnostic_summary_copy',{tool_name:'ip',usage_context:'injected'});
  const defaults=e.events().filter(x=>x[0]==='set').at(-1)[1];assert.equal(defaults.usage_context,'operational_qa');
- assert.equal(e.events().find(x=>x[0]==='config')[2].usage_context,undefined,'target-scoped value must not override later global context');
+ assert.equal(e.events().find(x=>x[0]==='config')[2].usage_context,'operational_qa');
  assert.equal(e.storage.get('ipbulucu.operational-qa'),'1');assert.equal(result(e).interaction,'user');assert(!qualifies(result(e)));
  assert.equal(e.env.requests[0].init.headers.get('X-IPBulucu-Context'),'operational_qa');
  assert.equal(e.events().at(-1)[2].usage_context,'operational_qa');
@@ -42,6 +42,10 @@ await test('internal entry labels first page view, manual result, copy event and
 await test('QA entered mid-session remains event scoped across SPA navigation and reload',async()=>{
  const e=environment('https://ipbulucu.org/');e.env.history.pushState({next:1},'','/?utm_medium=internal');
  e.env.history.pushState({next:2},'','/en/blacklist-check/?ip=DO_NOT_STORE');
+ const configs=e.events().filter(x=>x[0]==='config');
+ assert.equal(configs.filter(x=>x[2].send_page_view===true).length,1,'one initial page view only');
+ assert.equal(configs.at(-1)[2].usage_context,'operational_qa','automatic events must inherit current target context');
+ assert.equal(configs.at(-1)[2].send_page_view,false,'navigation context update must not add page views');
  await e.env.exports.toolFetch('/api/blacklist',undefined,'user');assert(!qualifies(result(e)));
  assert.equal(e.env.location.search,'?ip=DO_NOT_STORE&utm_medium=internal');assert.equal(e.env.history.state.next,2);
  const reload=environment('https://ipbulucu.org/en/',{storage:e.storage});assert.equal(reload.env.ipbulucuTelemetry.context(),'operational_qa');

@@ -27,7 +27,14 @@ export const analyticsBootstrap = String.raw`
   window.ipbulucuTelemetry = {context: context, page: page};
   window.dataLayer = window.dataLayer || [];
   function queue() { window.dataLayer.push(arguments); }
-  function defaults() { queue('set', {usage_context: context(), page_location: page()}); }
+  var started = false;
+  function defaults() {
+    var fields = {usage_context: context(), page_location: page()};
+    queue('set', fields);
+    // GA's automatic events need target-scoped custom parameters as well.
+    // Updating context must not emit an additional manual page view.
+    if (started) queue('config', 'G-WYQCJWTWHF', Object.assign({}, fields, {send_page_view: false}));
+  }
   window.gtag = function (command, name, fields) {
     if (command === 'event') {
       fields = Object.assign({}, fields, {usage_context: context(), page_location: page()});
@@ -69,10 +76,14 @@ export const analyticsBootstrap = String.raw`
   defaults();
   gtag('js', new Date());
   gtag('config', 'G-WYQCJWTWHF', {
+    usage_context: context(),
+    page_location: page(),
+    send_page_view: true,
     page_referrer: document.referrer.split('?')[0].split('#')[0],
     allow_google_signals: false,
     allow_ad_personalization_signals: false
   });
+  started = true;
   var tag = document.createElement('script');
   tag.async = true;
   tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-WYQCJWTWHF';
