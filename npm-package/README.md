@@ -4,11 +4,13 @@ CommonJS client for the [IPBulucu API](https://ipbulucu.org/en/api-docs/): `getI
 
 ## Release status
 
-On 25 October 2026 the npm registry lists **1.0.0**. This repository contains **1.0.1**, prepared but not published. Its 10-second timeout and self-declared SDK header are source changes; do not assume they exist in the installed 1.0.0 package. For a bounded request now, use the [direct REST quickstart](https://ipbulucu.org/en/api-docs/#quickstart).
+Version **1.0.1** is distributed as an installable archive in the [GitHub release](https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1). It adds a 10-second timeout, HTTP status checks and a self-declared SDK client header. npm still lists **1.0.0** as checked on 4 November 2026; a plain `npm install ipbulucu` does not install this release.
 
 ```bash
-npm install ipbulucu
+npm install https://github.com/codeonthetable/ipbulucu.org/releases/download/v1.0.1/ipbulucu-1.0.1.tgz
 ```
+
+The release includes SHA256SUMS for artifact verification. No API key is needed. [Direct REST examples](https://ipbulucu.org/en/api-docs/#quickstart) remain available.
 
 ## CommonJS example
 

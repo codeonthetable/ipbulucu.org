@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Server } from "lucide-react";
 import { ISPS_DATA } from "@/lib/seo-data";
+import WanAddressCheck from "@/components/WanAddressCheck";
 import InteractiveIpFinder from "@/components/InteractiveIpFinder";
 import FaqAccordion from "@/components/FaqAccordion";
 import AdPlaceholder from "@/components/AdPlaceholder";
@@ -32,6 +33,7 @@ export default async function IspPage({params}: IspPageProps) {
       <p className="text-gray-600 dark:text-gray-300">{isp.description}</p>
     </header>
     <InteractiveIpFinder defaultTitle={`${isp.name} için Genel IP ve Ağ Bilgisi`} placeholder="Genel IP adresi veya alan adı" buttonLabel="IP Bilgisini Sorgula"/>
+    <WanAddressCheck provider={isp.name} />
     <div className="grid gap-6 md:grid-cols-2">
       <section className="rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 space-y-4">
         <h2 className="text-xl font-bold">DNS adresinizi kontrol edin</h2>

@@ -1,6 +1,7 @@
 "use client";
 import { toolFetch } from "@/lib/usage";
 
+import MailDeliveryHelp from "@/components/MailDeliveryHelp";
 import { useState } from "react";
 import {
   ShieldCheck,
@@ -41,7 +42,7 @@ export default function BlacklistPage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleCheck = async (targetIp: string) => {
-    if (!targetIp.trim()) return;
+    if (!targetIp.trim() || loading) return;
 
     setLoading(true);
     setError(null);
@@ -78,6 +79,7 @@ export default function BlacklistPage() {
 
       {/* Form */}
       <div className="max-w-2xl mx-auto">
+        <a href="#mail-delivery-help" className="block mb-4 text-sm text-blue-600 underline">E-posta teslimatında web sitesi IP’si yerine gerçek gönderici IPv4 adresini kullanın. Hangi IP ve hata kodu?</a>
         <label htmlFor="blacklist-target" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">Kontrol edilecek IP adresi veya alan adı</label>
         <form
           onSubmit={(e) => {
@@ -210,6 +212,7 @@ export default function BlacklistPage() {
 
       {result && <DiagnosticResultSummary summary={blacklistSummary(result, "tr")} />}
 
+      <MailDeliveryHelp />
       <AdPlaceholder slotId="blacklist-mid-banner" format="leaderboard" />
 
       <FaqAccordion
