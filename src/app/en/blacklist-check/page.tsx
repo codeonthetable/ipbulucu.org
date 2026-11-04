@@ -1,6 +1,7 @@
 "use client";
 import { toolFetch } from "@/lib/usage";
 
+import MailDeliveryHelp from "@/components/MailDeliveryHelp";
 import { useState } from "react";
 import { ShieldCheck, ShieldAlert, CheckCircle2, XCircle, Search } from "lucide-react";
 import FaqAccordion from "@/components/FaqAccordion";
@@ -27,7 +28,7 @@ export default function EnglishBlacklistCheckPage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleCheck = async (targetIp: string) => {
-    if (!targetIp.trim()) return;
+    if (!targetIp.trim() || loading) return;
 
     setLoading(true);
     setError(null);
@@ -62,7 +63,8 @@ export default function EnglishBlacklistCheckPage() {
       </div>
 
       <div className="max-w-2xl mx-auto">
-        <label htmlFor="blacklist-target" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">IP address to check</label>
+        <a href="#mail-delivery-help" className="block mb-4 text-sm text-blue-600 underline">For delivery issues, use the outbound mail IPv4, which may differ from your website. Which IP and error code?</a>
+        <label htmlFor="blacklist-target" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">Sending server IPv4 or domain</label>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -81,7 +83,7 @@ export default function EnglishBlacklistCheckPage() {
             aria-describedby={error ? "blacklist-error" : undefined}
             value={ip}
             onChange={(e) => setIp(e.target.value)}
-            placeholder="e.g. 8.8.8.8 or your server IP"
+            placeholder="Outbound mail server IPv4"
             className="w-full pl-12 pr-4 sm:pr-44 py-3.5 text-base rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900 dark:text-white shadow-lg shadow-gray-100/50 dark:shadow-none transition-all"
           />
           <button
@@ -171,6 +173,7 @@ export default function EnglishBlacklistCheckPage() {
 
       {result && <DiagnosticResultSummary summary={blacklistSummary(result, "en")} language="en" />}
 
+      <MailDeliveryHelp language="en" />
       <TroubleshootingGuide kind="email" language="en" />
 
       <div className="max-w-3xl mx-auto pt-8">

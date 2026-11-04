@@ -1,6 +1,8 @@
 "use client";
 import { toolFetch } from "@/lib/usage";
 
+import WanAddressCheck from "@/components/WanAddressCheck";
+import PortPurposePicker from "@/components/PortPurposePicker";
 import { useState } from "react";
 import { Zap, ShieldCheck, ShieldAlert, Activity, CheckCircle2, XCircle, Search } from "lucide-react";
 import FaqAccordion from "@/components/FaqAccordion";
@@ -88,6 +90,7 @@ export default function EnglishPortScannerPage() {
           }}
           className="space-y-3"
         >
+          <PortPurposePicker language="en" onPort={setPort} onHost={setHost} disabled={loading} />
           <label htmlFor="port-host" className="block text-sm font-semibold">Host or public IP</label>
           <input
             id="port-host"
@@ -114,7 +117,7 @@ export default function EnglishPortScannerPage() {
       </div>
 
       {error && (
-        <div className="max-w-2xl mx-auto p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm font-medium">
+        <div role="alert" className="max-w-2xl mx-auto p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm font-medium">
           {error}
         </div>
       )}
@@ -161,6 +164,7 @@ export default function EnglishPortScannerPage() {
       )}
 
       {results.length > 0 && <DiagnosticResultSummary summary={portSummary(results, "en")} language="en" />}
+      <WanAddressCheck language="en" />
       <TroubleshootingGuide kind="port" language="en" />
 
       <div className="max-w-4xl mx-auto pt-8">

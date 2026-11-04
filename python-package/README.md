@@ -4,11 +4,13 @@ Synchronous `requests` client for the [IPBulucu API](https://ipbulucu.org/en/api
 
 ## Release status
 
-On 25 October 2026 PyPI lists **1.0.0**. This repository contains **1.0.1**, prepared but not published. Published 1.0.0 has a five-second timeout but parses JSON without checking the HTTP status. The prepared 1.0.1 adds status checks, a 10-second timeout and a self-declared SDK header. For explicit timeouts and HTTP checks now, use the [direct REST quickstart](https://ipbulucu.org/en/api-docs/#quickstart).
+Version **1.0.1** is distributed as a wheel and source archive in the [GitHub release](https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1). It adds HTTP status checks, a 10-second timeout and a self-declared SDK client header. PyPI still lists **1.0.0** as checked on 4 November 2026; a plain `pip install ipbulucu` does not install this release.
 
 ```bash
-python -m pip install ipbulucu
+python -m pip install https://github.com/codeonthetable/ipbulucu.org/releases/download/v1.0.1/ipbulucu-1.0.1-py3-none-any.whl
 ```
+
+The release includes SHA256SUMS for artifact verification. No API key is needed. [Direct REST examples](https://ipbulucu.org/en/api-docs/#quickstart) remain available.
 
 ## Example
 

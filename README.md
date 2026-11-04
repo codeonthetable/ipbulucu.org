@@ -12,9 +12,9 @@ IP geolocation is approximate and supplied by ipwho.is. Missing provider data is
 
 No API key is required. Use the [REST quickstart](https://ipbulucu.org/en/api-docs/#quickstart) for explicit timeouts, HTTP status checks and examples that handle unavailable geolocation. Requests without an IP argument describe the calling machine's public egress address; a backend call does not discover an end user's address.
 
-As checked on **27 October 2026**, npm and PyPI publish **1.0.0**. The **1.0.1** sources in this repository are prepared, not published.
+As checked on **4 November 2026**, npm and PyPI publish **1.0.0**. Installable **1.0.1** Node/Python archives are distributed in the [GitHub release](https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1); they are not published to npm/PyPI. Use the linked SDK guides for archive installation and verify SHA256SUMS. The Chrome ZIP is a developer build, not a store-approved update.
 
-| Client | Published 1.0.0 | Prepared 1.0.1 |
+| Client | Published 1.0.0 | GitHub archive 1.0.1 |
 | --- | --- | --- |
 | [Node.js SDK](npm-package/README.md) | No built-in timeout or HTTP status check | 10-second timeout and HTTP status checks |
 | [Python SDK](python-package/README.md) | 5-second timeout; no HTTP status check | 10-second timeout and HTTP status checks |
