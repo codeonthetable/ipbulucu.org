@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { CITIES_DATA, ISPS_DATA, ASNS_DATA } from "@/lib/seo-data";
+import { PUBLISHED_CONTENT_DATES } from "@/lib/content-updates";
 
 export const dynamic = "force-static";
 
@@ -241,8 +242,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const allRoutes = [...turkishRoutes, ...englishRoutes, ...cityRoutes, ...ispRoutes, ...asnRoutes];
-  return allRoutes.map((route) => ({
-    ...route,
-    url: route.url.endsWith("/") ? route.url : `${route.url}/`,
-  }));
+  return allRoutes.map((route) => {
+    const url = route.url.endsWith("/") ? route.url : `${route.url}/`;
+    const lastModified = PUBLISHED_CONTENT_DATES[new URL(url).pathname];
+    return { ...route, url, ...(lastModified ? { lastModified } : {}) };
+  });
 }
