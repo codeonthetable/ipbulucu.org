@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Server } from "lucide-react";
 import { ISPS_DATA } from "@/lib/seo-data";
+import IspDnsGuide from "@/components/IspDnsGuide";
 import WanAddressCheck from "@/components/WanAddressCheck";
 import InteractiveIpFinder from "@/components/InteractiveIpFinder";
 import FaqAccordion from "@/components/FaqAccordion";
@@ -32,11 +33,14 @@ export default async function IspPage({params}: IspPageProps) {
       <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">{isp.name} IP Sorgulama ve DNS Ayarları</h1>
       <p className="text-gray-600 dark:text-gray-300">{isp.description}</p>
     </header>
-    <InteractiveIpFinder defaultTitle={`${isp.name} için Genel IP ve Ağ Bilgisi`} placeholder="Genel IP adresi veya alan adı" buttonLabel="IP Bilgisini Sorgula"/>
+    <nav aria-label="Sayfa bölümleri" className="flex flex-wrap gap-4 text-sm text-blue-600 underline"><a href="#dns-ayarlari">DNS adresi ve ayarları</a><a href="#ip-sorgulama">IP ve ASN sorgulama</a><a href="#wan-check">CGNAT ve WAN kontrolü</a></nav>
+    <IspDnsGuide slug={isp.slug} name={isp.name} website={isp.website} />
+    <div id="ip-sorgulama" className="scroll-mt-24">
+    <InteractiveIpFinder defaultTitle={`${isp.name} için Genel IP ve Ağ Bilgisi`} placeholder="Genel IP adresi veya alan adı" buttonLabel="IP Bilgisini Sorgula"/></div>
     <WanAddressCheck provider={isp.name} />
     <div className="grid gap-6 md:grid-cols-2">
       <section className="rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 space-y-4">
-        <h2 className="text-xl font-bold">DNS adresinizi kontrol edin</h2>
+        <h2 className="text-xl font-bold">Genel DNS alternatifleri</h2>
         <p className="text-sm text-gray-600 dark:text-gray-300">Önce modeminizdeki otomatik DNS ayarını ve cihazın ağ ayrıntılarını kontrol edin. Sağlayıcıya özel elle girilecek adresleri <a className="text-blue-600 underline" href={isp.website}>{isp.name} resmî destek kanalı</a> üzerinden doğrulayın.</p>
         <p className="text-sm text-gray-600 dark:text-gray-300">Genel DNS seçenekleri farklı hizmetlerdir. Değiştirmeden önce mevcut ayarı not edin; erişim sorunu olursa önceki ayara dönün. Hız farkını kendi bağlantınızda ölçün.</p>
         <ul className="space-y-2 text-sm">

@@ -1,6 +1,8 @@
 "use client";
 import { toolFetch } from "@/lib/usage";
 
+import BlacklistTargetNotice from "@/components/BlacklistTargetNotice";
+import {blacklistInputError, isIPv4} from "@/lib/target-guidance";
 import MailDeliveryHelp from "@/components/MailDeliveryHelp";
 import { useState } from "react";
 import {
@@ -37,12 +39,17 @@ const SAMPLE_IPS = ["8.8.8.8", "1.1.1.1", "185.220.101.5", "195.175.39.39"];
 
 export default function BlacklistPage() {
   const [ip, setIp] = useState("");
+  const [hostnameConfirmed, setHostnameConfirmed] = useState(false);
+  const [checkedHostname, setCheckedHostname] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<BlacklistCheckResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleCheck = async (targetIp: string) => {
-    if (!targetIp.trim() || loading) return;
+    if (loading) return;
+    const validation=blacklistInputError(targetIp,hostnameConfirmed,"tr");
+    if(validation){setError(validation);setResult(null);return;}
+    setCheckedHostname(!isIPv4(targetIp));
 
     setLoading(true);
     setError(null);
@@ -80,7 +87,7 @@ export default function BlacklistPage() {
       {/* Form */}
       <div className="max-w-2xl mx-auto">
         <a href="#mail-delivery-help" className="block mb-4 text-sm text-blue-600 underline">E-posta teslimatında web sitesi IP’si yerine gerçek gönderici IPv4 adresini kullanın. Hangi IP ve hata kodu?</a>
-        <label htmlFor="blacklist-target" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">Kontrol edilecek IP adresi veya alan adı</label>
+        <label htmlFor="blacklist-target" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">Gönderici IPv4 adresi veya sunucu adı</label>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -97,8 +104,8 @@ export default function BlacklistPage() {
             aria-invalid={Boolean(error)}
             aria-describedby={error ? "blacklist-error" : undefined}
             value={ip}
-            onChange={(e) => setIp(e.target.value)}
-            placeholder="IP adresi veya alan adı girin (Örn: 8.8.8.8)"
+            onChange={(e) => {setIp(e.target.value);setHostnameConfirmed(false);setError(null);setResult(null);}}
+            placeholder="Gönderici sunucunun IPv4 adresi"
             className="w-full pr-4 sm:pr-44 py-4 pl-12 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 text-base shadow-sm"
           />
           <Globe className="w-5 h-5 text-gray-400 absolute left-4 top-5 pointer-events-none" />
@@ -110,11 +117,12 @@ export default function BlacklistPage() {
             {loading ? "Taranıyor..." : "Kara Liste Testi"}
           </button>
         </form>
+        <BlacklistTargetNotice value={ip} confirmed={hostnameConfirmed} onConfirm={setHostnameConfirmed} language="tr" />
 
         {/* Quick Examples */}
         <div className="flex items-center justify-center gap-2 mt-3 flex-wrap text-xs text-gray-500">
           <span className="flex items-center gap-1 font-medium">
-            <Sparkles className="w-3.5 h-3.5 text-red-500" /> Popüler:
+            <Sparkles className="w-3.5 h-3.5 text-red-500" /> Örnek IP:
           </span>
           {SAMPLE_IPS.map((item) => (
             <button
@@ -131,6 +139,8 @@ export default function BlacklistPage() {
           ))}
         </div>
       </div>
+
+      {result && checkedHostname && <p role="status" className="max-w-3xl mx-auto border-l-4 border-amber-500 pl-4 text-sm">Bu sonuç, sunucu adının tek bir A kaydından çözülen IPv4 içindir. Gerçek e-posta çıkış adresi olduğu doğrulanmadı.</p>}
 
       {error && (
         <div id="blacklist-error" role="alert" className="max-w-2xl mx-auto p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm text-center">

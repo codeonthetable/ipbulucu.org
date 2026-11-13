@@ -1,6 +1,7 @@
 "use client";
 import { toolFetch } from "@/lib/usage";
 
+import PortLocalDiagnostic from "@/components/PortLocalDiagnostic";
 import WanAddressCheck from "@/components/WanAddressCheck";
 import PortPurposePicker from "@/components/PortPurposePicker";
 import { useState } from "react";
@@ -90,7 +91,6 @@ export default function EnglishPortScannerPage() {
           }}
           className="space-y-3"
         >
-          <PortPurposePicker language="en" onPort={setPort} onHost={setHost} disabled={loading} />
           <label htmlFor="port-host" className="block text-sm font-semibold">Host or public IP</label>
           <input
             id="port-host"
@@ -113,6 +113,7 @@ export default function EnglishPortScannerPage() {
           </button>
           <button type="button" disabled={loading || !host.trim()} onClick={() => handleScan(host, true)} className="px-4 py-2.5 text-sm font-semibold rounded-xl border border-gray-300 dark:border-gray-700 disabled:opacity-50">Check 8 common ports</button>
           </div>
+        <details className="border-t border-gray-200 dark:border-gray-800 pt-3"><summary className="cursor-pointer text-sm font-semibold">Service presets and public IP help</summary><div className="mt-3"><PortPurposePicker language="en" onPort={setPort} onHost={setHost} disabled={loading} /></div></details>
         </form>
       </div>
 
@@ -164,6 +165,7 @@ export default function EnglishPortScannerPage() {
       )}
 
       {results.length > 0 && <DiagnosticResultSummary summary={portSummary(results, "en")} language="en" />}
+      <PortLocalDiagnostic port={port} language="en" />
       <WanAddressCheck language="en" />
       <TroubleshootingGuide kind="port" language="en" />
 

@@ -1,6 +1,8 @@
 "use client";
 import { toolFetch } from "@/lib/usage";
 
+import BlacklistTargetNotice from "@/components/BlacklistTargetNotice";
+import {blacklistInputError, isIPv4} from "@/lib/target-guidance";
 import MailDeliveryHelp from "@/components/MailDeliveryHelp";
 import { useState } from "react";
 import { ShieldCheck, ShieldAlert, CheckCircle2, XCircle, Search } from "lucide-react";
@@ -23,12 +25,17 @@ const EN_BLACKLIST_FAQS = [
 
 export default function EnglishBlacklistCheckPage() {
   const [ip, setIp] = useState("");
+  const [hostnameConfirmed, setHostnameConfirmed] = useState(false);
+  const [checkedHostname, setCheckedHostname] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<BlacklistCheckResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleCheck = async (targetIp: string) => {
-    if (!targetIp.trim() || loading) return;
+    if (loading) return;
+    const validation=blacklistInputError(targetIp,hostnameConfirmed,"en");
+    if(validation){setError(validation);setResult(null);return;}
+    setCheckedHostname(!isIPv4(targetIp));
 
     setLoading(true);
     setError(null);
@@ -64,7 +71,7 @@ export default function EnglishBlacklistCheckPage() {
 
       <div className="max-w-2xl mx-auto">
         <a href="#mail-delivery-help" className="block mb-4 text-sm text-blue-600 underline">For delivery issues, use the outbound mail IPv4, which may differ from your website. Which IP and error code?</a>
-        <label htmlFor="blacklist-target" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">Sending server IPv4 or domain</label>
+        <label htmlFor="blacklist-target" className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">Sending server IPv4 or hostname</label>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -82,7 +89,7 @@ export default function EnglishBlacklistCheckPage() {
             aria-invalid={Boolean(error)}
             aria-describedby={error ? "blacklist-error" : undefined}
             value={ip}
-            onChange={(e) => setIp(e.target.value)}
+            onChange={(e) => {setIp(e.target.value);setHostnameConfirmed(false);setError(null);setResult(null);}}
             placeholder="Outbound mail server IPv4"
             className="w-full pl-12 pr-4 sm:pr-44 py-3.5 text-base rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900 dark:text-white shadow-lg shadow-gray-100/50 dark:shadow-none transition-all"
           />
@@ -94,7 +101,10 @@ export default function EnglishBlacklistCheckPage() {
             {loading ? "Checking..." : "Check Blacklist"}
           </button>
         </form>
+        <BlacklistTargetNotice value={ip} confirmed={hostnameConfirmed} onConfirm={setHostnameConfirmed} language="en" />
       </div>
+
+      {result && checkedHostname && <p role="status" className="max-w-3xl mx-auto border-l-4 border-amber-500 pl-4 text-sm">This result checks one IPv4 resolved from the hostname’s A record. It does not verify that this is your outbound mail address.</p>}
 
       {error && (
         <div id="blacklist-error" role="alert" className="max-w-2xl mx-auto p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm font-medium">
