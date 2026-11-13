@@ -36,9 +36,21 @@ function curl_exec($c) {
       if($case==='nxdomain') $body=['Status'=>3];
       if($case==='servfail') $body=['Status'=>2];
       if(strpos($name,'bl.spamcop.net')!==false || strpos($name,'dnsbl.dronebl.org')!==false) {
-        if(strpos($name,'2.0.0.127.')===0 && $case!=='dnsbl-control-failure') $body=['Status'=>0,'Answer'=>[['type'=>1,'data'=>'127.0.0.2']]];
+        if(strpos($name,'2.0.0.127.')===0) {
+          if($case==='dnsbl-control-failure') $body=['Status'=>2];
+          elseif($case==='dnsbl-mixed-control') $body=['Status'=>0,'Answer'=>[['type'=>1,'data'=>'127.0.0.2'],['type'=>1,'data'=>'127.255.255.254']]];
+          elseif(strpos($name,'dnsbl.dronebl.org')!==false && strpos($case,'dnsbl-drone-')===0) {
+            if($type==='TXT') $body=$case==='dnsbl-drone-txt-timeout' ? ['Status'=>2] : ['Status'=>0,'Answer'=>[['type'=>16,'data'=>$case==='dnsbl-drone-wrong-txt' ? '"Access denied."' : '"Testing class."']]];
+            else $body=['Status'=>0,'Answer'=>[['type'=>1,'data'=>'127.0.0.1']]];
+          } else $body=['Status'=>0,'Answer'=>[['type'=>1,'data'=>'127.0.0.2']]];
+        }
+        elseif(strpos($name,'1.0.0.127.')===0) $body=$case==='dnsbl-negative-failure' ? ['Status'=>0,'Answer'=>[['type'=>1,'data'=>'127.0.0.2']]] : ($case==='dnsbl-negative-servfail' ? ['Status'=>2] : ['Status'=>3]);
         elseif($case==='dnsbl-blocked') $body=['Status'=>0,'Answer'=>[['type'=>1,'data'=>'127.255.255.254']]];
         elseif($case==='dnsbl-listed') $body=['Status'=>0,'Answer'=>[['type'=>1,'data'=>'127.0.0.2']]];
+        elseif($case==='dnsbl-drone-target-class1') $body=['Status'=>0,'Answer'=>[['type'=>1,'data'=>'127.0.0.1']]];
+        elseif($case==='dnsbl-mixed-answer') $body=['Status'=>0,'Answer'=>[['type'=>1,'data'=>'127.0.0.2'],['type'=>1,'data'=>'127.255.255.254']]];
+        elseif($case==='dnsbl-target-servfail') $body=['Status'=>2];
+        elseif($case==='dnsbl-target-no-record') $body=['Status'=>0];
         elseif($case==='dnsbl-control-failure') $body=['Status'=>2];
         else $body=['Status'=>3];
       }
@@ -91,6 +103,22 @@ try {
   for(const scenario of ['dnsbl-blocked','dnsbl-control-failure']) {const {body:b}=await req('blacklist','ip=1.1.1.1',scenario);assert.equal(b.listedCount,0);assert.equal(b.cleanCount,0);assert.equal(b.isClean,null);}
   let b=(await req('blacklist','ip=1.1.1.1')).body;assert.equal(b.cleanCount,2);assert.equal(b.unavailableCount,2);assert.equal(b.isClean,null);
   b=(await req('blacklist','ip=1.1.1.1','dnsbl-listed')).body;assert.equal(b.listedCount,2);assert.equal(b.isClean,false);
+ });
+ await test('DroneBL testing class is accepted only with its matching TXT; target class 1 stays unknown',async()=>{
+  let b=(await req('blacklist','ip=1.1.1.1','dnsbl-drone-testing')).body;
+  assert.equal(b.totalChecked,2);assert.equal(b.results[1].status,'not-listed');assert.equal(b.results[1].reason,null);
+  for(const scenario of ['dnsbl-drone-wrong-txt','dnsbl-drone-txt-timeout']) {
+   b=(await req('blacklist','ip=1.1.1.1',scenario)).body;assert.equal(b.totalChecked,1);assert.equal(b.results[1].reason,'positive_control_failed');assert.equal(b.results[1].listed,null);
+  }
+  b=(await req('blacklist','ip=1.1.1.1','dnsbl-drone-target-class1')).body;
+  assert.equal(b.totalChecked,0);assert.equal(b.results[1].reason,'unrecognized_response');assert.equal(b.isClean,null);
+ });
+ await test('DNSBL wildcard, blocked/mixed controls and partial target answers cannot become verdicts',async()=>{
+  for(const [scenario,reason] of [['dnsbl-negative-failure','negative_control_failed'],['dnsbl-negative-servfail','negative_control_failed'],['dnsbl-mixed-control','positive_control_failed'],['dnsbl-mixed-answer','unrecognized_response'],['dnsbl-target-servfail','query_unavailable'],['dnsbl-target-no-record','query_unavailable']]) {
+   const {body:b}=await req('blacklist','ip=1.1.1.1',scenario);
+   assert.equal(b.totalChecked,0,scenario);assert.equal(b.isClean,null);assert.equal(b.partial,true);assert(b.results.slice(0,2).every(r=>r.listed===null && r.reason===reason),scenario);
+   assert(b.results.slice(2).every(r=>r.reason==='access_not_configured' && r.listed===null));
+  }
  });
  await test('TCP open, refused and timeout remain distinct; input is bounded',async()=>{const {body:b}=await req('port','host=1.1.1.1&ports=443,80,22');assert.deepEqual(b.ports.map(p=>p.isOpen),[true,false,null]);assert.deepEqual(b.ports.map(p=>p.status),['open','closed','filtered']);for(const q of ['host=1.1.1.1&port=abc','host=1.1.1.1&ports='+Array(17).fill('80').join(','),'host=127.0.0.1&port=80']) assert.equal((await req('port',q)).status,400);});
  await test('TLS verifies chain/hostname and returns negotiated metadata; failure stays unverified',async()=>{const {body:b}=await req('ssl','host=example.com');assert.equal(b.authorized,true);assert.equal(b.tlsProtocol,'TLSv1.2');assert.equal(b.cipherName,'FIXTURE_CIPHER');assert.equal((await req('ssl','host=example.com','tls-failure')).status,502);});
