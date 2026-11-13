@@ -1,6 +1,7 @@
 "use client";
 import { toolFetch } from "@/lib/usage";
 
+import PortLocalDiagnostic from "@/components/PortLocalDiagnostic";
 import WanAddressCheck from "@/components/WanAddressCheck";
 import PortPurposePicker from "@/components/PortPurposePicker";
 import { useState } from "react";
@@ -131,7 +132,6 @@ export default function PortCheckPage() {
 
       {/* Control Form */}
       <form onSubmit={e=>{e.preventDefault();void handleSingleCheck(port);}} className="max-w-2xl mx-auto p-6 sm:p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm space-y-5">
-        <PortPurposePicker onPort={setPort} onHost={setHost} disabled={loading || batchLoading} />
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="sm:col-span-2">
             <label htmlFor="port-host" className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1.5">
@@ -206,7 +206,8 @@ export default function PortCheckPage() {
             ))}
           </div>
         </div>
-      </form>
+      <details className="border-t border-gray-200 dark:border-gray-800 pt-3"><summary className="cursor-pointer text-sm font-semibold">Servis seçimi ve genel IP yardımı</summary><div className="mt-3"><PortPurposePicker onPort={setPort} onHost={setHost} disabled={loading || batchLoading} /></div></details>
+        </form>
 
       {error && (
         <div id="port-error" role="alert" className="max-w-2xl mx-auto p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm text-center">
@@ -310,6 +311,7 @@ export default function PortCheckPage() {
 
       {(singleResult || batchResults?.length) ? <DiagnosticResultSummary summary={portSummary(singleResult ? [singleResult] : batchResults!, "tr")} /> : null}
 
+      <PortLocalDiagnostic port={port} language="tr" />
       <WanAddressCheck />
       <TroubleshootingGuide kind="port" />
 
