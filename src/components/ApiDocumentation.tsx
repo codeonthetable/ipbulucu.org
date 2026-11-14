@@ -27,6 +27,7 @@ export default function ApiDocumentation({ language }: { language: "tr" | "en" }
         <a href="#responses" className="underline">{en ? "Responses and limits" : "Yanıtlar ve sınırlar"}</a>
         <a href="#endpoints" className="underline">{en ? "10 endpoints" : "10 uç nokta"}</a>
         <a href="#ai" className="underline">{en ? "AI integrations" : "AI entegrasyonları"}</a>
+        <a href="#sdk" className="underline">{en ? "Install SDKs" : "SDK kurulumu"}</a>
       </nav>
     </header>
 
@@ -76,13 +77,22 @@ export default function ApiDocumentation({ language }: { language: "tr" | "en" }
       <p className="text-xs text-gray-500 dark:text-gray-400">{en ? "Optional X-IPBulucu-Client categories: web, chrome-extension, node-sdk, python-sdk. X-IPBulucu-Action: auto or user. These are client declarations, not verified human or AI identities. Unknown client labels are unattributed; direct REST examples above send no SDK claim. Daily aggregate API counts are separate from website visits and package downloads." : "İsteğe bağlı X-IPBulucu-Client değerleri: web, chrome-extension, node-sdk, python-sdk. X-IPBulucu-Action: auto veya user. Bunlar istemci beyanıdır; insan veya AI kimliğini doğrulamaz. Bilinmeyen istemci etiketleri atıfsız kalır; yukarıdaki REST örnekleri SDK beyanı göndermez. Günlük toplu API sayaçları site ziyaretlerinden ve paket indirmelerinden ayrı tutulur."}</p>
     </section>
 
-    <section className="space-y-4">
+    <section id="sdk" className="scroll-mt-24 space-y-4">
       <h2 className="text-2xl font-bold">{en ? "SDK packages and source" : "SDK paketleri ve kaynak kod"}</h2>
-      <p className="text-sm text-gray-600 dark:text-gray-300">{en ? "Registry check: 4 November 2026 — npm and PyPI list 1.0.0. Installable Node/Python 1.0.1 archives are available in the GitHub release, with 10-second timeouts and HTTP status checks; they are not registry releases. Published Node.js 1.0.0 has no request timeout; Python 1.0.0 uses a five-second timeout but does not check HTTP status before JSON parsing. Neither sends the SDK client header. The direct REST examples above include explicit error handling." : "4 Kasım 2026 kontrolü: npm ve PyPI üzerinde 1.0.0 bulunuyor. 10 saniye zaman aşımı ve HTTP hata denetimi içeren Node/Python 1.0.1 kurulum paketleri GitHub sürümünde indirilebilir; kayıt deposu yayını değildir. Yayımlanan Node.js 1.0.0 istek zaman aşımı uygulamıyor; Python 1.0.0 beş saniye sınır koyuyor ancak JSON okumadan önce HTTP durumunu denetlemiyor. İkisi de SDK istemci başlığı göndermiyor. Yukarıdaki REST örnekleri açık hata denetimi içerir."}</p>
-      <a href="https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1" className="inline-block rounded-xl bg-blue-600 text-white px-5 py-3 font-semibold">{en ? "Download SDK 1.0.1 · installation & checksums" : "SDK 1.0.1 indir · kurulum ve dosya doğrulama"}</a>
+      <p className="text-sm text-gray-600 dark:text-gray-300">{en ? "Verified 14 November 2026: Node.js 1.0.2 is published on npm. Python 1.0.1 is available as a GitHub release archive; PyPI still lists 1.0.0. Choose the installation source for your language below." : "14 Kasım 2026 kontrolü: Node.js 1.0.2 npm üzerinde yayımlandı. Python 1.0.1 GitHub sürüm paketi olarak indirilebilir; PyPI üzerinde hâlâ 1.0.0 bulunuyor. Dilinize uygun kurulum kaynağını aşağıdan seçin."}</p>
       <div className="grid md:grid-cols-3 gap-4">
-        <a href="https://www.npmjs.com/package/ipbulucu" className="p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-2"><h3 className="font-bold">npm · ipbulucu</h3><p className="text-sm">{en ? "Node.js CommonJS client. getIp, getWhois, checkPort." : "Node.js CommonJS istemcisi. getIp, getWhois, checkPort."}</p><code className="block text-sm">npm install ipbulucu</code></a>
-        <a href="https://pypi.org/project/ipbulucu/" className="p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-2"><h3 className="font-bold">PyPI · ipbulucu</h3><p className="text-sm">{en ? "Synchronous requests library. get_ip, get_whois, check_port. No built-in CLI or async API." : "Senkron requests kütüphanesi. get_ip, get_whois, check_port. Yerleşik CLI veya async API içermez."}</p><code className="block text-sm">pip install ipbulucu</code></a>
+        <article className="min-w-0 p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-3">
+          <h3 className="font-bold">Node.js · npm 1.0.2</h3>
+          <p className="text-sm">{en ? "CommonJS client for Node.js 18+. getIp, getWhois, checkPort. Requests use a 10-second timeout, reject HTTP errors and send the node-sdk client header." : "Node.js 18+ için CommonJS istemcisi. getIp, getWhois, checkPort. İsteklerde 10 saniye zaman aşımı, HTTP hata denetimi ve node-sdk istemci başlığı bulunur."}</p>
+          <code className="block break-words text-sm">npm install ipbulucu@1.0.2</code>
+          <a href="https://www.npmjs.com/package/ipbulucu/v/1.0.2" className="inline-block text-sm font-semibold underline">{en ? "Package and usage examples →" : "Paket ve kullanım örnekleri →"}</a>
+        </article>
+        <article className="min-w-0 p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-3">
+          <h3 className="font-bold">Python · GitHub 1.0.1</h3>
+          <p className="text-sm">{en ? "Synchronous requests library: get_ip, get_whois, check_port. The 1.0.1 archive adds a 10-second timeout, HTTP status checks and the python-sdk client header. No built-in CLI or async API." : "Senkron requests kütüphanesi: get_ip, get_whois, check_port. 1.0.1 paketinde 10 saniye zaman aşımı, HTTP hata denetimi ve python-sdk istemci başlığı bulunur. Yerleşik CLI veya async API içermez."}</p>
+          <a href="https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1" className="inline-block text-sm font-semibold underline">{en ? "Download wheel · installation & checksums →" : "Wheel indir · kurulum ve dosya doğrulama →"}</a>
+          <p className="text-xs text-gray-600 dark:text-gray-300">{en ? "pip install ipbulucu currently installs PyPI 1.0.0: a five-second timeout, no HTTP status check before JSON parsing and no SDK client header." : "pip install ipbulucu şu anda PyPI 1.0.0 sürümünü kurar: beş saniye zaman aşımı vardır; JSON okumadan önce HTTP durumunu denetlemez ve SDK istemci başlığı göndermez."} <a href="https://pypi.org/project/ipbulucu/" className="underline">PyPI →</a></p>
+        </article>
         <a href="https://github.com/codeonthetable/ipbulucu.org" className="p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-2"><h3 className="font-bold">GitHub · ipbulucu.org</h3><p className="text-sm">{en ? "Site, SDK and Chrome extension sources. Repository version and store approval are separate states." : "Site, SDK ve Chrome eklentisi kaynakları. Depo sürümü ile mağaza onayı farklı durumlardır."}</p><span className="text-sm underline">codeonthetable →</span></a>
       </div>
     </section>
