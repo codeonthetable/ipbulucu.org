@@ -12,22 +12,22 @@ IP geolocation is approximate and supplied by ipwho.is. Missing provider data is
 
 No API key is required. Use the [REST quickstart](https://ipbulucu.org/en/api-docs/#quickstart) for explicit timeouts, HTTP status checks and examples that handle unavailable geolocation. Requests without an IP argument describe the calling machine's public egress address; a backend call does not discover an end user's address.
 
-As checked on **4 November 2026**, npm and PyPI publish **1.0.0**. Installable **1.0.1** Node/Python archives are distributed in the [GitHub release](https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1); they are not published to npm/PyPI. Use the linked SDK guides for archive installation and verify SHA256SUMS. The Chrome ZIP is a developer build, not a store-approved update.
+The Node.js SDK update is now available on [npm](https://www.npmjs.com/package/ipbulucu); version **1.0.1** introduced the transport checks below. PyPI still publishes **1.0.0** as checked on **14 November 2026**. The Python **1.0.1** archive is available in the [GitHub release](https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1), with installation instructions in its SDK guide and SHA256SUMS for verification. The Chrome ZIP is a developer build, not a store-approved update.
 
-| Client | Published 1.0.0 | GitHub archive 1.0.1 |
+| Client | Registry release | GitHub archive 1.0.1 |
 | --- | --- | --- |
-| [Node.js SDK](npm-package/README.md) | No built-in timeout or HTTP status check | 10-second timeout and HTTP status checks |
-| [Python SDK](python-package/README.md) | 5-second timeout; no HTTP status check | 10-second timeout and HTTP status checks |
+| [Node.js SDK](npm-package/README.md) | npm 1.0.1 and later: 10-second timeout and HTTP status checks | Same transport behavior |
+| [Python SDK](python-package/README.md) | PyPI 1.0.0: 5-second timeout; no HTTP status check | 10-second timeout and HTTP status checks |
 
-Both published SDKs parse JSON on HTTP error responses and do not send the SDK client header added in 1.0.1. Check the returned `success` field and catch request/JSON errors. Use direct REST when you need access to response status and `Retry-After`; do not retry automatically. Package downloads and self-declared client headers do not establish human or AI usage.
+The current npm SDK rejects HTTP errors and sends a self-declared SDK client header. PyPI 1.0.0 still parses JSON on HTTP error responses and does not send that header. Check the returned `success` field and catch request/JSON errors. Use direct REST when you need access to response headers such as `Retry-After`; do not retry automatically. Package downloads and self-declared client headers do not establish human or AI usage.
 
 ## Node.js 18+
 
 ```bash
-npm install ipbulucu@1.0.0
+npm install ipbulucu
 ```
 
-Save as `lookup.cjs`, then run `node lookup.cjs`. This makes one request; the published SDK has no built-in timeout.
+Save as `lookup.cjs`, then run `node lookup.cjs`. This makes one request with a ten-second timeout and no automatic retry.
 
 ```js
 const { getIp } = require('ipbulucu');
