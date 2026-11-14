@@ -1,6 +1,6 @@
 {
   "name": "ipbulucu",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Node.js client for IPBulucu public IP, approximate geolocation, Whois and TCP port APIs",
   "main": "index.js",
   "keywords": [

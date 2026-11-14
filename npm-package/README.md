@@ -2,15 +2,15 @@
 
 CommonJS client for the [IPBulucu API](https://ipbulucu.org/en/api-docs/): `getIp`, `getWhois` and `checkPort`. Requires Node.js 18+ with built-in `fetch`.
 
-## Release status
+## Installation
 
-Version **1.0.1** is distributed as an installable archive in the [GitHub release](https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1). It adds a 10-second timeout, HTTP status checks and a self-declared SDK client header. npm still lists **1.0.0** as checked on 4 November 2026; a plain `npm install ipbulucu` does not install this release.
+The SDK includes a 10-second timeout, HTTP status checks and a self-declared SDK client header.
 
 ```bash
-npm install https://github.com/codeonthetable/ipbulucu.org/releases/download/v1.0.1/ipbulucu-1.0.1.tgz
+npm install ipbulucu
 ```
 
-The release includes SHA256SUMS for artifact verification. No API key is needed. [Direct REST examples](https://ipbulucu.org/en/api-docs/#quickstart) remain available.
+No API key is needed. [Direct REST examples](https://ipbulucu.org/en/api-docs/#quickstart) remain available.
 
 ## CommonJS example
 
