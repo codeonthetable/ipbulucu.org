@@ -33,7 +33,7 @@ export default async function IspPage({params}: IspPageProps) {
       <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">{isp.name} IP Sorgulama ve DNS Ayarları</h1>
       <p className="text-gray-600 dark:text-gray-300">{isp.description}</p>
     </header>
-    <nav aria-label="Sayfa bölümleri" className="flex flex-wrap gap-4 text-sm text-blue-600 underline"><a href="#dns-ayarlari">DNS adresi ve ayarları</a><a href="#ip-sorgulama">IP ve ASN sorgulama</a><a href="#wan-check">CGNAT ve WAN kontrolü</a></nav>
+    <nav aria-label="Sayfa bölümleri" className="flex flex-wrap gap-4 text-sm text-blue-600 underline"><a href="#dns-ayarlari">DNS adresi ve ayarları</a><a href="#telefonda-dns">Android / iPhone DNS kurulumu</a><a href="#ip-sorgulama">IP ve ASN sorgulama</a><a href="#wan-check">CGNAT ve WAN kontrolü</a></nav>
     <IspDnsGuide slug={isp.slug} name={isp.name} website={isp.website} />
     <div id="ip-sorgulama" className="scroll-mt-24">
     <InteractiveIpFinder defaultTitle={`${isp.name} için Genel IP ve Ağ Bilgisi`} placeholder="Genel IP adresi veya alan adı" buttonLabel="IP Bilgisini Sorgula"/></div>
