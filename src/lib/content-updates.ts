@@ -1,3 +1,4 @@
+// 2026-11-18: MCP integration and installable archive verified live on both API guides.
 // 2026-11-17: Android/iOS DNS and recovery flows verified live on9 operator pages.
 // Dates of verified, significant production content updates, not build dates.
 // 2026-11-04: PR #12, deployed 13:14:50Z; new WAN comparison, TCP purpose
@@ -20,6 +21,6 @@ export const PUBLISHED_CONTENT_DATES: Readonly<Record<string, string>> = {
   "/en/port-scanner/": "2026-11-14",
   "/karaliste-kontrolu/": "2026-11-14",
   "/en/blacklist-check/": "2026-11-14",
-  "/api-dokumantasyon/": "2026-11-04",
-  "/en/api-docs/": "2026-11-04",
+  "/api-dokumantasyon/": "2026-11-18",
+  "/en/api-docs/": "2026-11-18",
 };
