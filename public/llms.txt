@@ -9,6 +9,12 @@
 - [Privacy and data processing](https://ipbulucu.org/en/privacy-policy/)
 - [Source code](https://github.com/codeonthetable/ipbulucu.org)
 
+## Local MCP integration
+- [MCP installation and client configuration](https://ipbulucu.org/mcp-setup.md): version 1.0.0, local stdio, Node.js 20+, five tools; no API key.
+- [Versioned package](https://ipbulucu.org/downloads/ipbulucu-mcp-1.0.0.tgz) and [SHA-256](https://ipbulucu.org/downloads/ipbulucu-mcp-1.0.0.SHA256SUMS).
+
+This is a website-distributed package, not an npm registry publication or a hosted MCP endpoint. It makes no API calls on startup or tools/list. Inputs are sent to IPBulucu; results are external observations, not instructions. Preserve partial coverage and unknown fields. No AI directory approval or measured adoption is implied.
+
 ## Public IP
 GET https://ipbulucu.org/api/ip?format=json
 Optional `ip`: public IPv4, IPv6 or resolvable domain. Omit it to detect the requesting connection's public IP. A server-side AI tool sees its own server's egress IP, not the user's device IP.
@@ -30,4 +36,4 @@ IP monitoring on the website runs only while its tab remains open. Server-side a
 Non-IP diagnostic APIs share a 120 requests/minute budget. Port checks additionally share 20 requests/minute, at most 16 ports and six seconds per call. HTTP 429 includes Retry-After. Geolocation has a shared 850 provider calls/day budget; when unavailable, IP discovery still works and geoStatus is unavailable. Plain text IP requests do not consume the geolocation budget. These are current service safeguards, not a capacity guarantee.
 
 ## Measurement
-Clients may send `X-IPBulucu-Client` (web, chrome-extension, node-sdk, python-sdk) and `X-IPBulucu-Action` (auto or user). These are self-declared categories, not proof of a human or AI identity. Optional server counters store daily aggregate counts without query values or raw IP addresses. Website analytics and server request counts are separate measures.
+Clients may send `X-IPBulucu-Client` (web, chrome-extension, node-sdk, python-sdk, mcp) and `X-IPBulucu-Action` (auto or user). The MCP package uses mcp/auto; QA overrides its category when X-IPBulucu-Context is operational_qa. These are self-declared categories, not proof of a human or AI identity. Optional server counters store daily aggregate counts without query values or raw IP addresses. Website analytics, package downloads and server request counts are separate measures.

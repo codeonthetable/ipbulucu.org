@@ -10,6 +10,8 @@ IP geolocation is approximate and supplied by ipwho.is. Missing provider data is
 
 ## Choose an integration
 
+**Ready-to-run MCP:** [IPBulucu MCP 1.0.0](mcp-package/README.md) connects IP, DNS, TCP, DNSBL and subnet tools to a local stdio MCP client. It is distributed as a versioned website tarball with a checksum and tested client configuration, separately from the npm SDK. No API key; no automatic queries on startup. MCP-declared requests, QA and website traffic are counted separately.
+
 No API key is required. Use the [REST quickstart](https://ipbulucu.org/en/api-docs/#quickstart) for explicit timeouts, HTTP status checks and examples that handle unavailable geolocation. Requests without an IP argument describe the calling machine's public egress address; a backend call does not discover an end user's address.
 
 The Node.js SDK update is now available on [npm](https://www.npmjs.com/package/ipbulucu); version **1.0.1** introduced the transport checks below. PyPI still publishes **1.0.0** as checked on **14 November 2026**. The Python **1.0.1** archive is available in the [GitHub release](https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1), with installation instructions in its SDK guide and SHA256SUMS for verification. The Chrome ZIP is a developer build, not a store-approved update.

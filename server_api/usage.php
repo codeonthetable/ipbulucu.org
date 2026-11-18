@@ -10,7 +10,7 @@ if ($ipbResolved && $ipbDocroot && strpos($ipbResolved . '/', $ipbDocroot . '/')
     $endpoint = basename($_SERVER['SCRIPT_FILENAME'] ?? '', '.php');
     if (!in_array($endpoint, ['ip','dns','whois','ssl','headers','port','blacklist','propagation','email-security','subnet','watch'], true)) return;
     $claimed = $_SERVER['HTTP_X_IPBULUCU_CLIENT'] ?? '';
-    $client = in_array($claimed, ['web','chrome-extension','node-sdk','python-sdk'], true) ? $claimed . '_claimed' : 'unattributed';
+    $client = in_array($claimed, ['web','chrome-extension','node-sdk','python-sdk','mcp'], true) ? $claimed . '_claimed' : 'unattributed';
     $ua = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
     if ($client === 'unattributed' && preg_match('/gptbot|claudebot|google-extended|bytespider/', $ua)) $client = 'ai_crawler_claimed';
     elseif ($client === 'unattributed' && preg_match('/chatgpt-user|claude-user|perplexity-user|oai-searchbot|perplexitybot/', $ua)) $client = 'ai_agent_or_search_claimed';

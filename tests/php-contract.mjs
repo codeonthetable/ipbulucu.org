@@ -43,6 +43,17 @@ try {
   const preflight=await request('ip.php','',{method:'OPTIONS'});assert.match(JSON.stringify(preflight.headers),/X-IPBulucu-Context/);
  });
 
+ await test('MCP request declarations remain separate from humans and operational QA',async()=>{
+  await request('ip.php','format=text',{server:{HTTP_X_IPBULUCU_CLIENT:'mcp',HTTP_X_IPBULUCU_ACTION:'auto'}});
+  await request('ip.php','format=text',{server:{HTTP_X_IPBULUCU_CLIENT:'mcp',HTTP_X_IPBULUCU_ACTION:'auto',HTTP_X_IPBULUCU_CONTEXT:'operational_qa'}});
+  await request('ip.php','format=text',{server:{HTTP_X_IPBULUCU_CLIENT:'DO_NOT_STORE',HTTP_X_IPBULUCU_ACTION:'DO_NOT_STORE'}});
+  const file=php.listFiles('/private-metrics').find(x=>/^\d{4}-/.test(x));
+  const raw=php.readFileAsText('/private-metrics/'+file);const counts=JSON.parse(raw).counts;
+  assert.equal(counts['ip|mcp_claimed|auto|2xx'],1);
+  assert.equal(counts['ip|operational_qa_claimed|auto|2xx'],1);
+  assert(!raw.includes('DO_NOT_STORE'));
+ });
+
  function geoCounts() {
   const file=php.listFiles('/private-metrics').find(x=>x.startsWith('geo-outcomes-'));
   return file ? JSON.parse(php.readFileAsText('/private-metrics/'+file)).counts : {};

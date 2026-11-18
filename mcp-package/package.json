@@ -1,0 +1,36 @@
+{
+  "name": "ipbulucu-mcp",
+  "version": "1.0.0",
+  "description": "IPBulucu stdio MCP server for IP, DNS, TCP, DNSBL and IPv4 subnet tools",
+  "type": "module",
+  "bin": {
+    "ipbulucu-mcp": "bin/ipbulucu-mcp.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE",
+    "npm-shrinkwrap.json"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "homepage": "https://ipbulucu.org/en/api-docs/#ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codeonthetable/ipbulucu.org",
+    "directory": "mcp-package"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.4.0"
+  }
+}
