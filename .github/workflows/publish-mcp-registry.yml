@@ -1,0 +1,82 @@
+name: Publish verified MCP bundle metadata
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Publish reviewed metadata or deprecate this version
+        type: choice
+        required: true
+        default: publish
+        options:
+          - publish
+          - deprecate
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mcp-registry-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'codeonthetable/ipbulucu.org' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      MCP_PUBLISHER_VERSION: v1.8.1
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Verify public bundle matches reviewed metadata
+        run: |
+          set -euo pipefail
+          url=$(jq -er '.packages[0].identifier' mcp-package/server.json)
+          hash=$(jq -er '.packages[0].fileSha256' mcp-package/server.json)
+          test "$url" = 'https://github.com/codeonthetable/ipbulucu.org/releases/download/mcpb-v1.0.0/ipbulucu-mcp-1.0.0.mcpb'
+          curl --fail --location --silent --show-error --max-time 60 --output bundle.mcpb "$url"
+          printf '%s  bundle.mcpb\n' "$hash" | sha256sum --check --strict
+          python3 - <<'PY'
+          import json, zipfile
+          from pathlib import PurePosixPath
+          with zipfile.ZipFile('bundle.mcpb') as archive:
+              assert archive.testzip() is None
+              assert all(not name.startswith('/') and '..' not in PurePosixPath(name).parts for name in archive.namelist())
+              manifest = json.loads(archive.read('manifest.json'))
+              server = json.load(open('mcp-package/server.json'))
+              assert manifest['version'] == server['version'] == '1.0.0'
+              assert manifest['server']['type'] == 'node'
+          PY
+      - name: Install signature verifier
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+      - name: Verify and install pinned MCP publisher
+        run: |
+          set -euo pipefail
+          archive=mcp-publisher_linux_amd64.tar.gz
+          base_url="https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}"
+          curl --fail --location --silent --show-error --output "$archive" "$base_url/$archive"
+          curl --fail --location --silent --show-error --output "$archive.sigstore.json" "$base_url/$archive.sigstore.json"
+          cosign verify-blob --bundle "$archive.sigstore.json" \
+            --certificate-identity "https://github.com/modelcontextprotocol/registry/.github/workflows/release.yml@refs/tags/${MCP_PUBLISHER_VERSION}" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com "$archive"
+          tar xzf "$archive" mcp-publisher
+      - name: Authenticate through GitHub OIDC
+        working-directory: mcp-package
+        run: |
+          set -euo pipefail
+          ../mcp-publisher login github-oidc
+      - name: Publish reviewed metadata
+        if: inputs.operation == 'publish'
+        working-directory: mcp-package
+        run: |
+          set -euo pipefail
+          ../mcp-publisher publish
+      - name: Deprecate this version without deleting its history
+        if: inputs.operation == 'deprecate'
+        working-directory: mcp-package
+        run: ../mcp-publisher status --status deprecated --yes io.github.codeonthetable/ipbulucu 1.0.0

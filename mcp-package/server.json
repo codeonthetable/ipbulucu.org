@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.codeonthetable/ipbulucu",
+  "title": "IPBulucu Network Tools",
+  "description": "IP, DNS, TCP port, partial DNSBL and IPv4 subnet tools using ipbulucu.org.",
+  "websiteUrl": "https://ipbulucu.org/en/api-docs/#ai",
+  "repository": {
+    "url": "https://github.com/codeonthetable/ipbulucu.org",
+    "source": "github",
+    "subfolder": "mcp-package"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/codeonthetable/ipbulucu.org/releases/download/mcpb-v1.0.0/ipbulucu-mcp-1.0.0.mcpb",
+      "fileSha256": "dbd39c8ba61694485049a5519be446997eb08f5fa635885ca3973bbd69e5cc18",
+      "transport": { "type": "stdio" }
+    }
+  ]
+}

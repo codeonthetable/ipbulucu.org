@@ -1,0 +1,19 @@
+{
+  "manifest_version": "0.3",
+  "name": "ipbulucu-mcp",
+  "display_name": "IPBulucu Network Tools",
+  "version": "1.0.0",
+  "description": "IP, DNS, single TCP port, partial DNSBL and IPv4 subnet tools through ipbulucu.org.",
+  "author": { "name": "IPBulucu", "url": "https://ipbulucu.org" },
+  "homepage": "https://ipbulucu.org/en/api-docs/#ai",
+  "repository": { "type": "git", "url": "https://github.com/codeonthetable/ipbulucu.org" },
+  "license": "MIT",
+  "privacy_policies": ["https://ipbulucu.org/en/privacy-policy/"],
+  "server": {
+    "type": "node",
+    "entry_point": "bin/ipbulucu-mcp.mjs",
+    "mcp_config": { "command": "node", "args": ["${__dirname}/bin/ipbulucu-mcp.mjs"] }
+  },
+  "compatibility": { "platforms": ["darwin", "win32", "linux"], "runtimes": { "node": ">=20" } },
+  "keywords": ["dns", "ip", "network", "tcp", "dnsbl", "subnet"]
+}

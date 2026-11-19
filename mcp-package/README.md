@@ -1,10 +1,18 @@
 # IPBulucu MCP · 1.0.0
 
-A local **stdio MCP server** for five existing IPBulucu tools. No API key is required. It runs on your machine and makes HTTPS calls to `ipbulucu.org`; it is not a hosted MCP URL or an approved AI-directory listing. Requires Node.js 20+ and npm/npx.
+A local **stdio MCP server** for five existing IPBulucu tools. No API key is required. It runs on your machine and makes HTTPS calls to `ipbulucu.org`. Requires Node.js 20+ (provided by some MCPB-compatible clients). This is not a hosted MCP URL or a client-store approval.
+
+## Desktop bundle / Masaüstü paketi
+
+Download [ipbulucu-mcp-1.0.0.mcpb](https://github.com/codeonthetable/ipbulucu.org/releases/download/mcpb-v1.0.0/ipbulucu-mcp-1.0.0.mcpb) and its [SHA256SUMS](https://github.com/codeonthetable/ipbulucu.org/releases/download/mcpb-v1.0.0/ipbulucu-mcp-1.0.0.mcpb.SHA256SUMS). Import the bundle in a client that supports MCPB, such as Claude Desktop. Review the tool permissions before enabling it. All runtime dependencies are included; no npm install or API key is needed for this bundle. The client must supply a compatible Node runtime.
+
+Türkçe: MCPB dosyasını indirip destekleyen istemcide içe aktarın. Araç izinlerini inceleyerek etkinleştirin. Paket bağımlılıkları içerir; npm kurulumu veya API anahtarı istemez. Sorgular IPBulucu'ya gönderilir; aşağıdaki gizlilik ve kapsam bilgilerini okuyun.
+
+The bundle uses the same 1.0.0 runtime as the tarball below. Protocol tests cover the extracted bundle with current and legacy SDK clients; a native-client installation is a separate check. The bundle is not code-signed; SHA-256 verifies its integrity against the release, not publisher identity.
 
 ## Install / Kurulum
 
-This version is distributed as a versioned **website tarball**, not an npm registry release. `npm install ipbulucu` installs the separate Node SDK, not this MCP server.
+The alternative command-line installation uses a versioned **website tarball**, not an npm registry release. `npm install ipbulucu` installs the separate Node SDK, not this MCP server. This route requires npm/npx.
 
 Check the command before adding it to your MCP client (this prints the version without calling the API):
 
@@ -61,6 +69,6 @@ Results have a `source` and `data` object, also serialized as text for clients w
 
 ## Source and verification
 
-The source is in [`mcp-package/`](https://github.com/codeonthetable/ipbulucu.org/tree/mcp-v1.0.0/mcp-package). From that directory, run `npm ci --ignore-scripts` then `npm test`. Tests use official MCP clients with local API fixtures and verify both legacy and current stdio connections; they create no production API traffic.
+The bundle source is in [`mcp-package/`](https://github.com/codeonthetable/ipbulucu.org/tree/mcpb-v1.0.0/mcp-package); the original tarball remains at the `mcp-v1.0.0` tag. From that directory, run `npm ci --ignore-scripts` then `npm test`. Tests use official MCP clients with local API fixtures and verify both legacy and current stdio connections; they create no production API traffic. Build a bundle with `node scripts/build-bundle.mjs /absolute/output/directory`.
 
 The official MCP TypeScript SDK implements protocol negotiation and schemas: [stdio](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/docs/serving/stdio.md), [testing](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/docs/testing.md). An installed integration and package downloads do not establish real adoption.
