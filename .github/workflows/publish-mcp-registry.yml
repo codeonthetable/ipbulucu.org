@@ -34,6 +34,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Verify public bundle matches reviewed metadata
+        if: inputs.operation == 'publish'
         run: |
           set -euo pipefail
           url=$(jq -er '.packages[0].identifier' mcp-package/server.json)
