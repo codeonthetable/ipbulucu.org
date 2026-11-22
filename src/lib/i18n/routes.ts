@@ -1,6 +1,7 @@
 export type Locale = "tr" | "en";
 
 export const ROUTE_MAP: Record<string, { tr: string; en: string }> = {
+  chrome: { tr: "/chrome-eklentisi", en: "/en/chrome-extension" },
   home: { tr: "/", en: "/en" },
   tools: { tr: "/araclar", en: "/en/tools" },
   whois: { tr: "/whois", en: "/en/whois" },

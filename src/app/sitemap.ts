@@ -241,7 +241,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  const allRoutes = [...turkishRoutes, ...englishRoutes, ...cityRoutes, ...ispRoutes, ...asnRoutes];
+  const extensionRoutes: MetadataRoute.Sitemap = [
+    { url: `${baseUrl}/chrome-eklentisi/` },
+    { url: `${baseUrl}/en/chrome-extension/` },
+  ];
+  const allRoutes = [...extensionRoutes, ...turkishRoutes, ...englishRoutes, ...cityRoutes, ...ispRoutes, ...asnRoutes];
   return allRoutes.map((route) => {
     const url = route.url.endsWith("/") ? route.url : `${route.url}/`;
     const lastModified = PUBLISHED_CONTENT_DATES[new URL(url).pathname];
