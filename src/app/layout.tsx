@@ -51,6 +51,7 @@ export const metadata: Metadata = {
     description: "Genel IP adresi, yaklaşık konum, Whois, DNS ve port sorgulama.",
   },
   verification: {
+    other: { "msvalidate.01": "A90FF33F4927F0885281F24E3121DE46" },
     google: "5uzyQvk8kIHY8WbJP-0RpK_HTb4z-hIZ2OimS2weZ38",
   },
   other: {
