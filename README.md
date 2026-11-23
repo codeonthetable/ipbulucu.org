@@ -8,13 +8,17 @@ Turkish and English public IP lookup and network tools. The website is a Next.js
 
 IP geolocation is approximate and supplied by ipwho.is. Missing provider data is explicit (`geoStatus=unavailable`). VPN, CGNAT, connection speed, identity, risk and game latency are not measured by the IP endpoint. IP monitoring runs only in an open browser tab. Server alerts are unavailable.
 
+## Use IP Bulucu in Chrome
+
+[Install IP Bulucu from the Chrome Web Store](https://chromewebstore.google.com/detail/nifmmckmhnfjmpjfakhkifbeegdnanpb) to check your public IP, approximate location and internet provider from the toolbar. For pinning instructions or browser-based DNS, port and blocklist tools, see the [English guide](https://ipbulucu.org/en/chrome-extension/) or [Türkçe kurulum rehberi](https://ipbulucu.org/chrome-eklentisi/).
+
 ## Choose an integration
 
 **Ready-to-run MCP:** [IPBulucu MCP 1.0.0](mcp-package/README.md) connects IP, DNS, TCP, DNSBL and subnet tools to a local stdio MCP client. Download the [desktop MCPB bundle](https://github.com/codeonthetable/ipbulucu.org/releases/tag/mcpb-v1.0.0) with its dependencies included, or use the versioned website tarball and npx configuration. Both distributions are separate from the npm SDK. No API key; no automatic queries on startup. MCP-declared requests, QA and website traffic are counted separately.
 
 No API key is required. Use the [REST quickstart](https://ipbulucu.org/en/api-docs/#quickstart) for explicit timeouts, HTTP status checks and examples that handle unavailable geolocation. Requests without an IP argument describe the calling machine's public egress address; a backend call does not discover an end user's address.
 
-The Node.js SDK update is now available on [npm](https://www.npmjs.com/package/ipbulucu); version **1.0.1** introduced the transport checks below. PyPI still publishes **1.0.0** as checked on **14 November 2026**. The Python **1.0.1** archive is available in the [GitHub release](https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1), with installation instructions in its SDK guide and SHA256SUMS for verification. The Chrome ZIP is a developer build, not a store-approved update.
+The Node.js SDK update is now available on [npm](https://www.npmjs.com/package/ipbulucu); version **1.0.1** introduced the transport checks below. PyPI still publishes **1.0.0** as checked on **14 November 2026**. The Python **1.0.1** archive is available in the [GitHub release](https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1), with installation instructions in its SDK guide and SHA256SUMS for verification.
 
 | Client | Registry release | GitHub archive 1.0.1 |
 | --- | --- | --- |
