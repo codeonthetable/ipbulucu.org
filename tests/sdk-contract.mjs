@@ -12,3 +12,15 @@ for(const x of seen){assert.equal(x.opts.headers['X-IPBulucu-Client'],'node-sdk'
 globalThis.fetch=async()=>({ok:false,status:429});
 await assert.rejects(()=>sdk.getIp(),/HTTP 429/);
 console.log('PASS Node SDK: input encoding, nullable results, client header, timeout signal, HTTP errors');
+const callsBeforeInvalid=seen.length;
+globalThis.fetch=async()=>{ throw new Error('Unexpected network request for invalid arguments'); };
+for (const value of [null, false, {}, ['host'], 123, 'undefined', '[object Object]', 'bad host'])
+  for (const method of [sdk.getIp, sdk.getWhois, sdk.checkPort])
+    await assert.rejects(()=>method(value), TypeError);
+for (const port of [null, {}, NaN, 0, 65536, '80&other=x', [], [false], '80,'])
+  await assert.rejects(()=>sdk.checkPort('example.com',port), /TCP port/);
+assert.equal(seen.length,callsBeforeInvalid);
+globalThis.fetch=async url=>({ok:true,json:async()=>new URL(url).searchParams});
+assert.equal((await sdk.checkPort('https://example.com/path',[80,443])).get('port'),'80,443');
+assert.equal((await sdk.getIp()).get('ip'),null);
+console.log('PASS invalid arguments rejected locally and supported forms preserved');

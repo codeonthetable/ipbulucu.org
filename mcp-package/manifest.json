@@ -2,18 +2,59 @@
   "manifest_version": "0.3",
   "name": "ipbulucu-mcp",
   "display_name": "IPBulucu Network Tools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "IP, DNS, single TCP port, partial DNSBL and IPv4 subnet tools through ipbulucu.org.",
-  "author": { "name": "IPBulucu", "url": "https://ipbulucu.org" },
+  "author": {
+    "name": "IPBulucu",
+    "url": "https://ipbulucu.org"
+  },
   "homepage": "https://ipbulucu.org/en/api-docs/#ai",
-  "repository": { "type": "git", "url": "https://github.com/codeonthetable/ipbulucu.org" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codeonthetable/ipbulucu.org"
+  },
   "license": "MIT",
-  "privacy_policies": ["https://ipbulucu.org/en/privacy-policy/"],
+  "privacy_policies": [
+    "https://ipbulucu.org/en/privacy-policy/"
+  ],
   "server": {
     "type": "node",
     "entry_point": "bin/ipbulucu-mcp.mjs",
-    "mcp_config": { "command": "node", "args": ["${__dirname}/bin/ipbulucu-mcp.mjs"] }
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/bin/ipbulucu-mcp.mjs"
+      ],
+      "env": {
+        "IPBULUCU_USAGE_METRICS": "${user_config.usage_metrics}"
+      }
+    }
   },
-  "compatibility": { "platforms": ["darwin", "win32", "linux"], "runtimes": { "node": ">=20" } },
-  "keywords": ["dns", "ip", "network", "tcp", "dnsbl", "subnet"]
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "node": ">=20"
+    }
+  },
+  "keywords": [
+    "dns",
+    "ip",
+    "network",
+    "tcp",
+    "dnsbl",
+    "subnet"
+  ],
+  "user_config": {
+    "usage_metrics": {
+      "type": "boolean",
+      "title": "Share daily active usage",
+      "description": "Optional. On tool calls only, share a rotating daily bucket to estimate active MCP profiles.",
+      "required": false,
+      "default": false
+    }
+  }
 }

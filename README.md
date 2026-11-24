@@ -14,7 +14,7 @@ IP geolocation is approximate and supplied by ipwho.is. Missing provider data is
 
 ## Choose an integration
 
-**Ready-to-run MCP:** [IPBulucu MCP 1.0.0](mcp-package/README.md) connects IP, DNS, TCP, DNSBL and subnet tools to a local stdio MCP client. Download the [desktop MCPB bundle](https://github.com/codeonthetable/ipbulucu.org/releases/tag/mcpb-v1.0.0) with its dependencies included, or use the versioned website tarball and npx configuration. Both distributions are separate from the npm SDK. No API key; no automatic queries on startup. MCP-declared requests, QA and website traffic are counted separately.
+**Ready-to-run MCP:** [IPBulucu MCP 1.0.1](mcp-package/README.md) connects IP, DNS, TCP, DNSBL and subnet tools to a local stdio MCP client. Download the [desktop MCPB bundle](https://github.com/codeonthetable/ipbulucu.org/releases/tag/mcpb-v1.0.1) with its dependencies included, or use the versioned website tarball and npx configuration. Both distributions are separate from the npm SDK. No API key; no automatic queries on startup. MCP-declared requests, QA and website traffic are counted separately.
 
 No API key is required. Use the [REST quickstart](https://ipbulucu.org/en/api-docs/#quickstart) for explicit timeouts, HTTP status checks and examples that handle unavailable geolocation. Requests without an IP argument describe the calling machine's public egress address; a backend call does not discover an end user's address.
 

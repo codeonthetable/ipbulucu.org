@@ -28,6 +28,24 @@ if ($ipbResolved && $ipbDocroot && strpos($ipbResolved . '/', $ipbDocroot . '/')
         $key = $endpoint . '|' . $client . '|' . $action . '|' . (int)floor($status/100) . 'xx';
         $stats['counts'][$key] = ($stats['counts'][$key] ?? 0) + 1;
         rewind($fp); ftruncate($fp, 0); fwrite($fp, json_encode($stats)); fflush($fp); flock($fp, LOCK_UN); fclose($fp);
+        // Optional daily activity: one occupied bucket per successful participating MCP profile.
+        // A 65536-slot collision space bounds storage; the local key never reaches this service.
+        $activity = $_SERVER['HTTP_X_IPBULUCU_ACTIVITY'] ?? '';
+        if ($client === 'mcp_claimed' && $status >= 200 && $status < 300 &&
+            ($_SERVER['REQUEST_METHOD'] ?? '') === 'GET' &&
+            in_array($endpoint, ['ip', 'dns', 'port', 'blacklist', 'subnet'], true) &&
+            preg_match('~^([0-9]{4}-[0-9]{2}-[0-9]{2})/([0-9a-f]{4})$~D', $activity, $parts) &&
+            $parts[1] === gmdate('Y-m-d')) {
+            $slots = @fopen($ipbResolved . '/mcp-active-' . $parts[1] . '.bin', 'c+b');
+            if ($slots) {
+                if (flock($slots, LOCK_EX)) {
+                    if (fseek($slots, hexdec($parts[2])) === 0) fwrite($slots, chr(1));
+                    fflush($slots);
+                    flock($slots, LOCK_UN);
+                }
+                fclose($slots);
+            }
+        }
         // Keep provider outcomes separate from HTTP success and from the request-count schema.
         // Fixed labels only: no target, provider response, error string or user identifier.
         $outcome = $GLOBALS['ipbGeoOutcome'] ?? null;
