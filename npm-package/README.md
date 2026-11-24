@@ -1,6 +1,6 @@
 # ipbulucu — Node.js SDK
 
-CommonJS client for the [IPBulucu API](https://ipbulucu.org/en/api-docs/): `getIp`, `getWhois` and `checkPort`. Requires Node.js 18+ with built-in `fetch`.
+CommonJS client for the [IPBulucu API](https://ipbulucu.org/en/api-docs/): `getIp`, `getWhois` `checkPort` and `getDns`. Requires Node.js 18+ with built-in `fetch`.
 
 ## Installation
 
@@ -40,3 +40,14 @@ Location fields can be null. VPN, identity, CGNAT, speed and reputation are not 
 For `checkPort(host, port)`, use only authorized targets and read `status` (`open`, `closed`, `filtered`, `unavailable`) and `partial`. A timeout is inconclusive. `getWhois(domain)` returns RDAP data where provider coverage exists.
 
 Pass lookup arguments as strings, for example `getWhois("example.com")`. An object such as `{domain: "example.com"}` or an invalid TCP port raises a local TypeError before any request.
+
+## DNS lookup
+
+Pass a domain name in ASCII or Punycode. Read the status for each of A, AAAA, MX, TXT, NS, CNAME and SOA alongside its records. The source and UTC check time describe the observation from the IPBulucu server. An HTTP error means the result was unavailable.
+
+```javascript
+const { getDns } = require("ipbulucu");
+getDns("example.com").then(result => {
+  console.log(result.source, result.checkedAt, result.statuses.MX);
+}).catch(error => { console.error(error.message); process.exitCode = 1; });
+```

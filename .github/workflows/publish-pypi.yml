@@ -1,4 +1,4 @@
-name: Publish reviewed Python SDK 1.0.2
+name: Publish reviewed Python SDK 1.1.0
 on: workflow_dispatch
 permissions: {}
 jobs:
@@ -15,12 +15,12 @@ jobs:
           set -eu
           mkdir dist
           cd dist
-          base=https://github.com/codeonthetable/ipbulucu.org/releases/download/python-sdk-v1.0.2
-          for name in ipbulucu-1.0.2-py3-none-any.whl ipbulucu-1.0.2.tar.gz; do
+          base=https://github.com/codeonthetable/ipbulucu.org/releases/download/python-sdk-v1.1.0
+          for name in ipbulucu-1.1.0-py3-none-any.whl ipbulucu-1.1.0.tar.gz; do
             curl --fail --silent --show-error --location --proto '=https' "$base/$name" -o "$name"
           done
           sha256sum --check --strict <<'SUMS'
-          ed5af86fbf4a4b732dce534d9197075d2a681fd40577ec5ef4af6e9ec4e7601d  ipbulucu-1.0.2-py3-none-any.whl
-          94b28ec0c0d3b747b25891c87951faad37461ca1c5bb152a442c16e086baf42e  ipbulucu-1.0.2.tar.gz
+          d139c28bdf607c48b42bad9833d9ffa5867be9ade326f8f21b05dfd5dc4360df  ipbulucu-1.1.0-py3-none-any.whl
+          b6e255fc0fc817c8741078c4c7cec71c6dba530d8ee479368a4f4750071a40a4  ipbulucu-1.1.0.tar.gz
           SUMS
       - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086

@@ -24,3 +24,18 @@ globalThis.fetch=async url=>({ok:true,json:async()=>new URL(url).searchParams});
 assert.equal((await sdk.checkPort('https://example.com/path',[80,443])).get('port'),'80,443');
 assert.equal((await sdk.getIp()).get('ip'),null);
 console.log('PASS invalid arguments rejected locally and supported forms preserved');
+let dnsCalls=0;
+globalThis.fetch=async(url,options)=>{
+  dnsCalls++;
+  assert.equal(new URL(url).pathname, '/api/dns');
+  assert.equal(new URL(url).searchParams.get('host'), 'xn--bcher-kva.example');
+  assert.equal(options.headers['X-IPBulucu-Client'],'node-sdk');
+  return {ok:true,json:async()=>({success:true,statuses:{MX:'no-record'},records:{MX:[]}})};
+};
+assert.deepEqual((await sdk.getDns(' XN--BCHER-KVA.example. ')).records.MX, []);
+for (const invalid of [null,{},'', '127.0.0.1','::1','localhost','a..org','https://example.com','x.org/','example.123'])
+  await assert.rejects(()=>sdk.getDns(invalid),TypeError);
+assert.equal(dnsCalls,1);
+globalThis.fetch=async()=>({ok:false,status:502});
+await assert.rejects(()=>sdk.getDns('example.com'),/502/);
+console.log('PASS DNS normalization, headers, absent records, invalid arguments and HTTP failure');
