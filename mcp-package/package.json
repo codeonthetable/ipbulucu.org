@@ -1,6 +1,6 @@
 {
   "name": "ipbulucu-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "IPBulucu stdio MCP server for IP, DNS, TCP, DNSBL and IPv4 subnet tools",
   "type": "module",
   "bin": {

@@ -164,3 +164,21 @@ test('installed stdio entry negotiates current and legacy client connections wit
     assert.equal(errors, '');
   }
 });
+
+test('activity participation requires opt-in and excludes QA', async t => {
+  for (const [measureActivity, operationalQa] of [[false,false],[true,false],[true,true]]) {
+    const seen = [];
+    const c = await harness(t, { measureActivity, operationalQa,
+      fetchImpl: async (url, options) => {
+        seen.push(new Headers(options.headers).get('X-IPBulucu-Activity'));
+        return reply({ success:true });
+      }
+    });
+    await c.listTools();
+    assert.equal(seen.length, 0);
+    await c.callTool({ name:'ipbulucu_dns', arguments:{domain:'example.com'} });
+    assert.equal(seen.length, 1);
+    if (measureActivity && !operationalQa) assert.match(seen[0], /^\d{4}-\d{2}-\d{2}\/[0-9a-f]{4}$/);
+    else assert.equal(seen[0], null);
+  }
+});

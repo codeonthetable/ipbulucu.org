@@ -9,12 +9,12 @@
     "source": "github",
     "subfolder": "mcp-package"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "packages": [
     {
       "registryType": "mcpb",
-      "identifier": "https://github.com/codeonthetable/ipbulucu.org/releases/download/mcpb-v1.0.0/ipbulucu-mcp-1.0.0.mcpb",
-      "fileSha256": "dbd39c8ba61694485049a5519be446997eb08f5fa635885ca3973bbd69e5cc18",
+      "identifier": "https://github.com/codeonthetable/ipbulucu.org/releases/download/mcpb-v1.0.1/ipbulucu-mcp-1.0.1.mcpb",
+      "fileSha256": "d4e828b49ac5e63a06528dc6eec1a11740426be975a15d29247624eebbaa4747",
       "transport": { "type": "stdio" }
     }
   ]

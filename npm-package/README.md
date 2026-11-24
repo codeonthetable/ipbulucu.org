@@ -38,3 +38,5 @@ main();
 Location fields can be null. VPN, identity, CGNAT, speed and reputation are not measured. HTTP success does not establish complete data. Respect HTTP 429 and `Retry-After`. Keep lookup inputs and raw responses out of logs and analytics.
 
 For `checkPort(host, port)`, use only authorized targets and read `status` (`open`, `closed`, `filtered`, `unavailable`) and `partial`. A timeout is inconclusive. `getWhois(domain)` returns RDAP data where provider coverage exists.
+
+Pass lookup arguments as strings, for example `getWhois("example.com")`. An object such as `{domain: "example.com"}` or an invalid TCP port raises a local TypeError before any request.

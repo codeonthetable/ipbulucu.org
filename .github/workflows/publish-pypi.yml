@@ -1,0 +1,26 @@
+name: Publish reviewed Python SDK 1.0.1
+on: workflow_dispatch
+permissions: {}
+jobs:
+  publish:
+    if: github.repository == 'codeonthetable/ipbulucu.org' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - name: Retrieve and verify reviewed distributions
+        run: |
+          set -eu
+          mkdir dist
+          cd dist
+          base=https://github.com/codeonthetable/ipbulucu.org/releases/download/v1.0.1
+          for name in ipbulucu-1.0.1-py3-none-any.whl ipbulucu-1.0.1.tar.gz; do
+            curl --fail --silent --show-error --location --proto '=https' "$base/$name" -o "$name"
+          done
+          sha256sum --check --strict <<'SUMS'
+          e8138e77bf556ff3f48ed8025b0f975d4b32e200471668b261dc4bc15bcfc6f9  ipbulucu-1.0.1-py3-none-any.whl
+          23f838de173922c4164c0dc364f9ad8ebd4ecec0925bd6fb9bc59d65b9495cc0  ipbulucu-1.0.1.tar.gz
+          SUMS
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086

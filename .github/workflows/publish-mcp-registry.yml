@@ -39,7 +39,7 @@ jobs:
           set -euo pipefail
           url=$(jq -er '.packages[0].identifier' mcp-package/server.json)
           hash=$(jq -er '.packages[0].fileSha256' mcp-package/server.json)
-          test "$url" = 'https://github.com/codeonthetable/ipbulucu.org/releases/download/mcpb-v1.0.0/ipbulucu-mcp-1.0.0.mcpb'
+          test "$url" = 'https://github.com/codeonthetable/ipbulucu.org/releases/download/mcpb-v1.0.1/ipbulucu-mcp-1.0.1.mcpb'
           curl --fail --location --silent --show-error --max-time 60 --output bundle.mcpb "$url"
           printf '%s  bundle.mcpb\n' "$hash" | sha256sum --check --strict
           python3 - <<'PY'
@@ -50,7 +50,7 @@ jobs:
               assert all(not name.startswith('/') and '..' not in PurePosixPath(name).parts for name in archive.namelist())
               manifest = json.loads(archive.read('manifest.json'))
               server = json.load(open('mcp-package/server.json'))
-              assert manifest['version'] == server['version'] == '1.0.0'
+              assert manifest['version'] == server['version'] == '1.0.1'
               assert manifest['server']['type'] == 'node'
           PY
       - name: Install signature verifier
@@ -80,4 +80,4 @@ jobs:
       - name: Deprecate this version without deleting its history
         if: inputs.operation == 'deprecate'
         working-directory: mcp-package
-        run: ../mcp-publisher status --status deprecated --yes io.github.codeonthetable/ipbulucu 1.0.0
+        run: ../mcp-publisher status --status deprecated --yes io.github.codeonthetable/ipbulucu 1.0.1
