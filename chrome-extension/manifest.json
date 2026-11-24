@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "IP Bulucu - IP Adresi ve Yaklaşık Konum",
-  "version": "1.0.1",
-  "description": "Genel IP adresinizi, yaklaşık konumunuzu ve internet servis sağlayıcınızı görün. IP Bulucu ağ araçlarına hızlı erişim.",
+  "name": "__MSG_extensionName__",
+  "version": "1.0.2",
+  "description": "__MSG_extensionDescription__",
   "action": {
     "default_popup": "popup.html",
     "default_title": "IP Bulucu - ipbulucu.org"
   },
   "host_permissions": [
     "https://ipbulucu.org/*"
-  ]
+  ],
+  "default_locale": "en"
 }

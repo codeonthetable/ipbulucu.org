@@ -1,8 +1,8 @@
 # IP Bulucu Chrome extension
 
-Version 1.0.1 displays your public IP, approximate location and ISP. Missing data stays unavailable. It does not measure VPN safety, CGNAT, speed or security scores.
+The popup displays your public IP address and the approximate location and internet provider returned by IP Bulucu. Version 1.0.2 adds an IP copy button and Turkish and English messages. Copying happens on your device.
 
-[Install version 1.0.1 from the Chrome Web Store](https://chromewebstore.google.com/detail/nifmmckmhnfjmpjfakhkifbeegdnanpb). In desktop Chrome, select **Add to Chrome**, open the Extensions menu and pin IP Bulucu. Select its toolbar icon to run a lookup. The link in the popup opens the website for further checks.
+[Install the published extension from the Chrome Web Store](https://chromewebstore.google.com/detail/nifmmckmhnfjmpjfakhkifbeegdnanpb). In desktop Chrome, select **Add to Chrome**, open the Extensions menu and pin IP Bulucu. Select its toolbar icon to run a lookup. The link in the popup opens the website for further checks.
 
 [English setup guide](https://ipbulucu.org/en/chrome-extension/) · [Türkçe kurulum rehberi](https://ipbulucu.org/chrome-eklentisi/)
 

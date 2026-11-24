@@ -9,28 +9,40 @@
     body { width: 340px; background: #030712; color: #f9fafb; padding: 16px; }
     .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1f2937; padding-bottom: 12px; margin-bottom: 12px; }
     .logo { font-size: 15px; font-weight: 800; color: #38bdf8; display: flex; align-items: center; gap: 6px; }
-    .badge { font-size: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); padding: 2px 8px; rounded-full; border-radius: 9999px; }
+    .badge { font-size: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); padding: 2px 8px; border-radius: 9999px; }
     .ip-box { background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 14px; text-align: center; margin-bottom: 12px; }
     .ip-label { font-size: 10px; text-transform: uppercase; color: #94a3b8; font-weight: 700; }
-    .ip-val { font-size: 20px; font-weight: 900; font-family: monospace; color: #ffffff; margin: 4px 0; }
+    .ip-val { font-size: 20px; font-weight: 900; font-family: monospace; overflow-wrap: anywhere; user-select: all; color: #ffffff; margin: 4px 0; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
     .card { background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 10px; }
     .card-title { font-size: 10px; color: #64748b; font-weight: 600; text-transform: uppercase; }
     .card-val { font-size: 12px; font-weight: 700; color: #e2e8f0; margin-top: 2px; }
     .btn { display: block; width: 100%; padding: 10px; border-radius: 12px; background: linear-gradient(135deg, #2563eb, #3b82f6); color: white; text-align: center; text-decoration: none; font-size: 12px; font-weight: 700; margin-top: 8px; transition: 0.2s; }
     .btn:hover { background: linear-gradient(135deg, #1d4ed8, #2563eb); }
+    #copy-ip { min-height: 36px; padding: 4px 12px; margin: 4px 0; cursor: pointer; }
+    #copy-status { color: #e2e8f0; font-size: 12px; }
     .loading { color: #94a3b8; font-size: 12px; text-align: center; padding: 20px; }
   </style>
 </head>
 <body>
   <div class="header">
     <div class="logo">🌐 IPBulucu.org</div>
-    <div class="badge">v1.0</div>
+    <div class="badge" id="version"></div>
   </div>
 
-  <div id="content">
-    <div class="loading">IP Bilgileri Alınıyor...</div>
-  </div>
+  <main>
+    <div id="loading" class="loading" role="status"></div>
+    <section id="result" class="ip-box" hidden>
+      <div id="ip-label" class="ip-label"></div>
+      <div id="ip" class="ip-val" dir="ltr"></div>
+      <button type="button" id="copy-ip"></button>
+      <p id="copy-status" role="status"></p>
+      <p id="location"></p>
+      <p id="provider"></p>
+      <p id="notice"></p>
+    </section>
+    <a id="tools" class="btn" target="_blank" rel="noopener noreferrer"></a>
+  </main>
 
   <script src="popup.js"></script>
 </body>
