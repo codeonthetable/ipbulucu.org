@@ -2,15 +2,13 @@
 
 Synchronous `requests` client for the [IPBulucu API](https://ipbulucu.org/en/api-docs/): `get_ip`, `get_whois` and `check_port`. It does not provide a CLI or async API.
 
-## Release status
+## Installation
 
-Version **1.0.1** is distributed as a wheel and source archive in the [GitHub release](https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1). It adds HTTP status checks, a 10-second timeout and a self-declared SDK client header. PyPI still lists **1.0.0** as checked on 4 November 2026; a plain `pip install ipbulucu` does not install this release.
+Install the official SDK from PyPI. Requests use a ten-second timeout and check the HTTP status. No API key is required.
 
 ```bash
-python -m pip install https://github.com/codeonthetable/ipbulucu.org/releases/download/v1.0.1/ipbulucu-1.0.1-py3-none-any.whl
+python -m pip install ipbulucu
 ```
-
-The release includes SHA256SUMS for artifact verification. No API key is needed. [Direct REST examples](https://ipbulucu.org/en/api-docs/#quickstart) remain available.
 
 ## Example
 

@@ -18,14 +18,7 @@ IP geolocation is approximate and supplied by ipwho.is. Missing provider data is
 
 No API key is required. Use the [REST quickstart](https://ipbulucu.org/en/api-docs/#quickstart) for explicit timeouts, HTTP status checks and examples that handle unavailable geolocation. Requests without an IP argument describe the calling machine's public egress address; a backend call does not discover an end user's address.
 
-The Node.js SDK update is now available on [npm](https://www.npmjs.com/package/ipbulucu); version **1.0.1** introduced the transport checks below. PyPI still publishes **1.0.0** as checked on **14 November 2026**. The Python **1.0.1** archive is available in the [GitHub release](https://github.com/codeonthetable/ipbulucu.org/releases/tag/v1.0.1), with installation instructions in its SDK guide and SHA256SUMS for verification.
-
-| Client | Registry release | GitHub archive 1.0.1 |
-| --- | --- | --- |
-| [Node.js SDK](npm-package/README.md) | npm 1.0.1 and later: 10-second timeout and HTTP status checks | Same transport behavior |
-| [Python SDK](python-package/README.md) | PyPI 1.0.0: 5-second timeout; no HTTP status check | 10-second timeout and HTTP status checks |
-
-The current npm SDK rejects HTTP errors and sends a self-declared SDK client header. PyPI 1.0.0 still parses JSON on HTTP error responses and does not send that header. Check the returned `success` field and catch request/JSON errors. Use direct REST when you need access to response headers such as `Retry-After`; do not retry automatically. Package downloads and self-declared client headers do not establish human or AI usage.
+Install the [Node.js SDK](https://www.npmjs.com/package/ipbulucu) with `npm install ipbulucu` or the [Python SDK](https://pypi.org/project/ipbulucu/) with `python -m pip install ipbulucu`. Both clients check HTTP status and set a ten-second timeout.
 
 ## Node.js 18+
 
@@ -55,10 +48,10 @@ main();
 ## Python
 
 ```bash
-python -m pip install ipbulucu==1.0.0
+python -m pip install ipbulucu
 ```
 
-Save as `lookup.py`, then run `python lookup.py`. This makes one request with the published SDK's five-second timeout.
+Save as `lookup.py`, then run `python lookup.py`. This makes one request with the published SDK's ten-second timeout.
 
 ```python
 import ipbulucu

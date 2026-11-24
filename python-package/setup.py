@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="ipbulucu",
-    version="1.0.1",
+    version="1.0.2",
     description="Official Python SDK for ipbulucu.org - Free IP Geolocation, Whois and Network Intelligence API",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
