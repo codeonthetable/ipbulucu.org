@@ -57,4 +57,11 @@ async function checkPort(host, port = 80) {
   return request("port", { host: target, port: ports.map(Number).join(",") });
 }
 
-module.exports = { getIp, getWhois, checkPort };
+async function getDns(domain) {
+  const host = hostArgument(domain, false).replace(/\.$/, "").toLowerCase();
+  if (isIP(host) || /^\d+$/.test(host.split(".").pop()))
+    throw new TypeError("Expected a DNS domain name in ASCII or Punycode.");
+  return request("dns", { host });
+}
+
+module.exports = { getIp, getWhois, checkPort, getDns };
