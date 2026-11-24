@@ -1,0 +1,41 @@
+{
+  "language": {
+    "message": "en"
+  },
+  "extensionName": {
+    "message": "IP Bulucu - Public IP and Approximate Location"
+  },
+  "extensionDescription": {
+    "message": "View and copy your public IP address. Check your approximate location and internet provider."
+  },
+  "loading": {
+    "message": "Looking up your public IP address…"
+  },
+  "ipLabel": {
+    "message": "Your public IP address"
+  },
+  "copyIp": {
+    "message": "Copy IP address"
+  },
+  "copied": {
+    "message": "IP address copied."
+  },
+  "copyFailed": {
+    "message": "Copying was blocked. Select the IP address to copy it manually."
+  },
+  "noLocation": {
+    "message": "Location unavailable."
+  },
+  "noProvider": {
+    "message": "Internet provider unavailable."
+  },
+  "notice": {
+    "message": "Location is approximate. This lookup does not test connection speed, VPN security or CGNAT."
+  },
+  "lookupError": {
+    "message": "The IP lookup failed. Please try again."
+  },
+  "openTools": {
+    "message": "Open IP Bulucu network tools"
+  }
+}

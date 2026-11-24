@@ -1,0 +1,41 @@
+{
+  "language": {
+    "message": "tr"
+  },
+  "extensionName": {
+    "message": "IP Bulucu - IP Adresi ve Yaklaşık Konum"
+  },
+  "extensionDescription": {
+    "message": "Genel IP adresinizi görün ve kopyalayın. Yaklaşık konumunuzu ve internet servis sağlayıcınızı kontrol edin."
+  },
+  "loading": {
+    "message": "Genel IP adresi sorgulanıyor…"
+  },
+  "ipLabel": {
+    "message": "Genel IP adresiniz"
+  },
+  "copyIp": {
+    "message": "IP adresini kopyala"
+  },
+  "copied": {
+    "message": "IP adresi kopyalandı."
+  },
+  "copyFailed": {
+    "message": "Kopyalama engellendi. IP adresini seçip elle kopyalayabilirsiniz."
+  },
+  "noLocation": {
+    "message": "Konum bilgisi alınamadı."
+  },
+  "noProvider": {
+    "message": "İnternet servis sağlayıcısı bilgisi alınamadı."
+  },
+  "notice": {
+    "message": "Konum yaklaşık bir tahmindir. Bu sorgu hat hızı, VPN güvenliği veya CGNAT testi yapmaz."
+  },
+  "lookupError": {
+    "message": "IP sorgusu tamamlanamadı. Lütfen tekrar deneyin."
+  },
+  "openTools": {
+    "message": "IP Bulucu ağ araçlarını aç"
+  }
+}
