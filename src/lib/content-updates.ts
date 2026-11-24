@@ -8,6 +8,9 @@
 // 2026-11-14 Europe/Istanbul: 13 DNS/port/blacklist pages verified live
 // at 2026-11-13T21:51:44Z; API documentation retains its previous date.
 export const PUBLISHED_CONTENT_DATES: Readonly<Record<string, string>> = {
+  "/": "2026-11-25",
+  "/ip-sorgulama/": "2026-11-25",
+  "/ip-den-adres-bulma/": "2026-11-25",
   "/isp/turk-telekom/": "2026-11-17",
   "/isp/turkcell-superonline/": "2026-11-17",
   "/isp/turknet/": "2026-11-17",
