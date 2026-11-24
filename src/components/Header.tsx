@@ -70,7 +70,7 @@ export default function Header() {
         { name: "All Tools", href: "/en/tools", icon: Layers },
       ]
     : [
-        { name: "IP Sorgula", href: "/", icon: Globe2 },
+        { name: "IP Sorgula", href: "/ip-sorgulama/", icon: Globe2 },
         { name: "IP Takip", href: "/ip-takip", icon: Zap },
         { name: "DNS Yayılma", href: "/dns-yayilma-kontrolu", icon: Globe2 },
         { name: "Whois", href: "/whois", icon: Search },

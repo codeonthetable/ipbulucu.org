@@ -78,6 +78,13 @@ export default function AllToolsPage() {
           badge: "Ana Araç",
         },
         {
+          name: "IP Adresi Sorgulama",
+          desc: "Bir IPv4, IPv6 veya alan adı girerek sağlayıcısını ve varsa yaklaşık konumunu görün.",
+          href: "/ip-sorgulama/",
+          icon: Search,
+          color: "text-blue-600 bg-blue-50 dark:bg-blue-950/40",
+        },
+        {
           name: "Açık Port Kontrolü (Toplu Tarama)",
           desc: "Yaygın TCP portlarını sunucumuzdan kontrol edin. Reddedilen bağlantı ve belirsiz zaman aşımı ayrı gösterilir.",
           href: "/port-kontrolu",
