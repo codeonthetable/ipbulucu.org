@@ -1,155 +1,99 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  MapPin,
-  ShieldCheck,
-  Scale,
-  AlertTriangle,
-  HelpCircle,
-  Search,
-  ArrowRight,
-} from "lucide-react";
-import InteractiveIpFinder from "@/components/InteractiveIpFinder";
-import FaqAccordion from "@/components/FaqAccordion";
 import AdPlaceholder from "@/components/AdPlaceholder";
+import FaqAccordion from "@/components/FaqAccordion";
+import PublicIpLookup from "@/components/PublicIpLookup";
+
+const title = "IP adresinden konum nasıl bulunur?";
+const description =
+  "Bir IP adresinin yaklaşık ülke ve şehir bilgisini sorgulayın. Harita neden farklı bir şehri gösterebilir ve sonuçta hangi bilgileri kontrol edebilirsiniz?";
+const url = "https://ipbulucu.org/ip-ile-konum-bulma-nasil-yapilir/";
 
 export const metadata: Metadata = {
-  title: "IP Adresinden Konum Bulma Nasıl Yapılır? Ev Adresi Bulunur mu?",
-  description:
-    "IP adresinden fiziksel konum nasıl bulunur? Sokak ve ev adresi tespiti mümkün mü? 5651 sayılı kanun ve yasal bilişim süreçleri rehberi.",
-  alternates: {
-    canonical: "https://ipbulucu.org/ip-ile-konum-bulma-nasil-yapilir",
-  },
+  title,
+  description,
+  alternates: { canonical: url },
+  openGraph: { title, description, url, locale: "tr_TR", type: "article" },
+  twitter: { card: "summary", title, description },
 };
 
-const GEOLOC_FAQS = [
+const questions = [
   {
-    question: "IP adresinden tam ev adresi bulunur mu?",
+    question: "IP adresinden ev adresi bulunur mu?",
     answer:
-      "Hayır. Herkese açık hiçbir web sitesi veya araç IP adresinden evinizi, sokak adınızı veya kapı numaranızı bulamaz. IP sorgulamaları sadece bağlı olduğunuz santrali ve şehri gösterir. Kesin abone adresi yalnızca mahkeme kararıyla servis sağlayıcılardan (Türk Telekom vb.) talep edilebilir.",
+      "Bu sorgu bir ağ adresini coğrafi veri tabanında arar. Sokak, kapı numarası, abonenin adı veya telefonun GPS konumu sonuçta yer almaz.",
   },
   {
-    question: "IP coğrafi konumunun doğruluk oranı nedir?",
+    question: "VPN açınca haritada neden başka bir ülke görünüyor?",
     answer:
-      "Ülke bazında doğruluk %99, il/şehir bazında doğruluk %85-95 oranındadır. İlçe ve semt bazında ise internet servis sağlayıcısının santral yönlendirmesine göre sapmalar olabilir.",
+      "Sorgulanan genel IP, VPN üzerinden internete çıktığınızda VPN hizmetine ait olabilir. Ülke ve şehir alanları bu çıkış adresine ilişkin tahmini gösterir.",
   },
   {
-    question: "IP adresinden isim veya kimlik tespiti yapılabilir mi?",
+    question: "Neden şehir veya harita görünmüyor?",
     answer:
-      "Kullanıcılar için bu bilgi KVKK kapsamında kesinlikle gizlidir. Sadece cumhuriyet savcılıkları ve emniyet siber suçlar bürosu IP sağlayıcısından abone kimliğini alabilir.",
+      "Bir IP için ülke bilgisi varken şehir veya koordinat bulunmayabilir. Konum servisi de geçici olarak yanıt vermeyebilir. Geçerli koordinat gelmediğinde araç haritada nokta göstermez.",
   },
 ];
 
 export default function IpLocationGuidePage() {
   return (
-    <div className="space-y-10 max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="space-y-4">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold">
-          <MapPin className="w-3.5 h-3.5" />
-          <span>Siber Güvenlik & Yasal Rehber</span>
-        </div>
-        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
-          IP Adresinden Konum Nasıl Bulunur? (Ev Adresi Bulunabilir mi?)
-        </h1>
-        <p className="text-base md:text-lg text-gray-600 dark:text-slate-300 leading-relaxed">
-          İnternette en çok merak edilen sorulardan biri: Bir IP adresinden tam olarak nereye kadar konum tespiti yapılabilir ve adli süreçler nasıl işler?
+    <article className="space-y-10 max-w-4xl mx-auto">
+      <header className="space-y-4">
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">{title}</h1>
+        <p className="text-base md:text-lg leading-relaxed">
+          Genel IP adresini aşağıya girin. Araç, ipwho.is kaydındaki ülkeyi, varsa şehri ve
+          yaklaşık koordinatları gösterir. Haritadaki nokta bir evin, telefonun veya baz
+          istasyonunun yerini belirlemez.
         </p>
-      </div>
-
-      {/* Live Interactive Search Tool */}
-      <InteractiveIpFinder
-        defaultTitle="Canlı IP Konum & Koordinat Sorgulama"
-        placeholder="Konumunu öğrenmek istediğiniz IP adresini girin..."
-        buttonLabel="Konumu Tespit Et"
+      </header>
+      <PublicIpLookup
+        searchFirst
+        title="IP adresinin yaklaşık konumunu sorgula"
+        placeholder="Genel IP adresi veya alan adı"
+        buttonLabel="Konumu sorgula"
       />
-
-      {/* Featured Snippet Definition Box */}
-      <div className="rounded-2xl border-2 border-rose-500/40 bg-white dark:bg-slate-900/90 p-6 shadow-xl relative overflow-hidden">
-        <div className="space-y-2">
-          <div className="text-xs font-black text-rose-600 dark:text-rose-400 uppercase tracking-wider">Kesin ve Doğru Cevap</div>
-          <p className="text-sm md:text-base text-gray-900 dark:text-white font-medium leading-relaxed">
-            <b>IP adresinden doğrudan ev veya sokak adresi bulunamaz.</b> IP coğrafi konumlandırması (GeoIP) sadece servis sağlayıcının santralini, şehri ve yaklaşık bölge koordinatlarını verir. Kesin abone kimliği (Ad, Soyad, TC, Ev Adresi) yalnızca Cumhuriyet Savcılıkları tarafından yasal müzekkere ile ISS&#39;lerden alınabilir.
-          </p>
-        </div>
-      </div>
-
-      {/* Accuracy Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-5 rounded-3xl border border-slate-800 bg-slate-900/60 text-center space-y-2">
-          <div className="text-3xl font-black text-emerald-400 font-mono">%99.8</div>
-          <div className="text-xs font-bold text-white uppercase">Ülke Doğruluğu</div>
-          <p className="text-[11px] text-slate-400">Ülke bilgisi de sağlayıcının tahminidir; VPN, ağ değişikliği veya eski kayıt nedeniyle hatalı olabilir.</p>
-        </div>
-
-        <div className="p-5 rounded-3xl border border-slate-800 bg-slate-900/60 text-center space-y-2">
-          <div className="text-3xl font-black text-cyan-400 font-mono">%88 - 95</div>
-          <div className="text-xs font-bold text-white uppercase">Şehir / İl Doğruluğu</div>
-          <p className="text-[11px] text-slate-400">Santral merkezlerine göre il doğruluğu çok yüksektir.</p>
-        </div>
-
-        <div className="p-5 rounded-3xl border border-slate-800 bg-slate-900/60 text-center space-y-2">
-          <div className="text-3xl font-black text-rose-400 font-mono">%0</div>
-          <div className="text-xs font-bold text-white uppercase">Sokak / Ev Adresi</div>
-          <p className="text-[11px] text-slate-400">Halka açık hiçbir sistem ev adresini göremez.</p>
-        </div>
-      </div>
-
-      <AdPlaceholder slotId="location-mid" format="leaderboard" />
-
-      {/* Direct links to related guides */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Link
-          href="/ip-den-adres-bulma"
-          className="p-5 rounded-2xl bg-gradient-to-br from-blue-900/20 to-slate-900 border border-blue-500/20 hover:border-blue-500/50 transition-all group flex flex-col justify-between"
-        >
-          <div>
-            <div className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-1">Ayrıntılı Rehber</div>
-            <h3 className="text-base font-bold text-white group-hover:text-blue-400 transition-colors">
-              IP&#39;den Adres Bulma ve Ev Adresi Gerçekleri
-            </h3>
-            <p className="text-xs text-slate-400 mt-2">
-              Siber suçlar, HTS kayıtları ve 5651 sayılı kanunla adres bulma süreçlerinin tüm teknik detayları.
-            </p>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-blue-400 font-bold mt-4">
-            <span>Rehberi İncele</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </Link>
-
-        <Link
-          href="/karsi-tarafin-ip-adresini-bulma"
-          className="p-5 rounded-2xl bg-gradient-to-br from-cyan-900/20 to-slate-900 border border-cyan-500/20 hover:border-cyan-500/50 transition-all group flex flex-col justify-between"
-        >
-          <div>
-            <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">Sosyal Medya Rehberi</div>
-            <h3 className="text-base font-bold text-white group-hover:text-cyan-400 transition-colors">
-              Karşı Tarafın IP Adresini Bulma (Instagram & Discord)
-            </h3>
-            <p className="text-xs text-slate-400 mt-2">
-              Sosyal medya mesajlarından IP tespit etme imkanları ve IP Logger tuzaklarından korunma yolları.
-            </p>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-cyan-400 font-bold mt-4">
-            <span>Rehberi İncele</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </Link>
-      </div>
-
-      {/* Legal & Police Steps */}
-      <div className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-8 space-y-4">
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Scale className="w-5 h-5 text-indigo-400" />
-          <span>Dolandırıcılık ve Şantajda Yasal Süreç Nasıl İşler?</span>
-        </h2>
-        <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-          Eğer internetten dolandırıldıysanız veya tehdit aldıysanız, <Link href="/" className="text-cyan-400 font-bold hover:underline">ipbulucu.org üzerindeki Savcılık Delil Raporunu</Link> yazdırarak doğrudan en yakın Polis Merkezi Siber Suçlar Büro Amirliği&#39;ne veya Cumhuriyet Başsavcılığı&#39;na müracaat edebilirsiniz. Savcılık, telekom operatöründen ilgili saatteki IP sahibinin kimlik ve adres bilgilerini resmi olarak talep eder.
+      <section className="space-y-3">
+        <h2 className="text-2xl font-bold">Harita neden başka bir şehri gösteriyor?</h2>
+        <p>
+          Örneğin İzmir’de mobil veri kullanırken sorguda İstanbul görebilirsiniz.
+          Mobil operatör aynı adres aralığını farklı illerdeki bağlantılar için
+          kullanabilir. Şehir, veri sağlayıcısının o IP için tuttuğu tahmindir.
+          Haritayı yakınlaştırmak bu tahminin hassasiyetini artırmaz.
         </p>
-      </div>
-
-      <FaqAccordion items={GEOLOC_FAQS} />
-    </div>
+        <p>
+          Kendi bağlantınızda karşılaştırmak için telefonunuz Wi-Fi’ye bağlıyken
+          yukarıdaki <strong>IP adresim</strong> düğmesine dokunun. Wi-Fi’yi kapatıp
+          mobil veriyle yeniden deneyin. Önce genel IP ile servis sağlayıcısını,
+          sonra iki şehir sonucunu karşılaştırın. Aynı yerde dururken farklı şehirler
+          görebilirsiniz.
+        </p>
+        <p>
+          Bir alan adı girdiyseniz harita, sitenin bu sorguda çözülen sunucu veya
+          CDN adresine aittir. Site sahibinin yaşadığı yeri buradan çıkaramazsınız.
+        </p>
+      </section>
+      <AdPlaceholder slotId="location-mid" format="leaderboard" />
+      <section className="space-y-3">
+        <h2 className="text-2xl font-bold">Sonucu nasıl doğrulayabilirim?</h2>
+        <p>
+          Önce sonuçtaki genel IP ve ağ sağlayıcısını kontrol edin.
+          <Link className="underline" href="/ip-sorgulama/"> IP sorgulama aracında</Link> aynı
+          adresin ağ bilgilerini inceleyebilirsiniz. ASN, adresi duyuran ağı tanımaya
+          yardımcı olur. Şehir tahminini tek başına doğrulamaz.
+        </p>
+        <p>
+          Kullandığımız alanların tanımları <a className="underline" href="https://ipwhois.io/documentation">ipwho.is API belgelerinde</a> yer alır.
+          IP konumunun mobil bağlantı ve VPN kullanımına göre nasıl değiştiğini
+          <a className="underline" href="https://support.maxmind.com/knowledge-base/articles/maxmind-geolocation-accuracy"> MaxMind’ın coğrafi doğruluk açıklamasında</a> da okuyabilirsiniz.
+        </p>
+        <p>
+          Bir tehdit mesajı aldıysanız orijinal mesajı, tarihini ve bağlantısını saklayın.
+          Bir IP haritası mesajı kimin gönderdiğini göstermez.
+          <Link className="underline" href="/karsi-tarafin-ip-adresini-bulma/"> Mesajlaşmada IP ve gizlilik</Link> veya
+          <Link className="underline" href="/ip-den-adres-bulma/"> IP ile adres sorgulamanın sınırları</Link> hakkında okuyabilirsiniz.
+        </p>
+      </section>
+      <FaqAccordion items={questions} title="IP konumu hakkında sorular" subtitle="Ev adresi, VPN ve eksik konum sonuçları" />
+    </article>
   );
 }
