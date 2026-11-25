@@ -4,6 +4,10 @@
 
 Turkish and English public IP lookup and network tools. The website is a Next.js static export; PHP endpoints are hosted separately under `/api/`. Distribution folders contain the Chrome extension, Node SDK and Python SDK. Source changes are not automatically deployed or published.
 
+## Browser lookup and support material
+
+To check the network serving a website, enter its domain in the [browser lookup](https://ipbulucu.org/ip-sorgulama/). For a help desk or classroom, the [Turkish IP address worksheet](docs/ip-adresi-uygulamasi.md) includes a before-and-after connection check, an exercise with an answer key, and wording you can reuse in a support article.
+
 ## Result limits
 
 IP geolocation is approximate and supplied by ipwho.is. Missing provider data is explicit (`geoStatus=unavailable`). VPN, CGNAT, connection speed, identity, risk and game latency are not measured by the IP endpoint. IP monitoring runs only in an open browser tab. Server alerts are unavailable.
