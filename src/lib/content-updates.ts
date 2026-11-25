@@ -9,6 +9,7 @@
 // at 2026-11-13T21:51:44Z; API documentation retains its previous date.
 export const PUBLISHED_CONTENT_DATES: Readonly<Record<string, string>> = {
   "/": "2026-11-25",
+  "/ip-ile-konum-bulma-nasil-yapilir/": "2026-11-25",
   "/ip-tespit-etme/": "2026-11-25",
   "/ip-sorgulama/": "2026-11-25",
   "/ip-den-adres-bulma/": "2026-11-25",
