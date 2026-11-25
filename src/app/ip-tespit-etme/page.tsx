@@ -19,9 +19,9 @@ import AdPlaceholder from "@/components/AdPlaceholder";
 import { generateBreadcrumbSchema } from "@/lib/schemas";
 
 export const metadata: Metadata = {
-  title: "IP Tespit Etme & IP Bulma - Kendi IP Adresini Öğrenme Rehberi",
+  title: "Telefonda ve Bilgisayarda IP Adresi Nasıl Bulunur? | IP Bulucu",
   description:
-    "IP tespit etme ve IP bulma nasıl yapılır? Kendi IP adresimi nasıl öğrenirim? Telefondan (iPhone, Android) ve modemden IP adresi bulma adım adım kılavuzu ve canlı test aracı.",
+    "iPhone, Android, Windows ve Mac’te yerel IP adresinizi bulun. Modem için ağ geçidini, internette görünen genel IP için hangi sonuca bakacağınızı öğrenin.",
   keywords: [
     "ip tespit etme",
     "ip bulma",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     canonical: "https://ipbulucu.org/ip-tespit-etme",
   },
   openGraph: {
-    title: "IP Tespit Etme ve IP Bulma Rehberi - IPBulucu.org",
+    title: "Telefonda ve Bilgisayarda IP Adresi Nasıl Bulunur?",
     description:
       "IP adresinizi tek tıkla tespit edin. Telefondan ve modemden IP öğrenme adımları ve canlı tespit paneli.",
     url: "https://ipbulucu.org/ip-tespit-etme",
@@ -51,12 +51,12 @@ const FAQS = [
   {
     question: "IP tespit etme nedir ve ne işe yarar?",
     answer:
-      "IP tespit etme, internete bağlı cihazınızın (telefon, bilgisayar, tablet) dijital kimlik numarasını ve dünyaya çıkış yaptığı santral noktasını bulma işlemidir. Ağ sorunlarını gidermek, güvenlik kontrolleri yapmak veya sunuculara izin tanımlamak için IP tespiti yapılır.",
+      "Bir web sitesi, kendisine ulaşan bağlantının kaynak IP adresini görebilir. Ev ağı, mobil operatör veya VPN üzerinden bağlanmanıza göre farklı bir adres görünebilir. Bu bilgi tek başına bir kişiyi, ev adresini ya da telefon santralini belirlemez.",
   },
   {
     question: "Genel (Public) IP ile Yerel (Local) IP arasındaki fark nedir?",
     answer:
-      "Yerel IP (genellikle 192.168.1.X veya 10.0.0.X gibi başlar), evinizdeki modemin cihazlarınıza içeride dağıttığı adrestir. Genel (Public) IP ise tüm internet dünyasının sizi gördüğü, servis sağlayıcınız tarafından atanan resmi adrestir. Web sitelerine girerken genel IP adresiniz görünür.",
+      "Özel IPv4 adresi ev veya iş ağınızdaki cihazı o ağ içinde tanımlar. Genel IP, internette yönlendirilebilen adrestir. Evdeki birkaç cihaz aynı genel IPv4 üzerinden çıkabilir. IPv6 kullanan cihazın kendi genel adresi de olabilir.",
   },
   {
     question: "Telefonda IP adresi nereden bulunur?",
@@ -66,12 +66,12 @@ const FAQS = [
   {
     question: "Modem IP adresi nasıl bulunur?",
     answer:
-      "Çoğu modemin yönetim paneli IP'si varsayılan olarak 192.168.1.1 veya 192.168.0.1'dir. Tarayıcınızın adres çubuğuna bu adresi yazıp modem kullanıcı adı ve şifresiyle giriş yaparak modeminizin dış dünyaya bağlandığı genel WAN IP'sini görebilirsiniz.",
+      "Ev ağınıza bağlıyken ağ ayrıntılarındaki Yöneltici veya Varsayılan Ağ Geçidi alanını okuyun. Bu, cihazın o bağlantıda kullandığı yönlendiricinin adresidir. Modem panelindeki WAN adresi ise operatör tarafındaki bağlantıya aittir ve CGNAT kullanılan ağlarda internette görünen IPv4 adresinden farklı olabilir.",
   },
   {
     question: "IP adresim neden sürekli değişiyor?",
     answer:
-      "Türkiye'deki ev internetlerinin %95'i dinamik IP kullanır. Modeminizi kapatıp açtığınızda veya 24 saatlik periyotlarda servis sağlayıcınız size havuzdan yeni bir IP atar. Ayrıca CGNAT havuzundaysanız tek bir genel IP'yi yüzlerce kişiyle ortak paylaşıyor olabilirsiniz.",
+      "Wi-Fi ile mobil veri arasında geçiş yapmak veya VPN açmak, sitelerin gördüğü çıkış adresini değiştirebilir. Dinamik bir adresi sağlayıcı yeniden atayabilir. Modemi yeniden başlattığınızda adresin mutlaka değişmesi gerekmez. Statik IP hizmetiniz olup olmadığını abonelik bilgilerinizden kontrol edebilirsiniz.",
   },
 ];
 
@@ -81,26 +81,10 @@ const BREADCRUMBS = [
 ];
 
 export default function IpDetectionGuidePage() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQS.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
   const breadcrumbSchema = generateBreadcrumbSchema(BREADCRUMBS);
 
   return (
     <div className="space-y-12 max-w-4xl mx-auto">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
@@ -122,19 +106,23 @@ export default function IpDetectionGuidePage() {
           <span>Hızlı Ağ Teşhisi & IP Rehberi</span>
         </div>
         <h1 className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-          IP Tespit Etme & IP Bulma Rehberi
+          Telefonda ve bilgisayarda IP adresi nasıl bulunur?
         </h1>
         <p className="text-base md:text-lg text-gray-600 dark:text-slate-300 leading-relaxed">
-          Kendi IP adresinizi, bağlı olduğunuz internet servis sağlayıcınızı (ISS) ve yaklaşık konumunuzu saniyeler içinde tespit edin. Telefondan ve modemden IP adresi öğrenme adımları.
+          Bir cihazı ev ağında bulmak için o cihazın ağ ayarlarındaki IP adresini okuyun.
+          Modem ayarlarını açmak için aynı ekrandaki ağ geçidine bakın.
+          İnternette hangi adresle göründüğünüzü öğrenmek için aşağıdaki araçta <b>IP adresim</b> seçeneğini kullanın.
         </p>
       </div>
 
       {/* Live Tool */}
       <InteractiveIpFinder
-        defaultTitle="Canlı IP Tespit ve Ağ Bilgisi Çıkarıcı"
+        defaultTitle="Bağlantım internette hangi IP ile görünüyor?"
         placeholder="Kendi IP'niz veya sorgulamak istediğiniz IP..."
         buttonLabel="IP'yi Tespit Et"
       />
+
+      <noscript><a className="underline" href="/api/ip?format=text">Genel IP adresimi düz metin olarak göster</a></noscript>
 
       <AdPlaceholder slotId="detection-guide-top" format="leaderboard" />
 
@@ -179,11 +167,10 @@ export default function IpDetectionGuidePage() {
               <Laptop className="w-6 h-6" />
               <h3 className="font-bold text-gray-900 dark:text-white text-base">Bilgisayar (PC/Mac)</h3>
             </div>
-            <ol className="space-y-2 text-xs md:text-sm text-gray-600 dark:text-slate-300 list-decimal list-inside">
-              <li><b>Windows:</b> Başlat &#62; CMD açın ve <code className="text-cyan-400 bg-slate-950 px-1 py-0.5 rounded font-mono">ipconfig</code> yazıp Enter&#39;a basın.</li>
-              <li><b>Mac:</b> Terminal açın ve <code className="text-cyan-400 bg-slate-950 px-1 py-0.5 rounded font-mono">ipconfig getifaddr en0</code> yazın.</li>
-              <li>İç ağ IP&#39;niz anında listelenir.</li>
-            </ol>
+            <ul className="space-y-2 text-xs md:text-sm text-gray-600 dark:text-slate-300 list-disc list-inside">
+              <li><b>Windows:</b> Komut İstemi’nde <code>ipconfig</code> çalıştırın. Bağlı olduğunuz Wi-Fi veya Ethernet bağdaştırıcısındaki <b>IPv4 Adresi</b> satırını okuyun.</li>
+              <li><b>Mac:</b> Sistem Ayarları → Ağ → bağlı olduğunuz bağlantı → Ayrıntılar → TCP/IP yolunu açın. IPv4 Adresi alanını okuyun.</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -192,30 +179,26 @@ export default function IpDetectionGuidePage() {
       <div className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-8 space-y-4">
         <div className="flex items-center gap-3">
           <Router className="w-6 h-6 text-cyan-400 shrink-0" />
-          <h2 className="text-xl font-bold text-white">Modem IP Adresi Nasıl Bulunur ve Girilir?</h2>
+          <h2 className="text-xl font-bold text-white">Modemin yerel adresi ve WAN adresi nerede yazar?</h2>
         </div>
         <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-          Evinizdeki modemin kontrol paneline ulaşmak için en sık kullanılan varsayılan adresler şunlardır:
+          Ev Wi-Fi ağınıza bağlanın. Windows’ta <code>ipconfig</code> çıktısında <b>Varsayılan Ağ Geçidi</b>,
+          iPhone veya Mac’te ağ ayrıntılarında <b>Yöneltici</b> alanını okuyun. Kendi ev ağınızdaki yönlendiricinin yerel yönetim arayüzü varsa bu adresi tarayıcınızda açabilirsiniz.
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-center">
-          <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-cyan-400 font-bold text-sm">
-            192.168.1.1 (Türk Telekom / ZyXEL / TP-Link)
-          </div>
-          <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-cyan-400 font-bold text-sm">
-            192.168.0.1 (Netmaster Kablonet / D-Link)
-          </div>
-          <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-cyan-400 font-bold text-sm">
-            192.168.2.1 (AirTies / Belkin)
-          </div>
-        </div>
-        <p className="text-xs text-slate-400 leading-relaxed">
-          Tarayıcınıza bu adresi yazdığınızda giriş ekranı açılır. Standart kullanıcı adı ve şifre genellikle <b>admin / admin</b> veya <b>admin / turktelekom</b> şeklindedir.
+        <p className="text-sm text-slate-300">
+          Genel IPv4 adresinizi modemle karşılaştırırken paneldeki <b>İnternet / WAN IPv4</b> alanını kullanın.
+          İki değer farklıysa önce VPN’i ve arada başka bir yönlendirici olup olmadığını kontrol edin.
+          Operatörlerin ortak adres alanını kullanan bağlantılar için <Link href="/cgnat-nedir-nasil-anlasilir/" className="underline">CGNAT kontrol adımlarına</Link> bakabilirsiniz.
+        </p>
+        <p className="text-sm text-slate-300">
+          Cihaz belgeleri: <a className="underline" href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig">Microsoft’un ipconfig kılavuzu</a>
+          {" · "}<a className="underline" href="https://support.apple.com/tr-tr/guide/mac-help/mh14129/mac">Apple’ın TCP/IP ayarları kılavuzu</a>
         </p>
       </div>
 
       {/* Internal Crosslinks */}
       <div className="p-6 rounded-3xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 space-y-3">
-        <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">İlgili Diğer Rehberlerimiz</h3>
+        <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">İlgili rehberler</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           <Link
             href="/ip-den-adres-bulma"
