@@ -10,6 +10,10 @@ RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
+# Document the bare API URL without forwarding query values to the guide.
+RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
+RewriteRule ^api/?$ /api-dokumantasyon/ [R=301,L,QSD]
+
 # 2. API Routing to PHP endpoints with full query string forwarding
 RewriteRule ^api/ip/?$ /api/ip.php [QSA,L]
 RewriteRule ^api/whois/?$ /api/whois.php [QSA,L]
